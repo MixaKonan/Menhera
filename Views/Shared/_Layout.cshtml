@@ -10,6 +10,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="/css/site.css">
     <title></title>
 </head>
 <body>
@@ -22,12 +23,6 @@
     <div class="board">
         /bash/<span class="postfix">org</span>
     </div>
-    <div class="title">
-        Menherachan
-        <div class="description">
-            Добро пожаловать!
-        </div>
-    </div>
 </header>
 <aside>
     <nav>
@@ -37,8 +32,8 @@
                 if (!board.IsHidden)
                 {
                     <li>
-                        <a>
-                            @board.Prefix@board.Postfix
+                        <a asp-controller="Board" asp-action="Board" asp-route-prefix="@board.Prefix">
+                            /@board.Prefix/@board.Postfix
                         </a>
                     </li>
                 }

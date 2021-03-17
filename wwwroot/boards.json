@@ -1,6 +1,6 @@
 ﻿[
   {
-    "Prefix": "/a/",
+    "Prefix": "a",
     "Postfix": "ниме",
     "Title": "Аниме",
     "Description": "Desu, desu, desu!",
@@ -12,7 +12,7 @@
     "AnonName": "Анимешка"
   },
   {
-    "Prefix":"/b/",
+    "Prefix":"b",
     "Postfix":"ред",
     "Title":"Бред",
     "Description":"Постим куколок!",
@@ -24,7 +24,7 @@
     "AnonName":""
   },
   {
-    "Prefix":"/tv/",
+    "Prefix":"tv",
     "Postfix":"ач",
     "Title":"Сериалы",
     "Description":"Фильмы и сериалы",
@@ -35,7 +35,7 @@
     "AnonName":""
   },
   {
-    "Prefix":"/rf/",
+    "Prefix":"rf",
     "Postfix":"аг",
     "Title":"Убежище",
     "Description":"",
@@ -47,7 +47,7 @@
     "AnonName":"Хикка"
   },
   {
-    "Prefix":"/nkh/",
+    "Prefix":"nkh",
     "Postfix":"ikomori",
     "Title":"Hikkimori",
     "Description":"Доска для социофобов, добровольных домоседов,<br> душевнобольных и тех, кто способен не мешать им сидеть на своей доске.",
@@ -58,7 +58,7 @@
     "FileLimit":1,"AnonName":""
   },
   {
-    "Prefix":"/s/","Postfix":"upport",
+    "Prefix":"s","Postfix":"upport",
     "Title":"Support",
     "Description":"По проблемам с бордой",
     "IsHidden":false,
@@ -69,7 +69,7 @@
     "AnonName":""
   },
   {
-    "Prefix":"/test/",
+    "Prefix":"test",
     "Postfix":"инг",
     "Title":"Сериалы",
     "Description":"Тестинг борды",

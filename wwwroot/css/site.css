@@ -154,13 +154,10 @@ aside a {
     color: #fff;
 }
 
-main {
-    font-family: 'Ubuntu', sans-serif;
-}
-
 .functional-menu,
 .threads {
     margin: 0 226px 0 10%;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 .functional-menu {
