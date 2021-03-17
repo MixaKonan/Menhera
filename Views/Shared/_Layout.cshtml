@@ -1,0 +1,52 @@
+﻿@using Newtonsoft.Json
+@using System.IO
+@{ using(StreamReader sr = File.OpenText("wwwroot/boards.json"))
+   {
+       JsonSerializer serializer = new JsonSerializer();
+       ViewBag.Boards = (Board[]) serializer.Deserialize(sr, typeof(Board[]));
+   }
+    
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<header>
+    <div class="to-main">
+        <a asp-action="Main" asp-controller="MainPage">
+            На сосач!
+        </a>
+    </div>
+    <div class="board">
+        /bash/<span class="postfix">org</span>
+    </div>
+    <div class="title">
+        Menherachan
+        <div class="description">
+            Добро пожаловать!
+        </div>
+    </div>
+</header>
+<aside>
+    <nav>
+        <ul>
+            @foreach (var board in ViewBag.Boards)
+            {
+                if (!board.IsHidden)
+                {
+                    <li>
+                        <a>
+                            @board.Prefix@board.Postfix
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
+    </nav>
+</aside>
+@RenderBody()
+
+</body>
+</html>

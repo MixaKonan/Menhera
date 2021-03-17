@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Helpers" />
+      <Folder Include="Views\Home" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1-beta2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="wwwroot\boards.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+</Project>

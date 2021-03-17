@@ -1,0 +1,83 @@
+﻿[
+  {
+    "Prefix": "/a/",
+    "Postfix": "ниме",
+    "Title": "Аниме",
+    "Description": "Desu, desu, desu!",
+    "IsHidden": false,
+    "AnonHasNoName": true,
+    "NoSubject": false,
+    "NoFilesAllowed": false,
+    "FileLimit": 1,
+    "AnonName": "Анимешка"
+  },
+  {
+    "Prefix":"/b/",
+    "Postfix":"ред",
+    "Title":"Бред",
+    "Description":"Постим куколок!",
+    "IsHidden":false,
+    "AnonHasNoName":true,
+    "NoSubject":true,
+    "NoFilesAllowed":false,
+    "FileLimit":4,
+    "AnonName":""
+  },
+  {
+    "Prefix":"/tv/",
+    "Postfix":"ач",
+    "Title":"Сериалы",
+    "Description":"Фильмы и сериалы",
+    "IsHidden":false,"AnonHasNoName":true,
+    "NoSubject":false,
+    "NoFilesAllowed":false,
+    "FileLimit":1,
+    "AnonName":""
+  },
+  {
+    "Prefix":"/rf/",
+    "Postfix":"аг",
+    "Title":"Убежище",
+    "Description":"",
+    "IsHidden":true,
+    "AnonHasNoName":false,
+    "NoSubject":false,
+    "NoFilesAllowed":false,
+    "FileLimit":1,
+    "AnonName":"Хикка"
+  },
+  {
+    "Prefix":"/nkh/",
+    "Postfix":"ikomori",
+    "Title":"Hikkimori",
+    "Description":"Доска для социофобов, добровольных домоседов,<br> душевнобольных и тех, кто способен не мешать им сидеть на своей доске.",
+    "IsHidden":true,
+    "AnonHasNoName":false,
+    "NoSubject":false,
+    "NoFilesAllowed":false,
+    "FileLimit":1,"AnonName":""
+  },
+  {
+    "Prefix":"/s/","Postfix":"upport",
+    "Title":"Support",
+    "Description":"По проблемам с бордой",
+    "IsHidden":false,
+    "AnonHasNoName":true,
+    "NoSubject":false,
+    "NoFilesAllowed":true,
+    "FileLimit":4,
+    "AnonName":""
+  },
+  {
+    "Prefix":"/test/",
+    "Postfix":"инг",
+    "Title":"Сериалы",
+    "Description":"Тестинг борды",
+    "IsHidden":false,
+    "AnonHasNoName":false,
+    "NoSubject":false,
+    "NoFilesAllowed":false,
+    "FileLimit":1,
+    "AnonName":"Тестер"
+  }
+]
