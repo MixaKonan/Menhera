@@ -1,0 +1,399 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400&display=swap');
+
+html {
+    font-family: 'Raleway', sans-serif;
+    font-size: 100%;
+}
+
+body {
+    margin: 0;
+    background: #f1eff2 url('../images/background.png');
+    font-size: 0.875em;
+    word-break: break-word;
+}
+
+a {
+    display: inline-block;
+    color: #9c68ab;
+    text-decoration: none;
+}
+
+a:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+form {
+    display: inline-block;
+    margin: -1px 0 0 0;
+}
+
+input[type="text"],
+input[type="submit"],
+textarea,
+input[type="file"],
+input[type="password"],
+input[type="search"] {
+    box-sizing: border-box;
+    border: none;
+    padding: 4px 0 0 2px;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+textarea {
+    display: block;
+}
+
+label,
+input[type="submit"],
+input[type="file"],
+input[type="checkbox"] {
+    cursor: pointer;
+}
+
+hr {
+    height: 1px;
+    border: none;
+    background: #e0e0e0;
+    clear: both;
+}
+
+.letf {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
+
+button {
+    cursor: pointer;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+header,
+aside {
+    margin: 24px;
+}
+
+header {
+    padding: 8px;
+    font-size: 1.923em;
+}
+
+.to-main,
+.board {
+    position: absolute;
+}
+
+.to-main {
+    top: 16px;
+    left: 16px;
+    font-size: 0.400em;
+}
+
+.postfix,
+.description {
+    font-size: 0.800em;
+    color: #d68eea;
+}
+
+.title {
+    text-align: center;
+}
+
+aside {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+    width: 170px;
+    background: rgba(164, 109, 180, 0.4);
+    font-size: 1.429em;
+}
+
+aside:before {
+    display: inline-block;
+    -ms-transform: translateX(-24px) rotate(355deg);
+    -o-transform: translateX(-24px) rotate(355deg);
+    -moz-transform: translateX(-24px) rotate(355deg);
+    -webkit-transform: translateX(-24px) rotate(355deg);
+    transform: translateX(-24px) rotate(355deg);
+    content: 'Список разделов';
+    margin-bottom: 16px;
+}
+
+aside:after {
+    position: absolute;
+    top: 35%;
+    left: -44px;
+    right: 0;
+    bottom: 0;
+    background: url('../images/aside-menhera.png');
+    background-repeat: no-repeat;
+    content: '';
+    z-index: -1;
+}
+
+aside ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+aside li {
+    padding: 2px 16px;
+}
+
+aside a {
+    color: #fff;
+}
+
+main {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.functional-menu,
+.threads {
+    margin: 0 226px 0 10%;
+}
+
+.functional-menu {
+    margin-bottom: 10px;
+}
+
+.form {
+    max-width: 450px;
+    margin: 10px auto;
+    box-shadow: 0px 0px 10px 1px #e1bfe2;
+    background: #dcd2df;
+    padding: 2px;
+}
+
+.form form {
+    display: block;
+}
+
+.field {
+    width: 100%;
+    margin: 1px 0 1px 0;
+}
+
+.form .email {
+    float: left;
+    width: calc(40% - 2px);
+    margin-right: 2px;
+}
+
+.form .full-email {
+    float: left;
+    width: calc(80% - 2px);
+    margin-right: 2px;
+}
+
+.form .submit {
+    width: 20%;
+    cursor: pointer;
+}
+
+.form .subject {
+    float: left;
+    width: calc(70% - 2px);
+    margin-right: 2px;
+}
+
+.form .password {
+    width: 30%;
+}
+
+.form .comment {
+    height: 150px;
+}
+
+.form .files {
+    position: relative;
+    border-radius: 50px;
+    background: linear-gradient(90deg, #d68eea 50%, #8896dc 0%);
+    padding: 4px;
+    text-align: center;
+    color: #fff;
+}
+
+.form {
+}
+
+.form input[type="checkbox"] {
+    float: left;
+}
+
+.form label {
+    float: left;
+    margin-top: 2px;
+    font-size: 0.923em;
+}
+
+/*form .options input[type="checkbox"] {
+    display: none;
+}
+
+form .options label {
+    cursor: pointer;
+}
+
+form .options #op:checked ~ label[for="op"],
+form .options #user:checked ~ label[for="user"],
+form .options #sage:checked ~ label[for="sage"] {
+    font-weight: bold;
+}*/
+
+.thread-header {
+    display: block;
+    font-size: 0.929em;
+    margin-bottom: 10px;
+}
+
+.thread-header img {
+    vertical-align: text-bottom;
+}
+
+.thread-header-zero {
+    margin: 0;
+}
+
+.thread-header .your-thread:after {
+    color: #d68eea;
+    content: '●';
+    vertical-align: text-bottom;
+}
+
+article .subject {
+    font-size: 1.538em;
+    margin-bottom: 5px;
+}
+
+article .name {
+    font-size: 1.154em;
+}
+
+article figure {
+    float: left;
+    margin: 0 10px 10px 10px;
+}
+
+article figure ~ .comment {
+    display: table;
+    margin-top: 35px;
+}
+
+article figure:nth-child(2):nth-last-child(3) ~ .comment,
+article figure:nth-child(3):nth-last-child(3) ~ .comment,
+article figure:nth-child(3):nth-last-child(4) ~ .comment {
+    clear: left;
+}
+
+article figure figcaption {
+    font-size: .786em;
+    padding-bottom: 4px;
+}
+
+.thread-info {
+    margin-top: 2px;
+    font-size: 1.154em;
+    color: #ccc;
+}
+
+article .comment {
+    margin-left: 20px;
+}
+
+.post,
+.yourpost {
+    display: inline-block;
+    max-height: 400px;
+    border-radius: 4px;
+    background: rgba(220, 210, 223, 0.4);
+    padding: 8px;
+    overflow-y: auto;
+}
+
+.yourpost {
+    border-left: 2px dashed #d68eea;
+}
+
+.posts {
+    width: 90%;
+    margin: auto;
+}
+
+.pages-num {
+    padding: 8px;
+    text-align: center;
+    font-size: 3em;
+}
+
+@media all and (max-width: 850px) {
+    .to-main {
+        display: none;
+    }
+
+    aside {
+        position: absolute;
+        top: -8px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: inherit;
+        height: 0;
+        margin: 0;
+        background: unset;
+        text-align: center;
+        font-size: 0.923em;
+    }
+
+    aside:before {
+        display: inline-block;
+        transform: unset;
+        content: '';
+        margin: 0;
+    }
+
+    aside ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    aside li {
+        display: inline-block;
+        padding: 0;
+    }
+
+    aside a {
+        color: #9c68ab;
+    }
+
+    .board {
+        display: none;
+    }
+
+    .functional-menu,
+    .threads {
+        margin: auto 8px;
+    }
+
+    figure figcaption,
+    figure img {
+        max-width: 100px;
+    }
+
+    figure figcaption {
+        white-space: nowrap;
+        overflow: hidden;
+        vertical-align: bottom;
+    }
+}
