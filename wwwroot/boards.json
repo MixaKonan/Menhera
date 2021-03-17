@@ -28,7 +28,8 @@
     "Postfix":"ач",
     "Title":"Сериалы",
     "Description":"Фильмы и сериалы",
-    "IsHidden":false,"AnonHasNoName":true,
+    "IsHidden":false,
+    "AnonHasNoName":true,
     "NoSubject":false,
     "NoFilesAllowed":false,
     "FileLimit":1,
@@ -71,7 +72,7 @@
   {
     "Prefix":"test",
     "Postfix":"инг",
-    "Title":"Сериалы",
+    "Title":"Тест",
     "Description":"Тестинг борды",
     "IsHidden":false,
     "AnonHasNoName":false,

@@ -29,12 +29,12 @@
         3.Придерживайтесь тематики борды и ее правил, если они указаны.
         <br>
         4.Трипкоды и аватарки разрешены только в
-        <a asp-controller="Board" asp-action=""> <!-- TODO: Make an action to /rf section -->
-            /rf/
+        <a asp-controller="Board" asp-action="Board" asp-route-prefix="rf">
+             /rf/
         </a>.
         <br>
         5.Обсуждение работы модерации сайта запрещено на всех досках, кроме
-        <a href="/s"> <!-- TODO: Make an action to /s section -->
+        <a asp-controller="Board" asp-action="Board" asp-route-prefix="s">
             /s/
         </a>.
         Нарушение данного правила может повлечь за собой бан.

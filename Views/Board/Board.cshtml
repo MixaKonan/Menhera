@@ -1,6 +1,19 @@
-﻿@{
-    ViewBag.Title = "title";
+﻿@model Board
+@{
     Layout = "_Layout";
 }
 
-<h2>@ViewBag.Prefix</h2>
+<head>
+    <link rel="stylesheet" href="css/site.css">
+    <title>@Model.Title</title>
+</head>
+<body>
+<header>
+    <div class="title">
+        @Model.Title
+        <div class="description">
+            @Model.Description
+        </div>
+    </div>
+</header>
+</body>
