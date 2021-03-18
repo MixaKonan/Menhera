@@ -1,4 +1,6 @@
 ﻿@model Board
+@inject Menhera.Intefaces.IBoardCollection BoardCollection
+
 @{
     Layout = "_Layout";
 }
@@ -9,6 +11,14 @@
 </head>
 <body>
 <header>
+    <div class="to-main">
+        <a asp-action="Main" asp-controller="MainPage">
+            На башорг!
+        </a>
+    </div>
+    <div class="board">
+        /@Model.Prefix/<span class="postfix">@BoardCollection.PrePostFixes.First(pair => pair.Key == Model.Prefix).Value</span>
+    </div>
     <div class="title">
         @Model.Title
         <div class="description">
@@ -16,4 +26,38 @@
         </div>
     </div>
 </header>
+<section>
+    <div class="form">
+        <!-- TODO: Добавить проверку забанен ли юзер -->
+        <form enctype="multipart/form-data" method="post">
+            <input type="hidden" name="parent" value=""> <!--TODO: В value отправлять id треда -->
+            @{
+                if (Model.AnonHasNoName)
+                {
+                    <input type="email" name="email" placeholder="Email" autocomplete="off" class="field full-email">
+                }
+                else
+                {
+                    <input type="email" name="email" placeholder="Email" autocomplete="off" class="field email">
+                    <input type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
+                }
+                
+                <input type="submit" value="Пост" class="field submit">
+                if (!Model.NoSubject)
+                {
+                    <input type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
+                }
+                <textarea name="comment" placeholder="( . .)φ__" class="field comment"></textarea>
+                if (!Model.NoFilesAllowed)
+                {
+                    <input type="file" name="files[]" multiple class="field">
+                }
+                <input type="checkbox" name="op" value="1" id="op"> 
+                <label for="op">
+                    оп
+                </label>
+            }
+        </form>
+    </div>
+</section>
 </body>

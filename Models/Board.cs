@@ -34,8 +34,6 @@ namespace Menhera.Models
         [JsonProperty]
         public string AnonName { get; }
 
-        public static List<string> FileTypes { get; } = new List<string> {"jpeg", "png", "gif", "webm"};
-
         public Board(string prefix, string postfix, string title, string description, int fileLimit = 4, string anonName = "", bool isHidden = false, bool anonHasNoName = false, bool noSubject = false, bool noFilesAllowed = false)
         {
             Prefix = prefix;

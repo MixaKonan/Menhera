@@ -134,8 +134,7 @@ aside:after {
     left: -44px;
     right: 0;
     bottom: 0;
-    background: url('../images/aside-menhera.png');
-    background-repeat: no-repeat;
+    background: url('../images/aside-menhera.png') no-repeat;
     content: '';
     z-index: -1;
 }
