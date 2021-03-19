@@ -4,7 +4,6 @@
 @{
     Layout = "_Layout";
 }
-
 <head>
     <link rel="stylesheet" href="css/site.css">
     <title>@Model.Title</title>
@@ -27,7 +26,7 @@
     </div>
 </header>
 <section>
-    <div class="form">
+    <div class="form" style="margin-bottom: 17px">
         <!-- TODO: Добавить проверку забанен ли юзер -->
         <form enctype="multipart/form-data" method="post">
             <input type="hidden" name="parent" value=""> <!--TODO: В value отправлять id треда -->
@@ -41,7 +40,6 @@
                     <input type="email" name="email" placeholder="Email" autocomplete="off" class="field email">
                     <input type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
                 }
-                
                 <input type="submit" value="Пост" class="field submit">
                 if (!Model.NoSubject)
                 {
@@ -52,12 +50,16 @@
                 {
                     <input type="file" name="files[]" multiple class="field">
                 }
-                <input type="checkbox" name="op" value="1" id="op"> 
+                <input type="checkbox" name="op" value="1" id="op">
                 <label for="op">
                     оп
                 </label>
             }
         </form>
+    </div>
+    <div class="functional-menu">
+        <a asp-controller="MainPage" asp-action="Main">Главная</a>
+        <a asp-controller="Board" asp-action="Search">Поиск</a>
     </div>
 </section>
 </body>

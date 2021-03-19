@@ -1,0 +1,53 @@
+﻿@model Board
+@inject Menhera.Intefaces.IBoardCollection BoardCollection
+
+@{
+    ViewBag.Title = "Поиск";
+    Layout = "_Layout";
+}
+<head>
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header>
+    <div class="to-main">
+        <a asp-action="Main" asp-controller="MainPage">
+            На башорг!
+        </a>
+    </div>
+    <div class="board">
+        /@Model.Prefix/<span class="postfix">@BoardCollection.PrePostFixes.First(pair => pair.Key == Model.Prefix).Value</span>
+    </div>
+    <div class="title">
+        @Model.Title
+        <div class="description">
+            @Model.Description
+        </div>
+    </div>
+</header>
+<section>
+    <div class="form">
+        <form method="POST">
+            <input type="search" name="search" placeholder="Поиск" class="field full-email">
+            <input type="submit" value="Найти" class="field submit">
+        </form>
+    </div>
+    <div class="functional-menu">
+        <a asp-controller="Board" asp-action="Board" asp-route-prefix="@Model.Prefix">
+            ← К доске
+        </a>
+        <a asp-controller="MainPage" asp-action="Main">Главная</a>
+        <a asp-controller="Board" asp-action="Board" asp-route-prefix="@Model.Prefix">Поиск</a>
+        @{
+            //if(user.HasAccess) { <a href="/controls">Управление</a> }
+        }
+        <hr>
+    </div>
+</section>
+<div class="threads">
+    @{
+        
+    }
+    <!-- TODO: Поиск по тредам -->
+</div>
+</body>
