@@ -1,51 +1,38 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+
+// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
+// If you have enabled NRTs for your project, then un-comment the following line:
+// #nullable disable
 
 namespace Menhera.Models
 {
-    public class Board
+    public partial class Board
     {
-        [JsonProperty]
-        public string Prefix { get; }
-        
-        [JsonProperty]
-        public string Postfix { get;}
-        
-        [JsonProperty]
-        public string Title { get; }
-        
-        [JsonProperty]
-        public string Description { get; }
-        
-        [JsonProperty]
-        public bool IsHidden { get;}
-        
-        [JsonProperty]
-        public bool AnonHasNoName { get; }
-        
-        [JsonProperty]
-        public bool NoSubject { get; }
-        [JsonProperty]
-        
-        public bool NoFilesAllowed { get; }
-        [JsonProperty]
-        public int FileLimit { get; }
-        
-        [JsonProperty]
-        public string AnonName { get; }
-
-        public Board(string prefix, string postfix, string title, string description, int fileLimit = 4, string anonName = "", bool isHidden = false, bool anonHasNoName = false, bool noSubject = false, bool noFilesAllowed = false)
+        public Board()
         {
-            Prefix = prefix;
-            Postfix = postfix;
-            Title = title;
-            Description = description;
-            IsHidden = isHidden;
-            AnonHasNoName = anonHasNoName;
-            NoSubject = noSubject;
-            NoFilesAllowed = noFilesAllowed;
-            FileLimit = fileLimit;
-            AnonName = anonName;
+            Ban = new HashSet<Ban>();
+            File = new HashSet<File>();
+            Post = new HashSet<Post>();
+            Report = new HashSet<Report>();
+            Thread = new HashSet<Thread>();
         }
+
+        public int BoardId { get; set; }
+        public string Prefix { get; set; }
+        public string Postfix { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public bool IsHidden { get; set; }
+        public bool AnonHasNoName { get; set; }
+        public bool HasSubject { get; set; }
+        public bool FilesAreAllowed { get; set; }
+        public short FileLimit { get; set; }
+        public string AnonName { get; set; }
+
+        public virtual ICollection<Ban> Ban { get; set; }
+        public virtual ICollection<File> File { get; set; }
+        public virtual ICollection<Post> Post { get; set; }
+        public virtual ICollection<Report> Report { get; set; }
+        public virtual ICollection<Thread> Thread { get; set; }
     }
 }
