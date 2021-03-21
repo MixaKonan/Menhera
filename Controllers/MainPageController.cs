@@ -1,8 +1,5 @@
-﻿using Menhera.Helpers;
-using Menhera.Intefaces;
-using Menhera.Models;
+﻿using Menhera.Intefaces;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace Menhera.Controllers
 {

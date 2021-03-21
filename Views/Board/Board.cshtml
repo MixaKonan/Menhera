@@ -1,4 +1,4 @@
-﻿@model Board
+﻿@model Menhera.Models.Board
 @inject Menhera.Intefaces.IBoardCollection BoardCollection
 
 @{
@@ -41,12 +41,15 @@
                     <input type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
                 }
                 <input type="submit" value="Пост" class="field submit">
-                if (!Model.NoSubject)
+            }
+            
+            @{
+                if (Model.HasSubject)
                 {
                     <input type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
                 }
                 <textarea name="comment" placeholder="( . .)φ__" class="field comment"></textarea>
-                if (!Model.NoFilesAllowed)
+                if (Model.FilesAreAllowed)
                 {
                     <input type="file" name="files[]" multiple class="field">
                 }
@@ -59,7 +62,7 @@
     </div>
     <div class="functional-menu">
         <a asp-controller="MainPage" asp-action="Main">Главная</a>
-        <a asp-controller="Board" asp-action="Search">Поиск</a>
+        <a asp-controller="Board" asp-action="Search" asp-route-prefix="@Model.Prefix">Поиск</a>
     </div>
 </section>
 </body>

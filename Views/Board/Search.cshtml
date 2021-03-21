@@ -1,4 +1,4 @@
-﻿@model Board
+﻿@model Menhera.Models.Board
 @inject Menhera.Intefaces.IBoardCollection BoardCollection
 
 @{
@@ -37,7 +37,6 @@
             ← К доске
         </a>
         <a asp-controller="MainPage" asp-action="Main">Главная</a>
-        <a asp-controller="Board" asp-action="Board" asp-route-prefix="@Model.Prefix">Поиск</a>
         @{
             //if(user.HasAccess) { <a href="/controls">Управление</a> }
         }

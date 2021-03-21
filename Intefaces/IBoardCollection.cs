@@ -1,18 +1,12 @@
 ﻿using System.Collections.Generic;
-using Menhera.Models;
+using Board = Menhera.Models.Board;
 
 namespace Menhera.Intefaces
 {
     public interface IBoardCollection
     {
-        Board[] Boards { get; }
+        public IEnumerable<Board> Boards { get; }
+        public IEnumerable<string> FileTypes { get; }
         public Dictionary<string, string> PrePostFixes { get; }
-        public List<string> FileTypes { get; }
-
-        public Board this[int index]
-        {
-            get => Boards[index];
-            set => Boards[index] = value;
-        }
     }
 }

@@ -1,0 +1,33 @@
+﻿using System;
+using System.Collections.Generic;
+
+// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
+// If you have enabled NRTs for your project, then un-comment the following line:
+// #nullable disable
+
+namespace Menhera.Models
+{
+    public partial class Post
+    {
+        public Post()
+        {
+            File = new HashSet<File>();
+        }
+
+        public int PostId { get; set; }
+        public int BoardId { get; set; }
+        public int ThreadId { get; set; }
+        public string Email { get; set; }
+        public string Subject { get; set; }
+        public string Comment { get; set; }
+        public string AnonName { get; set; }
+        public long BumpInUnixTime { get; set; }
+        public bool IsPinned { get; set; }
+        public DateTime Time { get; set; }
+        public string AnonIpHash { get; set; }
+
+        public virtual Board Board { get; set; }
+        public virtual Thread Thread { get; set; }
+        public virtual ICollection<File> File { get; set; }
+    }
+}
