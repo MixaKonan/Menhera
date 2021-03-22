@@ -27,6 +27,7 @@ namespace Menhera
                     "DefaultConnection")));
             
             services.AddControllersWithViews();
+            services.AddRazorPages();
             services.AddSingleton<IBoardCollection, BoardCollection>();
         }
 
@@ -49,6 +50,7 @@ namespace Menhera
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -56,6 +58,7 @@ namespace Menhera
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=MainPage}/{action=Main}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }

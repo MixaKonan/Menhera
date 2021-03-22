@@ -1,8 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using Menhera.Areas.Identity.Data
+@using Menhera.Database
 
-@inject SignInManager<MenheraUser> SignInManager
-@inject UserManager<MenheraUser> UserManager
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))

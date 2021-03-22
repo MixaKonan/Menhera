@@ -1,9 +1,7 @@
-﻿using System;
-using Menhera.Areas.Identity.Data;
-using Menhera.Data;
+﻿using Menhera.Database;
+using Menhera.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,13 +13,23 @@ namespace Menhera.Areas.Identity
     {
         public void Configure(IWebHostBuilder builder)
         {
-            builder.ConfigureServices((context, services) => {
-                services.AddDbContext<MenheraContext>(options =>
-                    options.UseSqlServer(
-                        context.Configuration.GetConnectionString("MenheraContextConnection")));
+            builder.ConfigureServices((context, services) =>
+            {
+                services.AddDbContext<MenherachanContext>(options =>
+                    options.UseMySql(
+                        context.Configuration.GetConnectionString("DefaultConnection")));
 
-                services.AddDefaultIdentity<MenheraUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                    .AddEntityFrameworkStores<MenheraContext>();
+                services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+                    .AddEntityFrameworkStores<MenherachanContext>();
+                services.Configure<IdentityOptions>(options =>
+                {
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequiredUniqueChars = 0;
+                });
             });
         }
     }
