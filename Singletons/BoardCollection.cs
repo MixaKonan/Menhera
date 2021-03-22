@@ -16,7 +16,7 @@ namespace Menhera.Singletons
 
         public BoardCollection()
         {
-            Boards = _db.Board.Select(board => board).ToList();
+            Boards = _db.Boards.Select(board => board).ToList();
             FileTypes = new List<string> {"jpeg", "png", "gif", "webm"};
 
             foreach (var board in Boards)

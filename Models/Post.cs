@@ -1,33 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-
-// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
-// If you have enabled NRTs for your project, then un-comment the following line:
-// #nullable disable
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Menhera.Models
 {
-    public partial class Post
+    [Table("post")]
+    public class Post
     {
-        public Post()
-        {
-            File = new HashSet<File>();
-        }
-
+        [Key]
+        [Column("post_id")]
         public int PostId { get; set; }
-        public int BoardId { get; set; }
-        public int ThreadId { get; set; }
-        public string Email { get; set; }
-        public string Subject { get; set; }
-        public string Comment { get; set; }
-        public string AnonName { get; set; }
-        public long BumpInUnixTime { get; set; }
-        public bool IsPinned { get; set; }
-        public DateTime Time { get; set; }
-        public string AnonIpHash { get; set; }
 
-        public virtual Board Board { get; set; }
-        public virtual Thread Thread { get; set; }
-        public virtual ICollection<File> File { get; set; }
+        [Column("board_id")]
+        public int BoardId { get; set; }
+        
+        [Column("thread_id")]
+        public int ThreadId { get; set; }
+        
+        [Column("email")]
+        public string Email { get; set; }
+        
+        [Column("subject")]
+        public string Subject { get; set; }
+        
+        [Column("comment")]
+        public string Comment { get; set; }
+        
+        [Column("anon_name")]
+        public string AnonName { get; set; }
+        
+        [Column("bump_in_unix_time")]
+        public int BumpInUnixTime { get; set; }
+        
+        [Column("is_pinned")]
+        public bool IsPinned { get; set; }
+        
+        [Column("time")]
+        public DateTime Time { get; set; }
+        
+        [Column("anon_ip_hash")]
+        public string AnonIpHash { get; set; }
+        
     }
 }

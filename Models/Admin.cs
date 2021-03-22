@@ -1,25 +1,21 @@
-﻿using System.Collections.Generic;
-
-// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
-// If you have enabled NRTs for your project, then un-comment the following line:
-// #nullable disable
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Menhera.Models
 {
-    public partial class Admin
+    [Table("admin")]
+    public class Admin
     {
-        public Admin()
-        {
-            Ban = new HashSet<Ban>();
-        }
-
+        [Key]
+        [Column("admin_id")]
         public int AdminId { get; set; }
-        public string Login { get; set; }
-        public string PasswordHash { get; set; }
-        public string Email { get; set; }
+        
+        [Column("user_id")]
+        public int UserId { get; set; }
+        
+        [Column("is_superadmin")]
         public bool IsSuperadmin { get; set; }
-        public string AdminIpHash { get; set; }
 
-        public virtual ICollection<Ban> Ban { get; set; }
     }
+        
 }
