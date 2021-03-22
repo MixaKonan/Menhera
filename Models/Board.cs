@@ -1,38 +1,43 @@
-﻿using System.Collections.Generic;
-
-// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
-// If you have enabled NRTs for your project, then un-comment the following line:
-// #nullable disable
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Menhera.Models
 {
-    public partial class Board
+    [Table("board")]
+    public class Board
     {
-        public Board()
-        {
-            Ban = new HashSet<Ban>();
-            File = new HashSet<File>();
-            Post = new HashSet<Post>();
-            Report = new HashSet<Report>();
-            Thread = new HashSet<Thread>();
-        }
-
+        [Key]
+        [Column("board_id")]
         public int BoardId { get; set; }
+        
+        [Column("prefix")]
         public string Prefix { get; set; }
+        
+        [Column("postfix")]
         public string Postfix { get; set; }
+        
+        [Column("title")]
         public string Title { get; set; }
+        
+        [Column("description")]
         public string Description { get; set; }
+        
+        [Column("is_hidden")]
         public bool IsHidden { get; set; }
+        
+        [Column("anon_has_no_name")]
         public bool AnonHasNoName { get; set; }
+        
+        [Column("has_subject")]
         public bool HasSubject { get; set; }
+        
+        [Column("files_are_allowed")]
         public bool FilesAreAllowed { get; set; }
-        public short FileLimit { get; set; }
+        
+        [Column("file_limit")]
+        public int FileLimit { get; set; }
+        
+        [Column("anon_name")]
         public string AnonName { get; set; }
-
-        public virtual ICollection<Ban> Ban { get; set; }
-        public virtual ICollection<File> File { get; set; }
-        public virtual ICollection<Post> Post { get; set; }
-        public virtual ICollection<Report> Report { get; set; }
-        public virtual ICollection<Thread> Thread { get; set; }
     }
 }

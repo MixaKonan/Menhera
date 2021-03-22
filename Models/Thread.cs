@@ -1,29 +1,31 @@
-﻿using System.Collections.Generic;
-
-// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
-// If you have enabled NRTs for your project, then un-comment the following line:
-// #nullable disable
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Menhera.Models
 {
-    public partial class Thread
+    [Table("thread")]
+    public class Thread
     {
-        public Thread()
-        {
-            File = new HashSet<File>();
-            Post = new HashSet<Post>();
-            Report = new HashSet<Report>();
-        }
-
+        [Key]
+        [Column("thread_id")]
         public int ThreadId { get; set; }
+        
+        [Column("board_id")]
         public int BoardId { get; set; }
-        public bool Closed { get; set; }
+        
+        [Column("is_closed")]
+        public string IsClosed { get; set; }
+        
+        [Column("op")]
         public string Op { get; set; }
+        
+        [Column("is_hidden")]
+        public bool IsHidden { get; set; }
+        
+        [Column("anon_has_no_name")]
+        public bool AnonHasNoName { get; set; }
+        
+        [Column("anon_name")]
         public string AnonName { get; set; }
-
-        public virtual Board Board { get; set; }
-        public virtual ICollection<File> File { get; set; }
-        public virtual ICollection<Post> Post { get; set; }
-        public virtual ICollection<Report> Report { get; set; }
     }
 }
