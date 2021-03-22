@@ -1,0 +1,33 @@
+﻿@model Menhera.Models.Auth.Registration
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>Регистрация</title>
+</head>
+<body>
+<div>
+    <form asp-action="Register" method="post">
+        <div class="form-group">
+            <div class="col-lg-4">
+                <input type="text" asp-for="Login">
+            </div>
+            <div class="col-lg-4">
+                <input type="email" asp-for="Email">
+            </div>
+            <div class="col-lg-4">
+                <input type="password" asp-for="Password">
+            </div>
+            <div class="col-lg-4">
+                <input type="password" asp-for="ConfirmPassword">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,6 +1,7 @@
 using Menhera.Database;
 using Menhera.Intefaces;
 using Menhera.Singletons;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,11 @@ namespace Menhera
             services.AddDbContext<MenherachanContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString(
                     "DefaultConnection")));
+            
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+            {
+                options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+            });
             
             services.AddControllersWithViews();
             services.AddSingleton<IBoardCollection, BoardCollection>();
