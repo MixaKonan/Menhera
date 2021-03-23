@@ -1,4 +1,5 @@
 ﻿@inject Menhera.Intefaces.IBoardCollection BoardCollection
+@model Dictionary<Board, Menhera.Classes.BoardInformation>
 
 @{
     Layout = "_Layout";
@@ -47,10 +48,26 @@
         </a>.
         Нарушение данного правила может повлечь за собой бан.
     </div>
-    <!-- TODO: Передать данные из бд через View или напрямую через джоины в List<BoardInformation>-->
+    <br>
+    <br>
+    <br>
     <div>
         @{
-            
+            foreach (var (board, boardInfo) in Model)
+            {
+                if (!board.IsHidden)
+                {
+                    <p>Раздел
+                        <a asp-controller="Board" asp-action="Board" asp-route-prefix="@board.Prefix">
+                            /@board.Prefix/
+                        </a>;
+                        тредов @boardInfo.ThreadCount ;
+                        постов @boardInfo.PostCount ;
+                        файлов @boardInfo.FileCount ;
+                    </p>
+                    <hr>
+                }
+            }
         }
     </div>
 </div>

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Menhera.Authentification;
+using Menhera.Classes;
 using Menhera.Classes.Hash;
 using Menhera.Database;
 using Menhera.Extensions;
@@ -13,17 +15,18 @@ using Menhera.Models.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Menhera.Controllers
 {
     public class AccountController : Controller
     {
         private readonly MenherachanContext _db;
+        private EmailService _email;
 
         public AccountController(MenherachanContext db)
         {
             _db = db;
+            _email = new EmailService();
         }
         
         [HttpGet]
@@ -39,7 +42,7 @@ namespace Menhera.Controllers
             if (ModelState.IsValid)
             {
                 var hashComp = new HashComparator();
-                var loginPassHash = new SHA256Managed().ComputeHash(loginModel.Password.GetByteArray()).GetString();
+                var loginPassHash = new SHA256Managed().ComputeHash(Encoding.UTF8.GetBytes(loginModel.Password)).GetString();
                 
                 var user = _db.Users.First(u => u.Email == loginModel.Email);
                 if (user != null)
@@ -70,6 +73,11 @@ namespace Menhera.Controllers
             return View("Request");
         }
 
+        public IActionResult AfterRequest()
+        {
+            return View("AfterRequest");
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LeaveRequest(Request requestModel)
@@ -95,6 +103,10 @@ namespace Menhera.Controllers
                         });
 
                         await _db.SaveChangesAsync();
+
+                        await _email.SendEmailAsync("fater181@gmail.com", "Заявка на модерство " + requestModel.Login, requestModel.Comment);
+                        await _email.SendEmailAsync(requestModel.Email, "Заявка на модератора",
+                            "Заявка принята и будет рассмотренна");
 
                         return View("AfterRequest");
                     }

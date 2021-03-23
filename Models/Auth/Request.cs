@@ -19,5 +19,9 @@ namespace Menhera.Models.Auth
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Пароль введён неверно.")]
         public string ConfirmPassword { get; set; }
+
+        [Required(ErrorMessage ="Обязательно.")]
+        [DataType(DataType.Text)]
+        public string Comment { get; set; }
     }
 }

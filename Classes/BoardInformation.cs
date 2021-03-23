@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Linq;
 using Menhera.Database;
 using Menhera.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Menhera.Classes
 {
@@ -10,8 +10,8 @@ namespace Menhera.Classes
     {
         public int ThreadCount { get; }
         public int PostCount { get; }
-        public int PostsPerHour { get; }
-        
+        public int FileCount { get; }
+
         public BoardInformation(Board board, MenherachanContext db)
         {
             ThreadCount = db.Boards.Where(b => b.Prefix == board.Prefix)
@@ -19,16 +19,16 @@ namespace Menhera.Classes
                 b => b.BoardId,
                 t => t.BoardId,
                 (br, thread) => thread.ThreadId).Count();
-
+            
             PostCount = db.Boards.Where(b => b.Prefix == board.Prefix).Join(db.Posts,
                 b => b.BoardId,
                 p => p.BoardId,
                 (brd, post) => post.PostId).Count();
-
-            PostsPerHour = db.Threads.Join(db.Posts.Where(p => (DateTime.Now - p.Time).TotalHours <= 1),
-                t => t.ThreadId,
-                p => p.ThreadId,
-                (th, pt) => pt.PostId).Count();
+            
+            FileCount = db.Boards.Join(db.Files,
+                b => b.BoardId,
+                f => f.BoardId,
+                (br, fl) => fl.FileId).Count();
         }
     }
 }

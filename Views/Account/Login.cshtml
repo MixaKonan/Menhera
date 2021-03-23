@@ -4,29 +4,26 @@
     Layout = "_AccountLayout";
 }
 
-<!DOCTYPE html>
-
-<!-- TODO: Выведение ошибок при неправильных данных-->
-
+<!doctype html>
 <html lang="en">
 <head>
-    <title>Вход</title>
+    <title>Login</title>
 </head>
 <body>
-<div>
-    <form asp-action="Login" method="post">
-        <div class="form-group">
-            <div class="col-lg-4">
-                <input type="email" asp-for="Email">
+    <div class="request">
+        <div class="request-screen">
+            <div class="request-title">
+                <h1>Вход</h1>
             </div>
-            <div class="col-lg-4">
-                <input type="password" asp-for="Password">
-            </div>
-            <div class="col-lg-4">
-                <button type="submit">Login</button>
+            <div class="request-form">
+                <div class="control-group">
+                    <input asp-for="Email" type="email" class="request-field" placeholder="Email" id="request-email">
+                    <input asp-for="Password" type="password" class="request-field" placeholder="Password" id="request-pass">
+                </div>
+                <a asp-controller="MainPage" asp-action="Main" class="btn">Войти</a>
+                <a asp-action="LeaveRequest" class="request-link">Вернуться к реквесту</a>
             </div>
         </div>
-    </form>
-</div>
+    </div>
 </body>
 </html>

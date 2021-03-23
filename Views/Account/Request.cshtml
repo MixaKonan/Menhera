@@ -3,52 +3,45 @@
 @{
     Layout = "_AccountLayout";
 }
+
+
 <!-- TODO: Выведение ошибок при неправильных/уже существующих данных-->
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="css/account.css">
-    <title>Регистрация</title>
+    <title>Request</title>
 </head>
 <body>
-<div>
-    <form asp-action="LeaveRequest" method="post">
-        <div class="form-group">
-            
-            <div class="col-lg-4 offset-lg-5">
-                <label asp-for="Login"></label>
-                <br>
-                <input type="text" asp-for="Login">
-                <span asp-validation-for="Login" />
+    <div class="request">
+        <div class="request-screen">
+            <div class="request-title">
+                <h1>Реквесты</h1>
             </div>
-            
-            <div class="col-lg-4 offset-lg-5">
-                <label asp-for="Email"></label>
-                <br>
-                <input type="email" asp-for="Email">
-                <span asp-validation-for="Email" />
-            </div>
-            
-            <div class="col-lg-4 offset-lg-5">
-                <label asp-for="Password"></label>
-                <br>
-                <input type="password" asp-for="Password">
-                <span asp-validation-for="Password" />
-            </div>
-            <div class="col-lg-4 offset-lg-5">
-                <label asp-for="ConfirmPassword"></label>
-                <br>
-                <input type="password" asp-for="ConfirmPassword">
-                <span asp-validation-for="ConfirmPassword" />
-            </div>
-            <div class="col-lg-4 offset-lg-5">
-                <br>
-                <button type="submit">Зарегистрироваться</button>
-            </div>
+            <form asp-action="LeaveRequest" method="post">
+                <div class="request-form">
+                    <div class="control-group">
+                        <div class="form-group">
+                            <input asp-for="Login" type="text" class="request-field" value="" placeholder="Login" id="request-login">
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="Email" type="email" class="request-field" value="" placeholder="Email" id="request-email">
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="Password" type="password" class="request-field" value="" placeholder="Password" id="request-pass">
+                        </div>
+                        <div class="form-group">
+                            <input asp-for="ConfirmPassword" type="password" class="request-field" value="" placeholder="Confirm Password"
+                                   id="request-confirmpass">
+                        </div>
+                        <div class="form-group">
+                            <textarea asp-for="Comment" name="comment" placeholder="Убеди нас взять тебя в модераторы!" class="field comment"></textarea>
+                        </div>
+                    </div>
+                    <input type="submit" class="btn" placeholder="Отправить запрос">
+                    <a asp-action="Login" class="request-link">Уже модератор?</a>
+                </div>
+            </form>
         </div>
-    </form>
-</div>
+    </div>
 </body>
 </html>
