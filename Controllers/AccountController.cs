@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
+using Menhera.Authentification;
+using Menhera.Classes.Hash;
 using Menhera.Database;
 using Menhera.Extensions;
 using Menhera.Models;
@@ -32,20 +34,28 @@ namespace Menhera.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public Task<IActionResult> Login(Login loginModel)
+        public async Task<IActionResult> Login(Login loginModel)
         {
             if (ModelState.IsValid)
             {
-                var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == loginModel.Email && u.PasswordHash == GetHashStringAsync(loginModel.Password));
+                var hashComp = new HashComparator();
+                var loginPassHash = new SHA256Managed().ComputeHash(loginModel.Password.GetByteArray()).GetString();
+                
+                var user = _db.Users.First(u => u.Email == loginModel.Email);
                 if (user != null)
                 {
-                    await Authenticate(model.Email); // аутентификация
+                    if (hashComp.CompareStringHashes(user.PasswordHash, loginPassHash))
+                    {
+                        ModelState.AddModelError("", "Некорректные логин и(или) пароль");
+                    }
+                    
+                    await Authenticate(loginModel.Email);
  
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Main", "MainPage");
                 }
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }
-            return View(model);
+            return View(loginModel);
         }
         
         public async Task<IActionResult> Logout()
@@ -55,43 +65,43 @@ namespace Menhera.Controllers
         }
         
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult LeaveRequest()
         {
-            return View();
+            return View("Request");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(Registration registrationModel)
+        public async Task<IActionResult> LeaveRequest(Request requestModel)
         {
+            var auth = new Authentificator();
+            User user = null;
+            
             if (ModelState.IsValid)
             {
-                var user = await _db.Users.FirstAsync(usr => usr.Email == registrationModel.Email);
-                
-                if (user == null)
+                try
                 {
-                    await _db.Users.AddAsync(new User
-                    {
-                        Email = registrationModel.Email,
-                        Login = registrationModel.Login,
-                        PasswordHash = await GetHashStringAsync(registrationModel.Password)
-                    });
-
-                    await _db.SaveChangesAsync();
-
-                    await Authenticate(registrationModel.Email);
-                    
-                    return RedirectToAction("Main", "MainPage");
+                    user = _db.Users.First(usr => usr.Email == requestModel.Email);
                 }
-                else
+                catch (InvalidOperationException e)
                 {
+                    if (user == null)
+                    {
+                        await _db.Users.AddAsync(new User
+                        {
+                            Email = requestModel.Email,
+                            Login = requestModel.Login,
+                            PasswordHash = await auth.GetHashStringAsync(requestModel.Password)
+                        });
+
+                        await _db.SaveChangesAsync();
+
+                        return View("AfterRequest");
+                    }
                     ModelState.AddModelError("", "Проверьте введённые данные.");
                 }
             }
-
-            return RedirectToAction("Register");
-
-
+            return RedirectToAction("LeaveRequest");
         }
         
         private async Task Authenticate(string userName)
@@ -100,12 +110,8 @@ namespace Menhera.Controllers
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
             };
-            
-            var id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
-
-        
-        
     }
 }

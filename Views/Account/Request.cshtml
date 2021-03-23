@@ -1,0 +1,54 @@
+﻿@model Menhera.Models.Auth.Request
+
+@{
+    Layout = "_AccountLayout";
+}
+<!-- TODO: Выведение ошибок при неправильных/уже существующих данных-->
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/account.css">
+    <title>Регистрация</title>
+</head>
+<body>
+<div>
+    <form asp-action="LeaveRequest" method="post">
+        <div class="form-group">
+            
+            <div class="col-lg-4 offset-lg-5">
+                <label asp-for="Login"></label>
+                <br>
+                <input type="text" asp-for="Login">
+                <span asp-validation-for="Login" />
+            </div>
+            
+            <div class="col-lg-4 offset-lg-5">
+                <label asp-for="Email"></label>
+                <br>
+                <input type="email" asp-for="Email">
+                <span asp-validation-for="Email" />
+            </div>
+            
+            <div class="col-lg-4 offset-lg-5">
+                <label asp-for="Password"></label>
+                <br>
+                <input type="password" asp-for="Password">
+                <span asp-validation-for="Password" />
+            </div>
+            <div class="col-lg-4 offset-lg-5">
+                <label asp-for="ConfirmPassword"></label>
+                <br>
+                <input type="password" asp-for="ConfirmPassword">
+                <span asp-validation-for="ConfirmPassword" />
+            </div>
+            <div class="col-lg-4 offset-lg-5">
+                <br>
+                <button type="submit">Зарегистрироваться</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

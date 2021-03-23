@@ -1,4 +1,4 @@
-﻿@model object
+﻿@inject Menhera.Intefaces.IBoardCollection BoardCollection
 
 @{
     Layout = "_Layout";
@@ -38,7 +38,7 @@
         <br>
         4.Трипкоды и аватарки разрешены только в
         <a asp-controller="Board" asp-action="Board" asp-route-prefix="rf">
-             /rf/
+            /rf/
         </a>.
         <br>
         5.Обсуждение работы модерации сайта запрещено на всех досках, кроме
@@ -47,8 +47,11 @@
         </a>.
         Нарушение данного правила может повлечь за собой бан.
     </div>
+    <!-- TODO: Передать данные из бд через View или напрямую через джоины в List<BoardInformation>-->
     <div>
-        <!-- TODO: Сделать перечисление разделов, тредов + сколько в каждом постов, файлов -->
+        @{
+            
+        }
     </div>
 </div>
 </body>

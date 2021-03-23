@@ -2,7 +2,7 @@
 
 namespace Menhera.Models.Auth
 {
-    public class Registration
+    public class Request
     {
         [Required(ErrorMessage ="Не указан логин.")]
         [DataType(DataType.Text)]

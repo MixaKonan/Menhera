@@ -63,6 +63,12 @@
     <div class="functional-menu">
         <a asp-controller="MainPage" asp-action="Main">Главная</a>
         <a asp-controller="Board" asp-action="Search" asp-route-prefix="@Model.Prefix">Поиск</a>
+        @{
+            if (User.Identity.IsAuthenticated)
+            {
+                <a>Модерировать</a>
+            }
+        }
     </div>
 </section>
 </body>

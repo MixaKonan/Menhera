@@ -3,16 +3,8 @@ using System.Collections;
 
 namespace Menhera.Classes.Hash
 {
-    public class SHA256Hash : IEqualityComparer
+    public class SHA256Hash
     {
-        public new bool Equals(object? x, object? y)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int GetHashCode(object obj)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
