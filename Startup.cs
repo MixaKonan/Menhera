@@ -1,6 +1,7 @@
 using Menhera.Database;
 using Menhera.Intefaces;
 using Menhera.Singletons;
+using Menhera.Transients;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,6 +35,7 @@ namespace Menhera
             
             services.AddControllersWithViews();
             services.AddSingleton<IBoardCollection, BoardCollection>();
+            services.AddTransient<IAdminCollection, AdminCollection>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +57,7 @@ namespace Menhera
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

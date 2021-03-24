@@ -14,18 +14,18 @@ namespace Menhera.Classes
 
         public BoardInformation(Board board, MenherachanContext db)
         {
-            ThreadCount = db.Boards.Where(b => b.Prefix == board.Prefix)
-                .Join(db.Threads,
+            ThreadCount = db.Board.Where(b => b.Prefix == board.Prefix)
+                .Join(db.Thread,
                 b => b.BoardId,
                 t => t.BoardId,
                 (br, thread) => thread.ThreadId).Count();
             
-            PostCount = db.Boards.Where(b => b.Prefix == board.Prefix).Join(db.Posts,
+            PostCount = db.Board.Where(b => b.Prefix == board.Prefix).Join(db.Post,
                 b => b.BoardId,
                 p => p.BoardId,
                 (brd, post) => post.PostId).Count();
             
-            FileCount = db.Boards.Join(db.Files,
+            FileCount = db.Board.Join(db.File,
                 b => b.BoardId,
                 f => f.BoardId,
                 (br, fl) => fl.FileId).Count();

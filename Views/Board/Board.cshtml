@@ -1,12 +1,15 @@
-﻿@model Menhera.Models.Board
+﻿@using Menhera.Classes
+@model Post
 @inject Menhera.Intefaces.IBoardCollection BoardCollection
+@inject Menhera.Intefaces.IAdminCollection AdminCollection
+
 
 @{
     Layout = "_Layout";
 }
 <head>
     <link rel="stylesheet" href="css/site.css">
-    <title>@Model.Title</title>
+    <title>@ViewBag.Board.Title</title>
 </head>
 <body>
 <header>
@@ -16,12 +19,12 @@
         </a>
     </div>
     <div class="board">
-        /@Model.Prefix/<span class="postfix">@BoardCollection.PrePostFixes.First(pair => pair.Key == Model.Prefix).Value</span>
+        /@ViewBag.Board.Prefix/<span class="postfix">@BoardCollection.PrePostFixes.First(pair => pair.Key == ViewBag.Board.Prefix).Value</span>
     </div>
     <div class="title">
-        @Model.Title
+        @ViewBag.Board.Title
         <div class="description">
-            @Model.Description
+            @ViewBag.Board.Description
         </div>
     </div>
 </header>
@@ -31,27 +34,27 @@
         <form enctype="multipart/form-data" method="post">
             <input type="hidden" name="parent" value=""> <!--TODO: В value отправлять id треда -->
             @{
-                if (Model.AnonHasNoName)
+                if (ViewBag.Board.AnonHasNoName)
                 {
-                    <input type="email" name="email" placeholder="Email" autocomplete="off" class="field full-email">
+                    <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field full-email">
                 }
                 else
                 {
-                    <input type="email" name="email" placeholder="Email" autocomplete="off" class="field email">
-                    <input type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
+                    <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field email">
+                    <input asp-for="AnonName" type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
                 }
                 <input type="submit" value="Пост" class="field submit">
             }
             
             @{
-                if (Model.HasSubject)
+                if (ViewBag.Board.HasSubject)
                 {
-                    <input type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
+                    <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
                 }
-                <textarea name="comment" placeholder="( . .)φ__" class="field comment"></textarea>
-                if (Model.FilesAreAllowed)
+                <textarea asp-for="Comment" name="comment" placeholder="( . .)φ__" class="field comment"></textarea>
+                if (ViewBag.Board.FilesAreAllowed)
                 {
-                    <input type="file" name="files[]" multiple class="field">
+                    <input asp-for="File" type="file" name="files[]" multiple class="field">
                 }
                 <input type="checkbox" name="op" value="1" id="op">
                 <label for="op">
@@ -62,12 +65,76 @@
     </div>
     <div class="functional-menu">
         <a asp-controller="MainPage" asp-action="Main">Главная</a>
-        <a asp-controller="Board" asp-action="Search" asp-route-prefix="@Model.Prefix">Поиск</a>
-        @{
-            if (User.Identity.IsAuthenticated)
-            {
-                <a>Модерировать</a>
-            }
+        <a asp-controller="Board" asp-action="Search" asp-route-prefix="@ViewBag.Board.Prefix">Поиск</a>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a asp-controller="Admin" asp-action="Panel">Управление</a>
+        }
+    </div>
+    <div class="threads">
+        @foreach (var thread in ViewBag.ThreadPosts.Keys)
+        {
+            <span id="@thread.ThreadId">
+                <article>
+                    <div class="thread-header">
+                        @{ 
+                            ViewBag.ThreadPosts.TryGetValue(thread, out List<Post> br);
+                            foreach (var post in br)
+                            {
+                                if (!string.IsNullOrEmpty(post.Subject))
+                                {
+                                    <div class="subject">
+                                        @post.Subject
+                                    </div>
+                                }
+                                if (post.AnonIpHash == ViewBag.UserIp)
+                                {
+                                    <span class="your-thread">
+                                    </span>
+                                }
+                                if (!string.IsNullOrEmpty(post.Email) && !string.IsNullOrEmpty(post.AnonName))
+                                {
+                                    <span class="name">
+                                        <a href="mailto:@post.Email">
+                                            @post.AnonName
+                                        </a>
+                                    </span>
+                                }
+                                else if (!string.IsNullOrEmpty(post.AnonName))
+                                {
+                                    <span class="name">
+                                        @post.AnonName
+                                    </span>
+                                }
+                                if (post.AnonIpHash == thread.OpIpHash)
+                                {
+                                    <span style="color: green; ">
+                                        #OP
+                                    </span>
+                                }
+                                if (IpCheck.IpBelongsToAdmin(post.AnonIpHash, AdminCollection.Admins, out var admin))
+                                {
+                                    @admin.Login
+                                }
+                                @post.Time
+                                <a asp-controller="Board" asp-action="Thread" asp-route-id="@thread.ThreadId">
+                                    @thread.ThreadId
+                                </a>
+                                <a asp-controller="Board" asp-action="Report" asp-route-postId="@post.PostId">
+                                    Репорт
+                                </a>
+                                if (User.Identity.IsAuthenticated)
+                                {
+                                    <a asp-controller="Admin" asp-action="Panel">
+                                        Модерировать
+                                    </a>
+                                }
+                            }
+                            
+                        }
+                    </div>
+                </article>
+            </span>
         }
     </div>
 </section>

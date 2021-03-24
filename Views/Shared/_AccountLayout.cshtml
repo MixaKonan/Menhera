@@ -1,11 +1,29 @@
-﻿<!DOCTYPE html>
+﻿@inject Menhera.Intefaces.IBoardCollection BoardCollection
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
-
+<aside>
+    <nav>
+        <ul>
+            @foreach (var board in BoardCollection.Boards)
+            {
+                if (!board.IsHidden)
+                {
+                    <li>
+                        <a asp-controller="Board" asp-action="Board" asp-route-prefix="@board.Prefix">
+                            /@board.Prefix/@board.Postfix
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
+    </nav>
+</aside>
 @RenderBody()
-
 </body>
 </html>

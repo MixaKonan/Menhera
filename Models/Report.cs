@@ -1,29 +1,22 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
+
+// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
+// If you have enabled NRTs for your project, then un-comment the following line:
+// #nullable disable
 
 namespace Menhera.Models
 {
-    [Table("report")]
-    public class Report
+    public partial class Report
     {
-        [Key]
-        [Column("report_id")]
         public int ReportId { get; set; }
-        
-        [Column("board_id")]
         public int BoardId { get; set; }
-        
-        [Column("thread_id")]
         public int ThreadId { get; set; }
-        
-        [Column("post_id")]
         public int PostId { get; set; }
-        
-        [Column("reason")]
         public string Reason { get; set; }
-        
-        [Column("time")]
-        public DateTime Time { get; set; } 
+        public DateTime ReportTime { get; set; }
+
+        public virtual Board Board { get; set; }
+        public virtual Thread Thread { get; set; }
     }
 }
