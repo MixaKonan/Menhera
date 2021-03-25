@@ -1,4 +1,4 @@
-﻿@model object
+﻿@model Thread
 
 @{
     Layout = "_Layout";
@@ -8,11 +8,16 @@
 
 <html lang="en">
 <head>
-    <title>title</title>
+    <title>Тред №@Model.ThreadId</title>
 </head>
 <body>
 <div>
-      
+    @foreach (var post in ViewBag.Posts)
+    {
+        <div class="comment">
+            @post.Comment
+        </div>
+    }
 </div>
 </body>
 </html>

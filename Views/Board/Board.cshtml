@@ -44,6 +44,8 @@
                     <input asp-for="AnonName" type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
                 }
                 <input type="submit" value="Пост" class="field submit">
+                <input asp-controller="Board" asp-action="Board" asp-for="BoardId" type="hidden" value="@ViewBag.Board.BoardId">
+                <input asp-controller="Board" asp-action="Board" asp-for="AnonIpHash" type="hidden" value="@ViewBag.UserIp">
             }
             
             @{
@@ -74,13 +76,13 @@
     <div class="threads">
         @foreach (var thread in ViewBag.ThreadPosts.Keys)
         {
-            <span id="@thread.ThreadId">
-                <article>
-                    <div class="thread-header">
-                        @{ 
-                            ViewBag.ThreadPosts.TryGetValue(thread, out List<Post> br);
-                            foreach (var post in br)
-                            {
+            ViewBag.ThreadPosts.TryGetValue(thread, out List<Post> posts);
+            foreach (var post in posts)
+            {
+                <span id="@thread.ThreadId">
+                    <article>
+                        <div class="thread-header">
+                            @{
                                 if (!string.IsNullOrEmpty(post.Subject))
                                 {
                                     <div class="subject">
@@ -116,25 +118,33 @@
                                 {
                                     @admin.Login
                                 }
-                                @post.Time
-                                <a asp-controller="Board" asp-action="Thread" asp-route-id="@thread.ThreadId">
-                                    @thread.ThreadId
-                                </a>
-                                <a asp-controller="Board" asp-action="Report" asp-route-postId="@post.PostId">
-                                    Репорт
-                                </a>
+                                 @post.Time
+                                <a asp-controller="Board" asp-action="Thread" asp-route-id="@thread.ThreadId">@thread.ThreadId</a>
+                                <a asp-controller="Board" asp-action="Report" asp-route-postId="@post.PostId">Репорт</a>
                                 if (User.Identity.IsAuthenticated)
                                 {
                                     <a asp-controller="Admin" asp-action="Panel">
                                         Модерировать
                                     </a>
                                 }
+                                <a asp-controller="Board" asp-action="Thread" asp-route-id="@post.PostId">Ответ</a>
+                                if (post.IsPinned)
+                                {
+                                    <img src="images/sticked.png" alt="sticked.png">
+                                }
+                                if (thread.IsClosed)
+                                {
+                                    <img src="images/closed.png" alt="closed.png">
+                                }
+                                <div class="comment">
+                                    @post.Comment
+                                </div>
+                                <!-- TODO: Последние 3 поста в треде-->
                             }
-                            
-                        }
-                    </div>
-                </article>
-            </span>
+                        </div>
+                    </article>
+                </span>
+            }
         }
     </div>
 </section>

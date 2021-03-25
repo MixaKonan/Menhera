@@ -1,15 +1,17 @@
-﻿@inject IJSRuntime JS;
-@using Microsoft.JSInterop
-@model Menhera.Models.Auth.Login
+﻿@model Menhera.Models.Auth.Login
+@inject Menhera.Intefaces.IBoardCollection BoardCollection
 
 @{
-    Layout = "_AccountLayout";
+    Layout = "_Layout";
 }
-
 
 <!doctype html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/site.css">
     <title>Login</title>
 </head>
 <body>
@@ -17,32 +19,33 @@
     @Html.ValidationSummary(true)
     if (User.Identity.IsAuthenticated)
     {
-        <div class="login-title">
-            <h1>Вы уже вошли</h1>
+        <div class="signed">
+            <div class="signed-screen">
+                <div class="signed-title">
+                    <h1>Вы уже вошли</h1>
+                </div>
+                <div class="signed-form">
+                    <a asp-controller="MainPage" asp-action="Main" class="back-link">Вернуться на главную</a>
+                </div>
+            </div>
         </div>
-        <a asp-controller="MainPage" asp-action="Main">Вернуться на главную</a>
     }
     else
     {
-        <div class="login">
-            <div class="login-screen">
-                <div class="login-title">
-                    <h1>Вход</h1>
-                </div>
-                
-                <br>
-                @using (Html.BeginForm("Login", "Account", FormMethod.Post))
-                {
+        <div class="anime">
+            <div class="login">
+                <div class="login-screen">
+                    <div class="login-title">
+                        <h1>Вход</h1>
+                    </div>
                     <div class="login-form">
                         <div class="control-group">
-                            <input asp-for="Email" type="email" class="login-field" placeholder="Email" id="login-email">
-                            <input asp-for="Password" type="password" class="login-field" placeholder="Password" id="login-pass">
+                            <input asp-for="Email" type="email" class="login-field" value="" placeholder="Email" id="login-email">
+                            <input asp-for="Password" type="password" class="login-field" value="" placeholder="Password" id="login-pass">
                         </div>
-                        <div class="form-group">
-                            <input type="submit" class="btn" id="sbmt" value="Войти">
-                        </div>
+                        <input asp-controller="MainPage" asp-action="Main" type="submit" class="btn-login" value="Войти"/>
                     </div>
-                }
+                </div>
             </div>
         </div>
         <div style="text-align: center">
@@ -60,5 +63,4 @@
     }
 }
 </body>
-
 </html>
