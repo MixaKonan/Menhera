@@ -1,0 +1,50 @@
+.navbar {
+    border-radius: 0 !important;
+    margin-bottom: 0 !important;
+    background: black;
+}
+.btn-info{
+    background-color: transparent !important;
+    border-color: transparent !important;
+}
+.prefix{
+    font-size: 28px;
+    color: #fff;
+    text-decoration: none;
+}
+.postfix{
+    font-size: 28px;
+    color: #d68eea;
+    text-decoration: none;
+}
+thead{
+    text-align: center;
+}
+
+.tittle{
+    font-size: 18px;
+    text-align: center;
+}
+
+.navbar img {
+    height: 25px;
+}
+
+.form-control{
+    resize: none;
+}
+
+
+.breadcrumbs {
+    height: 50px;
+    padding-top: 5px;
+}
+
+.breadcrumbs .breadcrumb {
+    background-color: #fafafa !important;
+}
+
+.breadcrumbs .breadcrumb li a {
+    color: gray !important;
+    font-size: 18px !important;
+}

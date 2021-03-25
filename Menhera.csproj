@@ -17,6 +17,7 @@
 
     <ItemGroup>
       <Folder Include="Database" />
+      <Folder Include="Singletons" />
     </ItemGroup>
 
 </Project>

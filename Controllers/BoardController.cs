@@ -18,7 +18,7 @@ namespace Menhera.Controllers
 
 
         [HttpPost]
-        public IActionResult Board(Post post)
+        public IActionResult AddThread(Post post)
         {
             var thread = new Thread
             {
@@ -29,7 +29,7 @@ namespace Menhera.Controllers
             };
 
             _db.Thread.Add(thread);
-            _db.SaveChangesAsync();
+            _db.SaveChanges();
 
             _db.Post.Add(new Post
             {
@@ -45,7 +45,7 @@ namespace Menhera.Controllers
 
             _db.SaveChanges();
 
-            return RedirectToAction("Thread", thread.ThreadId);
+            return RedirectToAction("Thread", "Thread", new {id = thread.ThreadId});
         }
 
         [HttpGet]
@@ -56,7 +56,7 @@ namespace Menhera.Controllers
                 new MD5CryptoServiceProvider().ComputeHash(HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
                     .GetString();
 
-            ViewBag.ThreadPosts = new Dictionary<Thread, List<Post>>();
+            var threadPostPostsList = new List<ThreadPostLastThreePosts>();
 
             var threads = _db.Thread.Join(_db.Board.Where(b => b.Prefix == prefix),
                 t => t.BoardId, b => b.BoardId, (thread, board) => new Thread
@@ -70,7 +70,9 @@ namespace Menhera.Controllers
 
             foreach (var thread in threads)
             {
-                ViewBag.ThreadPosts.Add(thread, _db.Thread.Where(t => t.ThreadId == thread.ThreadId).Join(_db.Post,
+                Post[] lTP = new Post[] { };
+
+                var postList = _db.Thread.Where(t => t.ThreadId == thread.ThreadId).Join(_db.Post,
                     t => t.ThreadId,
                     p => p.ThreadId,
                     (th, pt) => new Post
@@ -84,36 +86,45 @@ namespace Menhera.Controllers
                         BumpInUnixTime = pt.BumpInUnixTime,
                         Email = pt.Email,
                         IsPinned = pt.IsPinned
-                    }).ToList());
+                    }).Take(1).ToList();
+
+                if (postList.Count > 0)
+                {
+
+                    lTP = _db.Thread.Where(t => t.ThreadId == thread.ThreadId).Join(_db.Post,
+                        t => t.ThreadId,
+                        p => p.ThreadId,
+                        (th, pt) => new Post
+                        {
+                            BoardId = pt.BoardId,
+                            ThreadId = pt.ThreadId,
+                            PostId = pt.PostId,
+                            AnonIpHash = pt.AnonIpHash,
+                            AnonName = pt.AnonName,
+                            Comment = pt.Comment,
+                            BumpInUnixTime = pt.BumpInUnixTime,
+                            Email = pt.Email,
+                            IsPinned = pt.IsPinned
+                        }).OrderByDescending(p => p.BumpInUnixTime).Take(3).ToArray();
+                    
+                    threadPostPostsList.Add(new ThreadPostLastThreePosts
+                    {
+                        Thread = thread,
+
+                        Post = postList[0],
+
+                        LastThreePosts = lTP
+
+                    });
+                }
             }
 
-
+            ViewBag.ThreadPostPostsList = threadPostPostsList;
+            
             return View();
         }
 
-
-        public IActionResult Thread(int id)
-        {
-            var thread = _db.Thread.First(t => t.ThreadId == id);
-            
-            ViewBag.Posts = _db.Thread.Where(t => t.ThreadId == thread.ThreadId).Join(_db.Post,
-                t => t.ThreadId,
-                p => p.ThreadId,
-                (th, pt) => new Post
-                {
-                    BoardId = pt.BoardId,
-                    ThreadId = pt.ThreadId,
-                    PostId = pt.PostId,
-                    AnonIpHash = pt.AnonIpHash,
-                    AnonName = pt.AnonName,
-                    Comment = pt.Comment,
-                    BumpInUnixTime = pt.BumpInUnixTime,
-                    Email = pt.Email,
-                    IsPinned = pt.IsPinned
-                }).ToList();
-            
-            return View(thread);
-        }
+        
 
         [HttpPost]
         public void Report(int postId)

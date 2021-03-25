@@ -43,9 +43,9 @@
                     <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field email">
                     <input asp-for="AnonName" type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
                 }
-                <input type="submit" value="Пост" class="field submit">
-                <input asp-controller="Board" asp-action="Board" asp-for="BoardId" type="hidden" value="@ViewBag.Board.BoardId">
-                <input asp-controller="Board" asp-action="Board" asp-for="AnonIpHash" type="hidden" value="@ViewBag.UserIp">
+                <input asp-action="AddThread" type="submit" value="Пост" class="field submit">
+                <input asp-for="BoardId" type="hidden" value="@ViewBag.Board.BoardId">
+                <input asp-for="AnonIpHash" type="hidden" value="@ViewBag.UserIp">
             }
             
             @{
@@ -74,77 +74,144 @@
         }
     </div>
     <div class="threads">
-        @foreach (var thread in ViewBag.ThreadPosts.Keys)
+        @foreach (ThreadPostLastThreePosts item in ViewBag.ThreadPostPostsList)
         {
-            ViewBag.ThreadPosts.TryGetValue(thread, out List<Post> posts);
-            foreach (var post in posts)
-            {
-                <span id="@thread.ThreadId">
-                    <article>
-                        <div class="thread-header">
+            <span id="@item.Thread.ThreadId">
+                <article>
+                    <div class="thread-header">
+                        @{
+                            if (!string.IsNullOrEmpty(item.Post.Subject))
+                            {
+                                <div class="subject">
+                                    @item.Post.Subject
+                                </div>
+                            }
+                            if (item.Post.AnonIpHash == ViewBag.UserIp)
+                            {
+                                <span class="your-thread">
+                                </span>
+                            }
+                            if (!string.IsNullOrEmpty(item.Post.Email) && !string.IsNullOrEmpty(item.Post.AnonName))
+                            {
+                                <span class="name">
+                                    <a href="mailto:@item.Post.Email">
+                                        @item.Post.AnonName
+                                    </a>
+                                </span>
+                            }
+                            else if (!string.IsNullOrEmpty(item.Post.AnonName))
+                            {
+                                <span class="name">
+                                    @item.Post.AnonName
+                                </span>
+                            }
+                            if (item.Post.AnonIpHash == item.Thread.OpIpHash)
+                            {
+                                <span style="color: green; ">
+                                    #OP
+                                </span>
+                            }
+                            if (IpCheck.IpBelongsToAdmin(item.Post.AnonIpHash, AdminCollection.Admins, out Admin admin))
+                            {
+                                @admin.Login
+                            }
+                            @item.Post.Time
+            <a asp-controller="Thread" asp-action="Thread" asp-route-id="@item.Post.ThreadId">@item.Post.ThreadId</a>
+            <a asp-controller="Board" asp-action="Report" asp-route-postId="@item.Post.PostId">Репорт</a>
+                            if (User.Identity.IsAuthenticated)
+                            {
+                                <a asp-controller="Admin" asp-action="Panel">
+                                    Модерировать
+                                </a>
+                            }
+            <a asp-controller="Thread" asp-action="Thread" asp-route-id="@item.Post.PostId">Ответ</a>
+                            if (item.Post.IsPinned)
+                            {
+                                <img src="images/sticked.png" alt="sticked.png">
+                            }
+                            if (item.Thread.IsClosed)
+                            {
+                                <img src="images/closed.png" alt="closed.png">
+                            }
+                            <div class="comment">
+                                @item.Post.Comment
+                            </div>
+                            <!-- TODO: Последние 3 поста в треде-->
+                        }
+                    </div>
+                </article>
+                <div class="posts">
+                    @foreach (var post in item.LastThreePosts)
+                    {
+                        <span id="@post.PostId">
                             @{
-                                if (!string.IsNullOrEmpty(post.Subject))
-                                {
-                                    <div class="subject">
-                                        @post.Subject
-                                    </div>
-                                }
+                                var className = "post";
                                 if (post.AnonIpHash == ViewBag.UserIp)
                                 {
-                                    <span class="your-thread">
-                                    </span>
+                                    className = "your-post";
                                 }
-                                if (!string.IsNullOrEmpty(post.Email) && !string.IsNullOrEmpty(post.AnonName))
-                                {
-                                    <span class="name">
-                                        <a href="mailto:@post.Email">
-                                            @post.AnonName
-                                        </a>
-                                    </span>
-                                }
-                                else if (!string.IsNullOrEmpty(post.AnonName))
-                                {
-                                    <span class="name">
-                                        @post.AnonName
-                                    </span>
-                                }
-                                if (post.AnonIpHash == thread.OpIpHash)
-                                {
-                                    <span style="color: green; ">
-                                        #OP
-                                    </span>
-                                }
-                                if (IpCheck.IpBelongsToAdmin(post.AnonIpHash, AdminCollection.Admins, out var admin))
-                                {
-                                    @admin.Login
-                                }
-                                 @post.Time
-                                <a asp-controller="Board" asp-action="Thread" asp-route-id="@thread.ThreadId">@thread.ThreadId</a>
-                                <a asp-controller="Board" asp-action="Report" asp-route-postId="@post.PostId">Репорт</a>
-                                if (User.Identity.IsAuthenticated)
-                                {
-                                    <a asp-controller="Admin" asp-action="Panel">
-                                        Модерировать
-                                    </a>
-                                }
-                                <a asp-controller="Board" asp-action="Thread" asp-route-id="@post.PostId">Ответ</a>
-                                if (post.IsPinned)
-                                {
-                                    <img src="images/sticked.png" alt="sticked.png">
-                                }
-                                if (thread.IsClosed)
-                                {
-                                    <img src="images/closed.png" alt="closed.png">
-                                }
-                                <div class="comment">
-                                    @post.Comment
-                                </div>
-                                <!-- TODO: Последние 3 поста в треде-->
                             }
-                        </div>
-                    </article>
-                </span>
-            }
+                            <article class="@className">
+                                <div class="thread-header">
+                                    @if (!string.IsNullOrEmpty(post.Subject))
+                                    {
+                                        <div class="subject">
+                                            @post.Subject
+                                        </div>
+                                    }
+                                    @{
+                                        if (!string.IsNullOrEmpty(item.Post.Email) && !string.IsNullOrEmpty(item.Post.AnonName))
+                                        {
+                                            <span class="name">
+                                                <a href="mailto:@item.Post.Email">
+                                                    @item.Post.AnonName
+                                                </a>
+                                            </span>
+                                        }
+                                        else if (!string.IsNullOrEmpty(item.Post.AnonName))
+                                        {
+                                            <span class="name">
+                                                @item.Post.AnonName
+                                            </span>
+                                        }
+                                        if (item.Post.AnonIpHash == item.Thread.OpIpHash)
+                                        {
+                                            <span style="color: green; ">
+                                                #OP
+                                            </span>
+                                        }
+                                        if (IpCheck.IpBelongsToAdmin(item.Post.AnonIpHash, AdminCollection.Admins, out var admin_))
+                                        {
+                                            @admin_.Login
+                                        }
+                                        @item.Post.Time
+                        <a asp-controller="Thread" asp-action="Thread" asp-route-id="@item.Post.ThreadId">@item.Post.ThreadId</a>
+                        <a asp-controller="Board" asp-action="Report" asp-route-postId="@item.Post.PostId">Репорт</a>
+                                        if (User.Identity.IsAuthenticated)
+                                        {
+                                            <a asp-controller="Admin" asp-action="Panel">
+                                                Модерировать
+                                            </a>
+                                        }
+                        <a asp-controller="Thread" asp-action="Thread" asp-route-id="@item.Post.PostId">Ответ</a>
+                                        if (item.Post.IsPinned)
+                                        {
+                                            <img src="images/sticked.png" alt="sticked.png">
+                                        }
+                                        if (item.Thread.IsClosed)
+                                        {
+                                            <img src="images/closed.png" alt="closed.png">
+                                        }
+                                        <div class="comment">
+                                            @item.Post.Comment
+                                        </div>
+                                    }
+                                </div>
+                            </article>
+                        </span>
+                    }
+                </div>
+            </span>
         }
     </div>
 </section>

@@ -1,6 +1,5 @@
 using Menhera.Database;
 using Menhera.Intefaces;
-using Menhera.Singletons;
 using Menhera.Transients;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -34,7 +33,7 @@ namespace Menhera
             });
             
             services.AddControllersWithViews();
-            services.AddSingleton<IBoardCollection, BoardCollection>();
+            services.AddTransient<IBoardCollection, BoardCollection>();
             services.AddTransient<IAdminCollection, AdminCollection>();
         }
 

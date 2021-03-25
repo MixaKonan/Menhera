@@ -4,7 +4,7 @@ using Menhera.Database;
 using Menhera.Intefaces;
 using Menhera.Models;
 
-namespace Menhera.Singletons
+namespace Menhera.Transients
 {
     public class BoardCollection : IBoardCollection
     {
