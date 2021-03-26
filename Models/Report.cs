@@ -14,7 +14,8 @@ namespace Menhera.Models
         public int ThreadId { get; set; }
         public int PostId { get; set; }
         public string Reason { get; set; }
-        public DateTime ReportTime { get; set; }
+        
+        public long ReportTimeInUnixSeconds { get; set; }
 
         public virtual Board Board { get; set; }
         public virtual Thread Thread { get; set; }

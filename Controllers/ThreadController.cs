@@ -29,8 +29,8 @@ namespace Menhera.Controllers
                     PostId = pt.PostId,
                     AnonIpHash = pt.AnonIpHash,
                     AnonName = pt.AnonName,
+                    Subject = pt.Subject,
                     Comment = pt.Comment,
-                    BumpInUnixTime = pt.BumpInUnixTime,
                     Email = pt.Email,
                     IsPinned = pt.IsPinned
                 }).ToList();

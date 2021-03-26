@@ -31,39 +31,37 @@
 <section>
     <div class="form" style="margin-bottom: 17px">
         <!-- TODO: Добавить проверку забанен ли юзер -->
-        <form enctype="multipart/form-data" method="post">
-            <input type="hidden" name="parent" value=""> <!--TODO: В value отправлять id треда -->
-            @{
-                if (ViewBag.Board.AnonHasNoName)
-                {
-                    <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field full-email">
-                }
-                else
-                {
-                    <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field email">
-                    <input asp-for="AnonName" type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
-                }
-                <input asp-action="AddThread" type="submit" value="Пост" class="field submit">
-                <input asp-for="BoardId" type="hidden" value="@ViewBag.Board.BoardId">
-                <input asp-for="AnonIpHash" type="hidden" value="@ViewBag.UserIp">
+        @using (Html.BeginForm("AddThread", "Board", FormMethod.Post, new { enctype="multipart/form-data"}))
+        {
+            if (ViewBag.Board.AnonHasNoName)
+            {
+                <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field full-email">
             }
-            
-            @{
-                if (ViewBag.Board.HasSubject)
-                {
-                    <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
-                }
-                <textarea asp-for="Comment" name="comment" placeholder="( . .)φ__" class="field comment"></textarea>
-                if (ViewBag.Board.FilesAreAllowed)
-                {
-                    <input asp-for="File" type="file" name="files[]" multiple class="field">
-                }
-                <input type="checkbox" name="op" value="1" id="op">
-                <label for="op">
-                    оп
-                </label>
+            else
+            {
+                <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field email">
+                <input asp-for="AnonName" type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
             }
-        </form>
+
+            <input type="submit" value="Пост" class="field submit">
+            <input asp-for="BoardId" type="hidden" value="@ViewBag.Board.BoardId">
+            <input asp-for="AnonIpHash" type="hidden" value="@ViewBag.UserIp">
+
+            if (ViewBag.Board.HasSubject)
+            {
+                <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
+            }
+            <textarea asp-for="Comment" name="comment" placeholder="( . .)φ__" class="field comment"></textarea>
+            if (ViewBag.Board.FilesAreAllowed)
+            {
+                <input type="file" name="files" multiple class="field">
+            }
+            <input type="checkbox" name="op" value="1" id="op">
+            <label for="op">
+                оп
+            </label>
+        }
+        
     </div>
     <div class="functional-menu">
         <a asp-controller="MainPage" asp-action="Main">Главная</a>
@@ -80,52 +78,52 @@
                 <article>
                     <div class="thread-header">
                         @{
-                            if (!string.IsNullOrEmpty(item.Post.Subject))
+                            if (!string.IsNullOrEmpty(item.FirstPost.Key.Subject))
                             {
-                                <div class="subject">
-                                    @item.Post.Subject
-                                </div>
+                                <span class="subject">
+                                    @item.FirstPost.Key.Subject
+                                </span>
                             }
-                            if (item.Post.AnonIpHash == ViewBag.UserIp)
+                            if (item.FirstPost.Key.AnonIpHash == ViewBag.UserIp)
                             {
                                 <span class="your-thread">
                                 </span>
                             }
-                            if (!string.IsNullOrEmpty(item.Post.Email) && !string.IsNullOrEmpty(item.Post.AnonName))
+                            if (!string.IsNullOrEmpty(item.FirstPost.Key.Email) && !string.IsNullOrEmpty(item.FirstPost.Key.AnonName))
                             {
                                 <span class="name">
-                                    <a href="mailto:@item.Post.Email">
-                                        @item.Post.AnonName
+                                    <a href="mailto:@item.FirstPost.Key.Email">
+                                        @item.FirstPost.Key.AnonName
                                     </a>
                                 </span>
                             }
-                            else if (!string.IsNullOrEmpty(item.Post.AnonName))
+                            else if (!string.IsNullOrEmpty(item.FirstPost.Key.AnonName))
                             {
                                 <span class="name">
-                                    @item.Post.AnonName
+                                    @item.FirstPost.Key.AnonName
                                 </span>
                             }
-                            if (item.Post.AnonIpHash == item.Thread.OpIpHash)
+                            if (item.FirstPost.Key.AnonIpHash == item.Thread.OpIpHash)
                             {
                                 <span style="color: green; ">
                                     #OP
                                 </span>
                             }
-                            if (IpCheck.IpBelongsToAdmin(item.Post.AnonIpHash, AdminCollection.Admins, out Admin admin))
+                            if (IpCheck.IpBelongsToAdmin(item.FirstPost.Key.AnonIpHash, AdminCollection.Admins, out Admin admin))
                             {
                                 @admin.Login
                             }
-                            @item.Post.Time
-            <a asp-controller="Thread" asp-action="Thread" asp-route-id="@item.Post.ThreadId">@item.Post.ThreadId</a>
-            <a asp-controller="Board" asp-action="Report" asp-route-postId="@item.Post.PostId">Репорт</a>
+                            @DateTimeOffset.FromUnixTimeSeconds(item.FirstPost.Key.TimeInUnixSeconds)
+            <a asp-controller="Thread" asp-action="Thread" asp-route-id="@item.FirstPost.Key.ThreadId">@item.FirstPost.Key.ThreadId</a>
+            <a asp-controller="Board" asp-action="Report" asp-route-postId="@item.FirstPost.Key.PostId">Репорт</a>
                             if (User.Identity.IsAuthenticated)
                             {
                                 <a asp-controller="Admin" asp-action="Panel">
                                     Модерировать
                                 </a>
                             }
-            <a asp-controller="Thread" asp-action="Thread" asp-route-id="@item.Post.PostId">Ответ</a>
-                            if (item.Post.IsPinned)
+            <a asp-controller="Thread" asp-action="Thread" asp-route-id="@item.FirstPost.Key.PostId">Ответ</a>
+                            if (item.FirstPost.Key.IsPinned)
                             {
                                 <img src="images/sticked.png" alt="sticked.png">
                             }
@@ -133,68 +131,82 @@
                             {
                                 <img src="images/closed.png" alt="closed.png">
                             }
+                            foreach (var file in item.FirstPost.Value)
+                            {
+                                <figure>
+                                    <figcaption>
+                                        <a href="/images/@file.FileName" title="@file.FileName" target="_blank">
+                                            @file.ThumbnailName
+                                        </a>
+                                        <br>
+                                        @file.Info
+                                    </figcaption>
+                                    <a href="/images/@file.FileName" target="_blank">
+                                        <img src="/thumbnails/@file.ThumbnailName" alt="@file.ThumbnailName">
+                                    </a>
+                                </figure>
+                            }
                             <div class="comment">
-                                @item.Post.Comment
+                                @item.FirstPost.Key.Comment
                             </div>
-                            <!-- TODO: Последние 3 поста в треде-->
                         }
                     </div>
                 </article>
                 <div class="posts">
                     @foreach (var post in item.LastThreePosts)
                     {
-                        <span id="@post.PostId">
+                        <span id="@post.Key.PostId">
                             @{
                                 var className = "post";
-                                if (post.AnonIpHash == ViewBag.UserIp)
+                                if (post.Key.AnonIpHash == ViewBag.UserIp)
                                 {
                                     className = "your-post";
                                 }
                             }
                             <article class="@className">
                                 <div class="thread-header">
-                                    @if (!string.IsNullOrEmpty(post.Subject))
-                                    {
-                                        <div class="subject">
-                                            @post.Subject
-                                        </div>
-                                    }
                                     @{
-                                        if (!string.IsNullOrEmpty(item.Post.Email) && !string.IsNullOrEmpty(item.Post.AnonName))
+                                        if (!string.IsNullOrEmpty(post.Key.Subject))
+                                        {
+                                            <span class="subject">
+                                                @post.Key.Subject
+                                            </span>
+                                        }
+                                        if (!string.IsNullOrEmpty(post.Key.Email) && !string.IsNullOrEmpty(post.Key.AnonName))
                                         {
                                             <span class="name">
-                                                <a href="mailto:@item.Post.Email">
-                                                    @item.Post.AnonName
+                                                <a href="mailto:@post.Key.Email">
+                                                    @post.Key.AnonName
                                                 </a>
                                             </span>
                                         }
-                                        else if (!string.IsNullOrEmpty(item.Post.AnonName))
+                                        else if (!string.IsNullOrEmpty(post.Key.AnonName))
                                         {
                                             <span class="name">
-                                                @item.Post.AnonName
+                                                @post.Key.AnonName
                                             </span>
                                         }
-                                        if (item.Post.AnonIpHash == item.Thread.OpIpHash)
+                                        if (post.Key.AnonIpHash == item.Thread.OpIpHash)
                                         {
                                             <span style="color: green; ">
                                                 #OP
                                             </span>
                                         }
-                                        if (IpCheck.IpBelongsToAdmin(item.Post.AnonIpHash, AdminCollection.Admins, out var admin_))
+                                        if (IpCheck.IpBelongsToAdmin(post.Key.AnonIpHash, AdminCollection.Admins, out var admin_))
                                         {
                                             @admin_.Login
                                         }
-                                        @item.Post.Time
-                        <a asp-controller="Thread" asp-action="Thread" asp-route-id="@item.Post.ThreadId">@item.Post.ThreadId</a>
-                        <a asp-controller="Board" asp-action="Report" asp-route-postId="@item.Post.PostId">Репорт</a>
+                                        @DateTimeOffset.FromUnixTimeSeconds(post.Key.TimeInUnixSeconds)
+                                        <a asp-controller="Thread" asp-action="Thread" asp-route-id="@post.Key.ThreadId">@post.Key.ThreadId</a>
+                                        <a asp-controller="Board" asp-action="Report" asp-route-postId="@post.Key.PostId">Репорт</a>
                                         if (User.Identity.IsAuthenticated)
                                         {
                                             <a asp-controller="Admin" asp-action="Panel">
                                                 Модерировать
                                             </a>
                                         }
-                        <a asp-controller="Thread" asp-action="Thread" asp-route-id="@item.Post.PostId">Ответ</a>
-                                        if (item.Post.IsPinned)
+                                        <a asp-controller="Thread" asp-action="Thread" asp-route-id="@post.Key.PostId">Ответ</a>
+                                        if (post.Key.IsPinned)
                                         {
                                             <img src="images/sticked.png" alt="sticked.png">
                                         }
@@ -202,8 +214,23 @@
                                         {
                                             <img src="images/closed.png" alt="closed.png">
                                         }
+                                        foreach (var file in item.FirstPost.Value)
+                                        {
+                                            <figure>
+                                                <figcaption>
+                                                    <a href="/images/@file.FileName" title="@file.FileName" target="_blank">
+                                                        @file.ThumbnailName
+                                                    </a>
+                                                    <br>
+                                                    @file.Info
+                                                </figcaption>
+                                                <a href="/images/@file.FileName" target="_blank">
+                                                    <img src="/thumbnails/@file.ThumbnailName" alt="@file.ThumbnailName">
+                                                </a>
+                                            </figure>
+                                        }
                                         <div class="comment">
-                                            @item.Post.Comment
+                                            @post.Key.Comment
                                         </div>
                                     }
                                 </div>

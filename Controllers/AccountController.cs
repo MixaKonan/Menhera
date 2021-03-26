@@ -37,7 +37,6 @@ namespace Menhera.Controllers
         {
             if (ModelState.IsValid)
             {
-                var hashComp = new HashComparator();
                 var loginPassHash = new SHA256Managed().ComputeHash(Encoding.UTF8.GetBytes(loginModel.Password))
                     .GetString();
 
@@ -47,7 +46,7 @@ namespace Menhera.Controllers
                     
                     if (admin != null)
                     {
-                        if (!hashComp.CompareStringHashes(admin.PasswordHash, loginPassHash))
+                        if (!HashComparator.CompareStringHashes(admin.PasswordHash, loginPassHash))
                         {
                             ModelState.AddModelError("WrongPassword", "Некорректный пароль.");
                         }
@@ -86,7 +85,7 @@ namespace Menhera.Controllers
                 new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
             };
             var id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultNameClaimType);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
     }
 }

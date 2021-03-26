@@ -2,9 +2,9 @@
 
 namespace Menhera.Classes.Hash
 {
-    public class HashComparator : IHashComparator
+    public static class HashComparator
     {
-        public bool CompareStringHashes(string h1, string h2)
+        public static bool CompareStringHashes(string h1, string h2)
         {
             if (h1.Length != h2.Length)
             {
@@ -22,7 +22,7 @@ namespace Menhera.Classes.Hash
             return true;
         }
 
-        public bool CompareByteArrHashes(byte[] h1, byte[] h2)
+        public static bool CompareByteArrHashes(byte[] h1, byte[] h2)
         {
             if (h1.Length != h2.Length)
             {

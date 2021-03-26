@@ -1,3 +1,4 @@
+using System.IO;
 using Menhera.Database;
 using Menhera.Intefaces;
 using Menhera.Transients;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
 namespace Menhera
@@ -20,7 +22,6 @@ namespace Menhera
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<MenherachanContext>(options =>
@@ -33,11 +34,13 @@ namespace Menhera
             });
             
             services.AddControllersWithViews();
+            services.AddSingleton<IFileProvider>(
+                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
+            
             services.AddTransient<IBoardCollection, BoardCollection>();
             services.AddTransient<IAdminCollection, AdminCollection>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -47,7 +50,6 @@ namespace Menhera
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

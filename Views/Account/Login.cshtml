@@ -15,6 +15,16 @@
     <title>Login</title>
 </head>
 <body>
+<header>
+    <div class="to-main">
+        <a asp-action="Main" asp-controller="MainPage">
+            На сосач!
+        </a>
+        </div>
+    <div class="board">
+        /bash/<span class="postfix">org</span>
+    </div>
+</header>
 @{
     @Html.ValidationSummary(true)
     if (User.Identity.IsAuthenticated)
@@ -39,11 +49,14 @@
                         <h1>Вход</h1>
                     </div>
                     <div class="login-form">
-                        <div class="control-group">
-                            <input asp-for="Email" type="email" class="login-field" value="" placeholder="Email" id="login-email">
-                            <input asp-for="Password" type="password" class="login-field" value="" placeholder="Password" id="login-pass">
-                        </div>
-                        <input asp-controller="MainPage" asp-action="Main" type="submit" class="btn-login" value="Войти"/>
+                        @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+                        {
+                            <div class="control-group">
+                                <input asp-for="Email" type="email" class="login-field" placeholder="Email" id="login-email">
+                                <input asp-for="Password" type="password" class="login-field" placeholder="Password" id="login-pass">
+                            </div>
+                            <input type="submit" class="btn-login" value="Войти"/>
+                        }
                     </div>
                 </div>
             </div>
@@ -56,7 +69,6 @@
                     {
                         <p>@err.ErrorMessage</p>
                     }
-                    
                 }
             }
         </div>
