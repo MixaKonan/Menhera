@@ -1,0 +1,30 @@
+.signed {
+    margin: 200px auto auto auto;
+    width: 400px;
+}
+
+.signed-screen {
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.signed-title {
+    text-align: center;
+    color: #a986b5;
+}
+
+.signed-form {
+    text-align: center;
+}
+
+
+@media screen and (max-width: 975px){
+    .signed-screen{
+        background-color: #a986b580;
+    }
+
+    .signed-title{
+        color: #fff;
+    }
+
+}
