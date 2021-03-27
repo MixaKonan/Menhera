@@ -25,7 +25,7 @@ namespace Menhera.Classes
                 p => p.BoardId,
                 (brd, post) => post.PostId).Count();
             
-            FileCount = db.Board.Join(db.File,
+            FileCount = db.Board.Where(b => b.Prefix == board.Prefix).Join(db.File,
                 b => b.BoardId,
                 f => f.BoardId,
                 (br, fl) => fl.FileId).Count();

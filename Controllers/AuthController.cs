@@ -16,11 +16,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Menhera.Controllers
 {
-    public class AccountController : Controller
+    public class AuthController : Controller
     {
         private readonly MenherachanContext _db;
 
-        public AccountController(MenherachanContext db)
+        public AuthController(MenherachanContext db)
         {
             _db = db;
         }
@@ -75,7 +75,7 @@ namespace Menhera.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("Login");
         }
 
         private async Task Authenticate(string userName)

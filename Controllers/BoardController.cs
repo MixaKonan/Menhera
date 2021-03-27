@@ -9,11 +9,12 @@ using Menhera.Database;
 using Menhera.Extensions;
 using Menhera.Intefaces;
 using Menhera.Models;
-using Microsoft.Extensions.Hosting;
 using System.Drawing;
 using System.Drawing.Imaging;
+using Menhera.Classes;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using File = Menhera.Models.File;
 
 namespace Menhera.Controllers
@@ -22,14 +23,27 @@ namespace Menhera.Controllers
     {
         private const double ThumbW = 200;
         private const double ThumbH = 200;
-        
+        private const int PageSize = 10;
+
         private readonly MenherachanContext _db;
         private readonly IBoardCollection _collection;
         private readonly IWebHostEnvironment _env;
 
+        private readonly MD5CryptoServiceProvider _md5;
+
         [HttpPost]
         public async Task<IActionResult> AddThread(Post post, List<IFormFile> files)
         {
+            var ipHash = _md5.ComputeHash(HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
+                .GetString();
+
+            var anon = new Anon(ipHash, IpCheck.UserIsBanned(_db, ipHash));
+
+            if (anon.IsBanned)
+            {
+                return RedirectToAction("YouAreBanned", "Ban");
+            }
+            
             if (ModelState.IsValid)
             {
                 var thread = new Thread
@@ -91,10 +105,13 @@ namespace Menhera.Controllers
                                 }
                                 else
                                 {
-                                    
-                                    var coefficient = image.Width > image.Height ? ThumbW / image.Width : ThumbH / image.Height;
-                                    var thumbnailHeight = (int)Math.Round(image.Height * coefficient, MidpointRounding.ToEven);
-                                    var thumbnailWidth = (int)Math.Round(image.Width * coefficient, MidpointRounding.ToEven);
+                                    var coefficient = image.Width > image.Height
+                                        ? ThumbW / image.Width
+                                        : ThumbH / image.Height;
+                                    var thumbnailHeight = (int) Math.Round(image.Height * coefficient,
+                                        MidpointRounding.ToEven);
+                                    var thumbnailWidth = (int) Math.Round(image.Width * coefficient,
+                                        MidpointRounding.ToEven);
 
                                     var thumbnail = image.GetThumbnailImage(thumbnailWidth, thumbnailHeight,
                                         () => false,
@@ -105,6 +122,7 @@ namespace Menhera.Controllers
                                         thumbnail.Save(stream, ImageFormat.Jpeg);
                                     }
                                 }
+
                                 _db.File.Add(new File
                                 {
                                     BoardId = addPost.BoardId,
@@ -131,112 +149,122 @@ namespace Menhera.Controllers
         }
 
         [HttpGet]
-        public IActionResult Board(string prefix)
+        public IActionResult Board(string prefix, int page = 1)
         {
-            ViewBag.Board = _collection.Boards.First(brd => brd.Prefix == prefix);
-            ViewBag.UserIp =
-                new MD5CryptoServiceProvider().ComputeHash(HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
-                    .GetString();
+            var md5 = new MD5CryptoServiceProvider();
 
-            var threadPostPostsList = new List<ThreadPostLastThreePosts>();
+            var ipHash = md5.ComputeHash(HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
+                .GetString();
 
-            var threads = _db.Thread.Join(_db.Board.Where(b => b.Prefix == prefix),
-                t => t.BoardId,
-                b => b.BoardId,
-                (thread, board) => new Thread
-                {
-                    ThreadId = thread.ThreadId,
-                    BoardId = thread.BoardId,
-                    IsClosed = thread.IsClosed,
-                    OpIpHash = thread.OpIpHash,
-                    AnonName = thread.AnonName
-                }).ToList();
+            var anon = new Anon(ipHash, IpCheck.UserIsBanned(_db, ipHash));
 
-            foreach (var thread in threads)
+            ViewBag.UserIpHash = anon.IpHash;
+            
+            ViewBag.UserIsBanned = anon.IsBanned;
+
+            try
             {
-                var postList = _db.Thread.Where(t => t.ThreadId == thread.ThreadId).Join(_db.Post,
-                    t => t.ThreadId,
-                    p => p.ThreadId,
-                    (th, pt) => new Post
-                    {
-                        BoardId = pt.BoardId,
-                        ThreadId = pt.ThreadId,
-                        PostId = pt.PostId,
-                        AnonIpHash = pt.AnonIpHash,
-                        AnonName = pt.AnonName,
-                        Subject = pt.Subject,
-                        Comment = pt.Comment,
-                        Email = pt.Email,
-                        IsPinned = pt.IsPinned
-                    }).Take(1).ToList();
+                ViewBag.Board = _collection.Boards.First(brd => brd.Prefix == prefix);
 
-                if (postList.Count > 0)
+                var threadPostPostsList = new List<ThreadPostLastThreePosts>();
+
+                var boards = _db.Board.Where(b => b.Prefix == prefix).Include(b => b.Thread).ToList();
+
+                Board board;
+                if (boards.Count > 0)
                 {
-                    var firstPost = postList[0];
+                    board = boards[0];
+                }
+                else
+                {
+                    ModelState.AddModelError("SequenceContainsNoElements", "Такой доски не существует.");
+                    return RedirectToAction("Error", "Error");
+                }
 
-                    var firstPostFiles = _db.Post.Where(p => p.PostId == firstPost.PostId).Join(_db.File,
-                        p => p.PostId,
-                        f => f.PostId,
-                        (post, file) => new File
-                        {
-                            FileId = file.FileId,
-                            BoardId = file.BoardId,
-                            ThreadId = file.ThreadId,
-                            PostId = file.PostId,
-                            FileName = file.FileName,
-                            ThumbnailName = file.ThumbnailName,
-                            Info = file.Info
-                        }).ToList();
+                foreach (var thread in board.Thread)
+                {
+                    var threads = _db.Thread.Where(t => t.ThreadId == thread.ThreadId).Include(t => t.Post).ToList();
 
-                    var lTp = _db.Thread.Where(t => t.ThreadId == thread.ThreadId).Join(_db.Post,
-                        t => t.ThreadId,
-                        p => p.ThreadId,
-                        (th, pt) => new Post
-                        {
-                            BoardId = pt.BoardId,
-                            ThreadId = pt.ThreadId,
-                            PostId = pt.PostId,
-                            AnonIpHash = pt.AnonIpHash,
-                            AnonName = pt.AnonName,
-                            Subject = pt.Subject,
-                            Comment = pt.Comment,
-                            Email = pt.Email,
-                            IsPinned = pt.IsPinned
-                        }).Take(3).ToArray().OrderByDescending(p => p.TimeInUnixSeconds).ToArray();
-
-                    var lTpFiles = new Dictionary<Post, List<File>>();
-
-                    foreach (var post in lTp)
+                    Thread thrd;
+                    if (threads.Count > 0)
                     {
-                        lTpFiles.Add(post, _db.Post.Where(p => p.PostId == firstPost.PostId).Join(_db.File,
-                            p => p.PostId,
-                            f => f.PostId,
-                            (post_, file) => new File
-                            {
-                                FileId = file.FileId,
-                                BoardId = file.BoardId,
-                                ThreadId = file.ThreadId,
-                                PostId = file.PostId,
-                                FileName = file.FileName,
-                                ThumbnailName = file.ThumbnailName,
-                                Info = file.Info
-                            }).ToList());
+                        thrd = threads[0];
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("SequenceContainsNoElements", "Такой доски не существует.");
+                        return RedirectToAction("Error", "Error");
                     }
 
-                    threadPostPostsList.Add(new ThreadPostLastThreePosts
+                    var postList = thrd.Post.ToList();
+
+                    if (postList.Count > 0)
                     {
-                        Thread = thread,
+                        var firstPost = postList[0];
 
-                        FirstPost = new KeyValuePair<Post, List<File>>(firstPost, firstPostFiles),
+                        var posts =
+                            _db.Post.Where(p => p.PostId == firstPost.PostId).Include(p => p.File).ToList();
 
-                        LastThreePosts = lTpFiles
+                        var firstPostFiles = new List<File>();
 
-                    });
+                        if (posts.Count > 0)
+                        {
+                            firstPostFiles = posts[0].File.ToList();
+                        }
+
+                        var lTp = _db.Thread.Where(t => t.ThreadId == thread.ThreadId)
+                            .Include(t => t.Post).ToList()[0].Post
+                            .Take(3).ToArray().OrderByDescending(p => p.TimeInUnixSeconds).ToArray();
+
+                        var lTpFiles = new Dictionary<Post, List<File>>();
+
+                        foreach (var post in lTp)
+                        {
+                            lTpFiles.Add(post, _db.Post.Where(p => p.PostId == post.PostId).Join(_db.File,
+                                p => p.PostId,
+                                f => f.PostId,
+                                (pt, file) => new File
+                                {
+                                    FileId = file.FileId,
+                                    BoardId = file.BoardId,
+                                    ThreadId = file.ThreadId,
+                                    PostId = file.PostId,
+                                    FileName = file.FileName,
+                                    ThumbnailName = file.ThumbnailName,
+                                    Info = file.Info
+                                }).ToList());
+                        }
+
+                        threadPostPostsList.Add(new ThreadPostLastThreePosts
+                        {
+                            Thread = thread,
+
+                            FirstPost = new KeyValuePair<Post, List<File>>(firstPost, firstPostFiles),
+
+                            LastThreePosts = lTpFiles
+                        });
+                    }
                 }
+
+                var count = threadPostPostsList.Count;
+                var items = threadPostPostsList.Skip((page - 1) * PageSize).Take(PageSize).ToList();
+
+                var pageViewModel = new PageViewModel(count, page, PageSize);
+                var threadViewModel = new ThreadViewModel
+                {
+                    PageViewModel = pageViewModel,
+                    Model = items
+                };
+
+
+                ViewBag.ThreadViewModel = threadViewModel;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return RedirectToAction("Error", "Error");
             }
 
-            ViewBag.ThreadPostPostsList = threadPostPostsList;
-            
             return View();
         }
 
@@ -257,6 +285,8 @@ namespace Menhera.Controllers
             _db = db;
             _env = env;
             _collection = collection;
+
+            _md5 = new MD5CryptoServiceProvider();
         }
     }
 }
