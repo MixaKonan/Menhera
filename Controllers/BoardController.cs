@@ -50,7 +50,7 @@ namespace Menhera.Controllers
                 {
                     AnonName = post.AnonName,
                     BoardId = post.BoardId,
-                    OpIpHash = post.AnonIpHash,
+                    OpIpHash = ipHash,
                     IsClosed = false,
                 };
 
@@ -61,7 +61,7 @@ namespace Menhera.Controllers
                 {
                     ThreadId = thread.ThreadId,
                     AnonName = post.AnonName,
-                    AnonIpHash = post.AnonIpHash,
+                    AnonIpHash = ipHash,
                     BoardId = post.BoardId,
                     Subject = post.Subject,
                     TimeInUnixSeconds = DateTimeOffset.Now.ToUnixTimeSeconds(),
@@ -72,7 +72,7 @@ namespace Menhera.Controllers
                 _db.Post.Add(addPost);
                 _db.SaveChanges();
 
-                if (files != null && files.Count > 0)
+                if (files.Count > 0)
                 {
                     foreach (var file in files)
                     {
@@ -174,11 +174,13 @@ namespace Menhera.Controllers
                 if (boards.Count > 0)
                 {
                     board = boards[0];
+                    ViewBag.FileLimit = board.FileLimit;
                 }
                 else
                 {
                     ModelState.AddModelError("SequenceContainsNoElements", "Такой доски не существует.");
-                    return RedirectToAction("Error", "Error");
+                    Response.StatusCode = 404;
+                    return RedirectToAction("Error", "Error", new {statusCode = 404});
                 }
 
                 foreach (var thread in board.Thread)
@@ -193,7 +195,8 @@ namespace Menhera.Controllers
                     else
                     {
                         ModelState.AddModelError("SequenceContainsNoElements", "Такой доски не существует.");
-                        return RedirectToAction("Error", "Error");
+                        Response.StatusCode = 404;
+                        return RedirectToAction("Error", "Error", new {statusCode = 404});  
                     }
 
                     var postList = thrd.Post.ToList();
@@ -259,10 +262,10 @@ namespace Menhera.Controllers
 
                 ViewBag.ThreadViewModel = threadViewModel;
             }
-            catch (Exception e)
+            catch (InvalidOperationException)
             {
-                Console.WriteLine(e);
-                return RedirectToAction("Error", "Error");
+                Response.StatusCode = 404;
+                return RedirectToAction("Error", "Error", new {statusCode = 404});
             }
 
             return View();

@@ -1,6 +1,58 @@
-﻿@{
-    ViewBag.Title = "Ошибка";
-    Layout = "_Layout";
+﻿@inject Menhera.Intefaces.IBoardCollection BoardCollection
+
+@{
+    Layout = null;
 }
 
-<h2>Произошла ошибка</h2>
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Ошибка</title>
+    <link rel="stylesheet" type="text/css" href="/css/error.css" />
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+
+<body>
+<aside>
+    <nav>
+        <ul>
+            @foreach (var board in BoardCollection.Boards)
+            {
+                if (!board.IsHidden)
+                {
+                    <li>
+                        <a asp-controller="Board" asp-action="Board" asp-route-prefix="@board.Prefix">
+                            /@board.Prefix/@board.Postfix
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
+    </nav>
+</aside>
+<div class="container">
+    <h1 class="error">@ViewBag.StatusCode</h1>
+    <br>
+    @if (ViewBag.StatusCode == 500)
+    {
+        <h2 class="error-msg">Внутренняя ошибка сервера</h2>
+    }
+    @if (ViewBag.StatusCode == 404)
+    {
+        <h2 class="error-msg">Такой странички не существует</h2>
+    }
+    else
+    {
+        <h2 class="error-msg">Ошибка</h2>
+    }
+    <br>
+    <a href="#">Вернуться на главную</a>
+    <br/>
+    <img class="ops" src="/images/menhera-oops.png" alt="menhera"/>
+</div>
+</body>
+
+</html>

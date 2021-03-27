@@ -32,7 +32,8 @@ namespace Menhera.Database
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql("server=192.168.0.10;port=3306;database=Menherachan;uid=mixakonan;pwd=fater181;treattinyasboolean=false", x => x.ServerVersion("10.3.27-mariadb"));
+                optionsBuilder.UseMySql("server=192.168.0.10;port=3306;database=Menherachan;uid=mixakonan;pwd=fater181;treattinyasboolean=true",
+                    x => x.ServerVersion("10.3.27-mariadb"));
             }
         }
 
@@ -102,9 +103,6 @@ namespace Menhera.Database
                 entity.HasIndex(e => e.AdminId)
                     .HasName("fkAdminId_Ban");
 
-                entity.HasIndex(e => e.BoardId)
-                    .HasName("fkBoardId_Ban");
-
                 entity.Property(e => e.BanId)
                     .HasColumnName("ban_id")
                     .HasColumnType("int(11)");
@@ -124,10 +122,6 @@ namespace Menhera.Database
                     .HasColumnName("ban_time_in_unix_seconds")
                     .HasColumnType("bigint");
 
-                entity.Property(e => e.BoardId)
-                    .HasColumnName("board_id")
-                    .HasColumnType("int(11)");
-
                 entity.Property(e => e.Reason)
                     .IsRequired()
                     .HasColumnName("reason")
@@ -144,12 +138,6 @@ namespace Menhera.Database
                     .HasForeignKey(d => d.AdminId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_AdminBan");
-
-                entity.HasOne(d => d.Board)
-                    .WithMany(p => p.Ban)
-                    .HasForeignKey(d => d.BoardId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_BoardBan");
             });
 
             modelBuilder.Entity<Board>(entity =>

@@ -1,0 +1,63 @@
+@charset "UTF-8";
+/* CSS Document */
+*{
+    margin-block-start: 0;
+    margin-block-end: 0;
+}
+
+body {
+    font-family: 'MS Gothic UI', sans-serif;
+    padding: 0;
+    margin: 0;
+    background: #d9c4e3 url("../images/background.png");
+}
+
+.container {
+    text-align: center;
+    padding: 150px 150px 150px 150px;
+}
+h1{
+    margin-block-end: 12px;
+}
+
+.error {
+    font-size: 64px;
+    color: #a986b5;
+    font-weight: bold;
+    text-align: center;
+}
+
+.error-msg {
+    font-size: 24px;
+    color: #a986b5;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+
+a{
+    color: #a986b5;
+}
+
+img{
+    margin-top: 24px;
+}
+
+
+
+
+@media screen and (max-width: 675px) {
+    img {
+        width: 70%;
+    }
+    .container {
+        padding: 150px 10px 10px 10px;
+    }
+
+    .error{
+        font-size: 48px;
+    }
+    .error-msg {
+        font-size: 18px;
+    }
+}

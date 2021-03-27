@@ -11,7 +11,6 @@ namespace Menhera.Models
     {
         public Board()
         {
-            Ban = new HashSet<Ban>();
             File = new HashSet<File>();
             Post = new HashSet<Post>();
             Report = new HashSet<Report>();
@@ -30,7 +29,6 @@ namespace Menhera.Models
         public short FileLimit { get; set; }
         public string AnonName { get; set; }
 
-        public virtual ICollection<Ban> Ban { get; set; }
         public virtual ICollection<File> File { get; set; }
         public virtual ICollection<Post> Post { get; set; }
         public virtual ICollection<Report> Report { get; set; }

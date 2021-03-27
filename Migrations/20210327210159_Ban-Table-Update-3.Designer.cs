@@ -2,14 +2,16 @@
 using Menhera.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Menhera.Migrations
 {
     [DbContext(typeof(MenherachanContext))]
-    partial class MenherachanContextModelSnapshot : ModelSnapshot
+    [Migration("20210327210159_Ban-Table-Update-3")]
+    partial class BanTableUpdate3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,19 +35,19 @@ namespace Menhera.Migrations
                     b.Property<bool>("CanBanUsers")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("can_ban_users")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasDefaultValueSql("b'0'");
 
                     b.Property<bool>("CanCloseThreads")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("can_close_threads")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasDefaultValueSql("b'0'");
 
                     b.Property<bool>("CanDeletePosts")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("can_delete_posts")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasDefaultValueSql("b'1'");
 
                     b.Property<string>("Email")
@@ -58,7 +60,7 @@ namespace Menhera.Migrations
                     b.Property<bool>("HasAccessToPanel")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("has_access_to_panel")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasDefaultValueSql("b'0'");
 
                     b.Property<string>("Login")
@@ -131,7 +133,7 @@ namespace Menhera.Migrations
                     b.Property<bool>("AnonHasNoName")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("anon_has_no_name")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasDefaultValueSql("b'0'");
 
                     b.Property<string>("AnonName")
@@ -158,19 +160,19 @@ namespace Menhera.Migrations
                     b.Property<bool>("FilesAreAllowed")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("files_are_allowed")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasDefaultValueSql("b'1'");
 
                     b.Property<bool>("HasSubject")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("has_subject")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasDefaultValueSql("b'1'");
 
                     b.Property<bool>("IsHidden")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("is_hidden")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasDefaultValueSql("b'0'");
 
                     b.Property<string>("Postfix")
@@ -296,7 +298,7 @@ namespace Menhera.Migrations
                     b.Property<bool>("IsPinned")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("is_pinned")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasDefaultValueSql("b'0'");
 
                     b.Property<string>("Subject")
@@ -384,7 +386,7 @@ namespace Menhera.Migrations
                     b.Property<bool>("IsClosed")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("is_closed")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasDefaultValueSql("b'0'");
 
                     b.Property<string>("OpIpHash")

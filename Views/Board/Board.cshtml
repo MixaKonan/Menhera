@@ -36,6 +36,7 @@
 }
 else
 {
+    <input type="hidden" value="@ViewBag.FileLimit" id="fileLimit">
     <div class="form" style="margin-bottom: 17px">
         @using (Html.BeginForm("AddThread", "Board", FormMethod.Post, new {enctype = "multipart/form-data"}))
         {
@@ -49,7 +50,7 @@ else
                 <input asp-for="AnonName" type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
             }
 
-            <input type="submit" value="Пост" class="field submit">
+            <input type="submit" value="Пост" class="field submit" id="submit">
             <input asp-for="BoardId" type="hidden" value="@ViewBag.Board.BoardId">
             <input asp-for="AnonIpHash" type="hidden" value="@ViewBag.UserIp">
 
@@ -60,7 +61,7 @@ else
             <textarea asp-for="Comment" name="comment" placeholder="( . .)φ__" class="field comment"></textarea>
             if (ViewBag.Board.FilesAreAllowed)
             {
-                <input type="file" name="files" multiple class="field">
+                <input type="file" name="files" id="files" multiple class="field">
             }
             <input type="checkbox" name="op" value="1" id="op">
             <label for="op">
@@ -207,9 +208,15 @@ else
                     <a asp-controller="Board" asp-action="Report" asp-route-postId="@post.Key.PostId">Репорт</a>
                                     if (User.Identity.IsAuthenticated)
                                     {
-                                        <a asp-controller="Admin" asp-action="Panel">
+                                        <a id="moderation">
                                             Модерировать
                                         </a>
+                                        <a id="deletePost">Удалить пост</a>
+                                        <input id="deleteInput" type="hidden" value="@post.Key.PostId">
+                                        <i></i>
+                                        <a id="banAnon">Забанить</a>
+                                        <input id="banIpInput" type="hidden" value="@post.Key.AnonIpHash">
+                                        <input id="banBoardIdInput" type="hidden" value="@post.Key.BoardId">
                                     }
                     <a asp-controller="Thread" asp-action="Thread" asp-route-id="@post.Key.PostId">Ответ</a>
                                     if (post.Key.IsPinned)
@@ -259,4 +266,11 @@ else
     </div>
 }
 </section>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <script src="/js/moderation.js"></script>
+}
+<script src="/js/formValidation.js"></script>
 </body>

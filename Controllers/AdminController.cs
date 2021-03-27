@@ -1,4 +1,9 @@
-﻿using Menhera.Models;
+﻿using System;
+using System.Linq;
+using System.Security.Cryptography;
+using Menhera.Database;
+using Menhera.Extensions;
+using Menhera.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +12,8 @@ namespace Menhera.Controllers
     [Authorize]
     public class AdminController : Controller
     {
+        private readonly MenherachanContext _db;
+        
         // GET
         public IActionResult Panel()
         {
@@ -26,6 +33,52 @@ namespace Menhera.Controllers
         public IActionResult Boards()
         {
             return View();
+        }
+
+        [HttpPost]
+        public void DeletePost(int postId)
+        {
+            var post = new Post {PostId = postId};
+            using (_db)
+            {
+                _db.Remove(post);
+                _db.SaveChanges();
+            }
+        }
+        
+        [HttpPost]
+        public void BanAnon(string anonIpHash)
+        {
+            var adminIpHash = new MD5CryptoServiceProvider().ComputeHash
+                    (HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
+                .GetString();
+
+            using (_db)
+            {
+                var adminId = _db.Admin.First(a => a.AdminIpHash == adminIpHash).AdminId;
+                var banTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+                var banEndTime = banTime + 3600; 
+                var ban = new Ban
+                {
+                    AdminId = adminId,
+                    AnonIpHash = anonIpHash,
+                    BanTimeInUnixSeconds = banTime,
+                    Term = banEndTime,
+                    Reason = "Test"
+                };
+
+                _db.Ban.Add(ban);
+                _db.SaveChanges();
+            }
+            
+            
+            
+
+        }
+
+        public AdminController(MenherachanContext db)
+        {
+            _db = db;
         }
     }
 }
