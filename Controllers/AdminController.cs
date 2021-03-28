@@ -6,6 +6,7 @@ using Menhera.Extensions;
 using Menhera.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Menhera.Controllers
 {
@@ -44,6 +45,30 @@ namespace Menhera.Controllers
                 _db.Remove(post);
                 _db.SaveChanges();
             }
+        }
+
+        [HttpGet]
+        public IActionResult BanAnon(int postId)
+        {
+            Post post;
+
+            using (_db)
+            {
+                ViewBag.ThreadOpIpHash = _db.Thread.Join(_db.Post.Where(p => p.PostId == postId),
+                    t => t.ThreadId,
+                    p => p.ThreadId,
+                    (t, p) => new Thread
+                    {
+                        OpIpHash = t.OpIpHash
+                    }).ToList()[0].OpIpHash;
+
+                post = _db.Post.First(p => p.PostId == postId);
+
+                ViewBag.PostFiles = _db.Post.Where(p => p.PostId == postId)
+                    .Include(p => p.File).ToList()[0].File.ToList();
+            }
+
+            return View("Ban", post);
         }
         
         [HttpPost]

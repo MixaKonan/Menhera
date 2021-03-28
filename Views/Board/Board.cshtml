@@ -128,10 +128,9 @@ else
                             <a class="deletePost" id="deleteLink-@ViewBag.Id">Удалить пост</a>
                             <input class="deleteInput" id="deleteInput-@ViewBag.Id" type="hidden" value="@item.FirstPost.Key.PostId">
                             <i></i>
-                            ViewBag.Id += 1;
-                            <a class="banAnon" id="@ViewBag.Id">Забанить</a>
-                            <input class="banIpInput"  type="hidden" value="@item.FirstPost.Key.AnonIpHash">
-                            <input class="banBoardIdInput" type="hidden" value="@item.FirstPost.Key.BoardId">
+                            <a class="banAnon" asp-controller="Admin" asp-action="BanAnon" asp-route-postId="@item.FirstPost.Key.PostId">
+                                Забанить
+                            </a>
                         }
         <a asp-controller="Thread" asp-action="Thread" asp-route-id="@item.FirstPost.Key.PostId">Ответ</a>
                         if (item.FirstPost.Key.IsPinned)
@@ -216,10 +215,9 @@ else
                                         <a class="deletePost" id="deleteLink-@ViewBag.Id">Удалить пост</a>
                                         <input class="deleteInput" id="deleteInput-@ViewBag.Id" type="hidden" value="@item.FirstPost.Key.PostId">
                                         <i></i>
-                                        ViewBag.Id += 1;
-                                        <a class="banAnon" id="@ViewBag.Id">Забанить</a>
-                                        <input class="banIpInput" type="hidden" value="@post.Key.AnonIpHash">
-                                        <input class="banBoardIdInput" type="hidden" value="@post.Key.BoardId">
+                                        <a class="banAnon" asp-controller="Admin" asp-action="BanAnon" asp-route-postId="@post.Key.PostId">
+                                            Забанить
+                                        </a>
                                     }
                     <a asp-controller="Thread" asp-action="Thread" asp-route-id="@post.Key.PostId">Ответ</a>
                                     if (post.Key.IsPinned)

@@ -1,0 +1,76 @@
+﻿@inject Menhera.Intefaces.IAdminCollection AdminCollection
+
+@model Post
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/css/site.css">
+    <title>Бан</title>
+</head>
+<body>
+<div class="threads">
+    <article>
+        <div class="thread-header">
+            @{
+                if (!string.IsNullOrEmpty(Model.Subject))
+                {
+                    <span class="subject">
+                        @Model.Subject
+                    </span>
+                }
+                if (!string.IsNullOrEmpty(Model.Email) && !string.IsNullOrEmpty(Model.AnonName))
+                {
+                    <span class="name">
+                        <a href="mailto:@Model.Email">
+                            @Model.AnonName
+                        </a>
+                    </span>
+                }
+                else if (!string.IsNullOrEmpty(Model.AnonName))
+                {
+                    <span class="name">
+                        @Model.AnonName
+                    </span>
+                }
+                if (Model.AnonIpHash == ViewBag.ThreadOpIpHash)
+                {
+                    <span style="color: green; ">
+                        #OP
+                    </span>
+                }
+                @DateTimeOffset.FromUnixTimeSeconds(Model.TimeInUnixSeconds).DateTime
+    <a asp-controller="Thread" asp-action="Thread" asp-route-id="@Model.ThreadId">@Model.ThreadId</a>
+    <a asp-controller="Thread" asp-action="Thread" asp-route-id="@Model.PostId">Ответ</a>
+                foreach (File file in ViewBag.PostFiles)
+                {
+                    <figure>
+                        <figcaption>
+                            <a href="/images/@file.FileName" title="@file.FileName" target="_blank">
+                                @file.ThumbnailName
+                            </a>
+                            <br>
+                            @file.Info
+                        </figcaption>
+                        <a href="/images/@file.FileName" target="_blank">
+                            <img src="/thumbnails/@file.ThumbnailName" alt="@file.ThumbnailName">
+                        </a>
+                    </figure>
+                }
+                <div class="comment">
+                    @Model.Comment
+                </div>
+            }
+        </div>
+    </article>
+</div>
+<div>
+    <input type="submit" asp-action="BanAnon" asp-route-anonIpHash="@Model.AnonIpHash" value="Забанить">
+</div>
+</body>
+</html>

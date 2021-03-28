@@ -1,5 +1,5 @@
 ﻿document.querySelectorAll(".deletePost").forEach(item =>
-    item.addEventListener('click', event => DeletePost(item.id)))
+    item.addEventListener('click', () => DeletePost(item.id)))
 
 function DeletePost(stringId)
 {
@@ -11,29 +11,18 @@ function DeletePost(stringId)
     }
 
     let deletionData = {postId: document.getElementById("deleteInput-".concat(id)).value};
+    
+    let confirm = window.confirm("Удалить этот пост?");
 
-    $.ajax(
-        {
-            url:'/Admin/DeletePost',
-            contentType: 'application/x-www-form-urlencoded',
-            data: deletionData,
-            type: 'post'
-        }).done(
-        () => alert('Удалено')
-    );
-}
-
-function BanAnon()
-{
-    let banData = {anonIpHash: banIpInput.value};
-
-    $.ajax(
-        {
-            url:'/Admin/BanAnon',
-            contentType: 'application/x-www-form-urlencoded',
-            data: banData,
-            method: 'Post'
-        }).done(
-            () => alert('Забанен')
-    );
+    if(confirm) {
+        $.ajax(
+            {
+                url: '/Admin/DeletePost',
+                contentType: 'application/x-www-form-urlencoded',
+                data: deletionData,
+                method: 'post'
+            }).done(
+            () => alert('Удалено')
+        );
+    }
 }
