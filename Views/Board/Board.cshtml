@@ -125,9 +125,13 @@ else
         <a asp-controller="Board" asp-action="Report" asp-route-postId="@item.FirstPost.Key.PostId">Репорт</a>
                         if (User.Identity.IsAuthenticated)
                         {
-                            <a asp-controller="Admin" asp-action="Panel">
-                                Модерировать
-                            </a>
+                            <a class="deletePost" id="deleteLink-@ViewBag.Id">Удалить пост</a>
+                            <input class="deleteInput" id="deleteInput-@ViewBag.Id" type="hidden" value="@item.FirstPost.Key.PostId">
+                            <i></i>
+                            ViewBag.Id += 1;
+                            <a class="banAnon" id="@ViewBag.Id">Забанить</a>
+                            <input class="banIpInput"  type="hidden" value="@item.FirstPost.Key.AnonIpHash">
+                            <input class="banBoardIdInput" type="hidden" value="@item.FirstPost.Key.BoardId">
                         }
         <a asp-controller="Thread" asp-action="Thread" asp-route-id="@item.FirstPost.Key.PostId">Ответ</a>
                         if (item.FirstPost.Key.IsPinned)
@@ -208,15 +212,14 @@ else
                     <a asp-controller="Board" asp-action="Report" asp-route-postId="@post.Key.PostId">Репорт</a>
                                     if (User.Identity.IsAuthenticated)
                                     {
-                                        <a id="moderation">
-                                            Модерировать
-                                        </a>
-                                        <a id="deletePost">Удалить пост</a>
-                                        <input id="deleteInput" type="hidden" value="@post.Key.PostId">
+                                        ViewBag.Id += 1;
+                                        <a class="deletePost" id="deleteLink-@ViewBag.Id">Удалить пост</a>
+                                        <input class="deleteInput" id="deleteInput-@ViewBag.Id" type="hidden" value="@item.FirstPost.Key.PostId">
                                         <i></i>
-                                        <a id="banAnon">Забанить</a>
-                                        <input id="banIpInput" type="hidden" value="@post.Key.AnonIpHash">
-                                        <input id="banBoardIdInput" type="hidden" value="@post.Key.BoardId">
+                                        ViewBag.Id += 1;
+                                        <a class="banAnon" id="@ViewBag.Id">Забанить</a>
+                                        <input class="banIpInput" type="hidden" value="@post.Key.AnonIpHash">
+                                        <input class="banBoardIdInput" type="hidden" value="@post.Key.BoardId">
                                     }
                     <a asp-controller="Thread" asp-action="Thread" asp-route-id="@post.Key.PostId">Ответ</a>
                                     if (post.Key.IsPinned)

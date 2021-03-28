@@ -1,17 +1,17 @@
-﻿const deleteButton = document.getElementById("deletePost");
-const banButton = document.getElementById("banAnon");
-const deleteInput = document.getElementById("deleteInput");
-const banIpInput = document.getElementById("banIpInput");
+﻿document.querySelectorAll(".deletePost").forEach(item =>
+    item.addEventListener('click', event => DeletePost(item.id)))
 
-let deletionData = {postId: deleteInput.value};
-let banData = {anonIpHash: banIpInput.value};
-
-deleteButton.onclick = DeletePost;
-banButton.onclick = BanAnon;
-
-
-function DeletePost()
+function DeletePost(stringId)
 {
+    let id = "";
+
+    for(let i = 11; i < stringId.length; i++)
+    {
+        id += stringId[i];
+    }
+
+    let deletionData = {postId: document.getElementById("deleteInput-".concat(id)).value};
+
     $.ajax(
         {
             url:'/Admin/DeletePost',
@@ -19,12 +19,14 @@ function DeletePost()
             data: deletionData,
             type: 'post'
         }).done(
-            () => alert('Удалено')
+        () => alert('Удалено')
     );
 }
 
 function BanAnon()
 {
+    let banData = {anonIpHash: banIpInput.value};
+
     $.ajax(
         {
             url:'/Admin/BanAnon',

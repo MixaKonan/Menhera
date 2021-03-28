@@ -162,6 +162,8 @@ namespace Menhera.Controllers
             
             ViewBag.UserIsBanned = anon.IsBanned;
 
+            ViewBag.Id = 0;
+            
             try
             {
                 ViewBag.Board = _collection.Boards.First(brd => brd.Prefix == prefix);

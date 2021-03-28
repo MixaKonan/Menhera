@@ -70,9 +70,6 @@ namespace Menhera.Controllers
                 _db.Ban.Add(ban);
                 _db.SaveChanges();
             }
-            
-            
-            
 
         }
 
