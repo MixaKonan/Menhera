@@ -27,7 +27,7 @@ namespace Menhera.Classes
         {
             try
             {
-                var ban = db.Ban.First(b => b.AnonIpHash == ipHash);
+                var ban = db.Ban.Last(b => b.AnonIpHash == ipHash);
 
                 if (ban == null)
                 {
