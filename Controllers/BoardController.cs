@@ -163,6 +163,8 @@ namespace Menhera.Controllers
             ViewBag.UserIsBanned = anon.IsBanned;
 
             ViewBag.Id = 0;
+
+            ViewBag.Page = page;
             
             try
             {

@@ -1,12 +1,10 @@
 @charset "UTF-8";
-/* CSS Document */
 *{
     margin-block-start: 0;
     margin-block-end: 0;
 }
 
 body {
-    font-family: 'MS Gothic UI', sans-serif;
     padding: 0;
     margin: 0;
     background: #d9c4e3 url("../images/background.png");
@@ -42,8 +40,6 @@ a{
 img{
     margin-top: 24px;
 }
-
-
 
 
 @media screen and (max-width: 675px) {

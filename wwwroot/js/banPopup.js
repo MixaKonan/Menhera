@@ -12,7 +12,7 @@ openFormButtons.forEach(item => item.addEventListener('click',
 closeFormButtons.forEach(item => item.addEventListener('click',
     () => closeForm(item.id)));
 
-function  BanAnon(stringId) {
+function BanAnon(stringId) {
     let id = "";
     
     for(let i = 11; i < stringId.length; i++) {
@@ -34,7 +34,9 @@ function  BanAnon(stringId) {
             contentType: 'application/x-www-form-urlencoded',
             data: banData,
             method: 'post',
-            success: () => alert("Анон забанен"),
+            success: () => {
+                alert("Анон забанен");
+            },
             error: () => alert("Произошла ошибка")
         })
     }
@@ -56,12 +58,12 @@ function openForm(buttonId) {
 function closeForm(buttonId) {
     let id = "";
 
-    for(let i = 11; i < buttonId.length; i++) {
+    for(let i = 13; i < buttonId.length; i++) {
 
         id += buttonId[i];
     }
     
-    let form = document.getElementById("close-button-".concat(id));
+    let form = document.getElementById("myForm-".concat(id));
     
     form.style.display = "none";
 }
