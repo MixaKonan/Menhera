@@ -1,5 +1,8 @@
 ﻿const fileInput = document.getElementById("files");
 const submit = document.getElementById("submit");
+const textarea = document.getElementById("Comment")
+
+textarea.setAttribute("required", "required");
 
 let limit = document.getElementById("fileLimit").value
 

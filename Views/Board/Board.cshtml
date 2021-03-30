@@ -60,7 +60,10 @@ else
             {
                 <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
             }
-            <textarea asp-for="Comment" name="comment" aria-required="true" placeholder="( . .)φ__" class="field comment"></textarea>
+            @Html.TextAreaFor(p => p.Comment, new
+            {
+                @class = "field comment", placeholder = "( . .)φ__"
+            })
             if (ViewBag.Board.FilesAreAllowed)
             {
                 <input type="file" name="files" id="files" multiple class="field">

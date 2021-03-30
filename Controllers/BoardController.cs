@@ -9,8 +9,6 @@ using Menhera.Database;
 using Menhera.Extensions;
 using Menhera.Intefaces;
 using Menhera.Models;
-using System.Drawing;
-using System.Drawing.Imaging;
 using Menhera.Classes;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -43,108 +41,73 @@ namespace Menhera.Controllers
             {
                 return RedirectToAction("YouAreBanned", "Ban");
             }
-            
+
             if (ModelState.IsValid)
             {
-                var thread = new Thread
+                using (_db)
                 {
-                    AnonName = post.AnonName,
-                    BoardId = post.BoardId,
-                    OpIpHash = ipHash,
-                    IsClosed = false,
-                };
-
-                _db.Thread.Add(thread);
-                _db.SaveChanges();
-
-                var addPost = new Post
-                {
-                    ThreadId = thread.ThreadId,
-                    AnonName = post.AnonName,
-                    AnonIpHash = ipHash,
-                    BoardId = post.BoardId,
-                    Subject = post.Subject,
-                    TimeInUnixSeconds = DateTimeOffset.Now.ToUnixTimeSeconds(),
-                    Comment = post.Comment,
-                    Email = post.Email
-                };
-
-                _db.Post.Add(addPost);
-                _db.SaveChanges();
-
-                if (files.Count > 0)
-                {
-                    foreach (var file in files)
+                    var thread = new Thread
                     {
-                        if (file.Length > 0)
+                        AnonName = post.AnonName,
+                        BoardId = post.BoardId,
+                        OpIpHash = ipHash,
+                        IsClosed = false,
+                    };
+
+                    _db.Thread.Add(thread);
+                    _db.SaveChanges();
+
+                    var addPost = new Post
+                    {
+                        ThreadId = thread.ThreadId,
+                        AnonName = post.AnonName,
+                        AnonIpHash = ipHash,
+                        BoardId = post.BoardId,
+                        Subject = post.Subject,
+                        TimeInUnixSeconds = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                        Comment = post.Comment,
+                        Email = post.Email
+                    };
+
+                    _db.Post.Add(addPost);
+                    _db.SaveChanges();
+
+                    if (files.Count > 0)
+                    {
+                        var fileDirectory = Path.Combine(_env.WebRootPath, "images");
+
+                        var thumbnailPath = Path.Combine(_env.WebRootPath, "thumbnails");
+
+                        foreach (var file in files)
                         {
-                            var extension = Path.GetExtension(file.FileName);
-
-                            var filePath = Path.Combine(_env.WebRootPath, "images");
-                            var fullFilePath = string.Concat(filePath, "\\", file.FileName);
-
-                            await using (var stream = new FileStream(fullFilePath, FileMode.Create))
+                            if (file.Length > 0)
                             {
-                                await file.CopyToAsync(stream);
+                                using (var creator = new ImageThumbnailCreator(file, fileDirectory, thumbnailPath))
+                                {
+                                    await creator.CreateThumbnail(ThumbW, ThumbH);
+
+                                    _db.File.Add(new File
+                                    {
+                                        BoardId = addPost.BoardId,
+                                        ThreadId = addPost.ThreadId,
+                                        PostId = addPost.PostId,
+                                        FileName = creator.FileName,
+                                        ThumbnailName = creator.ThumbnailName,
+                                        Info = $"{creator.ImageInfo}"
+                                    });
+                                    _db.SaveChanges();
+                                }
                             }
-
-                            var thumbnailName = string.Concat(new Random().Next(int.MaxValue).ToString(), extension);
-                            var thumbnailPath = Path.Combine(_env.WebRootPath, "thumbnails");
-                            var fullThumbnailPath = string.Concat(thumbnailPath, "\\", thumbnailName);
-
-                            if (extension == ".jpeg" || extension == ".jpg" || extension == ".png")
+                            else
                             {
-                                var image = Image.FromFile(fullFilePath);
-
-                                if (image.Width < 200 && image.Height < 200)
-                                {
-                                    await using (var stream = new FileStream(fullThumbnailPath, FileMode.Create))
-                                    {
-                                        await file.CopyToAsync(stream);
-                                    }
-                                }
-                                else
-                                {
-                                    var coefficient = image.Width > image.Height
-                                        ? ThumbW / image.Width
-                                        : ThumbH / image.Height;
-                                    var thumbnailHeight = (int) Math.Round(image.Height * coefficient,
-                                        MidpointRounding.ToEven);
-                                    var thumbnailWidth = (int) Math.Round(image.Width * coefficient,
-                                        MidpointRounding.ToEven);
-
-                                    var thumbnail = image.GetThumbnailImage(thumbnailWidth, thumbnailHeight,
-                                        () => false,
-                                        IntPtr.Zero);
-
-                                    await using (var stream = new FileStream(fullThumbnailPath, FileMode.Create))
-                                    {
-                                        thumbnail.Save(stream, ImageFormat.Jpeg);
-                                    }
-                                }
-
-                                _db.File.Add(new File
-                                {
-                                    BoardId = addPost.BoardId,
-                                    ThreadId = addPost.ThreadId,
-                                    PostId = addPost.PostId,
-                                    FileName = file.FileName,
-                                    ThumbnailName = thumbnailName,
-                                    Info = $"{image.Size}"
-                                });
-                                _db.SaveChanges();
+                                ModelState.AddModelError("FileLengthNotValid", "Файл пустой.");
                             }
-                        }
-                        else
-                        {
-                            ModelState.AddModelError("FileLengthNotValid", "Файл пустой.");
                         }
                     }
+
+                    return RedirectToAction("Thread", "Thread", new {id = thread.ThreadId});
                 }
-
-                return RedirectToAction("Thread", "Thread", new {id = thread.ThreadId});
             }
-
             return RedirectToAction("Board");
         }
 
