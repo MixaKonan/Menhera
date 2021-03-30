@@ -8,6 +8,7 @@
     Layout = "_Layout";
 }
 <head>
+    
     <title>@ViewBag.Board.Title</title>
 </head>
 <body>
@@ -30,8 +31,10 @@
 <section>
 @if (ViewBag.UserIsBanned)
 {
-    <div>
-        <h1 style="text-align: center">Вы забанены</h1>
+    <div style="text-align: center">
+        <h1 >Вы забанены</h1>
+        <h2>По причине: @ViewBag.BanReason</h2>
+        <h2>Конец бана: @ViewBag.BanEnd</h2>
     </div>
 }
 else
@@ -57,7 +60,7 @@ else
             {
                 <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
             }
-            <textarea asp-for="Comment" name="comment" placeholder="( . .)φ__" class="field comment"></textarea>
+            <textarea asp-for="Comment" name="comment" aria-required="true" placeholder="( . .)φ__" class="field comment"></textarea>
             if (ViewBag.Board.FilesAreAllowed)
             {
                 <input type="file" name="files" id="files" multiple class="field">
@@ -135,7 +138,9 @@ else
                                 <button type="button" class="close-button" id="close-button-@ViewBag.Id">X</button>
                                 <h1 class="popup-title"> (。U ω U。) Причина</h1>
                                 <textarea class="report-reason" id="report-reason-@ViewBag.Id" required></textarea>
-                                <input type="date" class="banCalendar" id="banCalendar-@ViewBag.Id" required>
+                                <div class="popup-banTime">Окончанние бана:
+                                    <input type="text" class="banCalendar" id="banCalendar-@ViewBag.Id" required>
+                                </div>
                                 <input type="hidden" class="banIpHash" id="banIpHash-@ViewBag.Id" value="@item.FirstPost.Key.AnonIpHash">
                                 <button type="submit" class="report-btn" id="report-btn-@ViewBag.Id">Забанить</button>
                             </div>
@@ -230,7 +235,9 @@ else
                                             <button type="button" class="close-button" id="close-button-@ViewBag.Id">X</button>
                                             <h1 class="popup-title"> (。U ω U。) Причина</h1>
                                             <textarea class="report-reason" id="report-reason-@ViewBag.Id" required></textarea>
-                                            <input type="date" class="banCalendar" id="banCalendar-@ViewBag.Id">
+                                            <div class="popup-banTime">Окончанние бана:
+                                                <input type="text" class="banCalendar" id="banCalendar-@ViewBag.Id">
+                                            </div>
                                             <input type="hidden" class="banIpHash" id="banIpHash-@ViewBag.Id" value="@post.Key.AnonIpHash">
                                             <button type="submit" class="report-btn" id="report-btn-@ViewBag.Id">Забанить</button>
                                         </div>
@@ -288,6 +295,8 @@ else
 <input type="hidden" value="@ViewBag.Page" id="page">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js" integrity="sha512-s5u/JBtkPg+Ff2WEr49/cJsod95UgLHbC00N/GglqdQuLnYhALncz8ZHiW/LxDRGduijLKzeYb7Aal9h3codZA==" crossorigin="anonymous"></script>
 
 @if (User.Identity.IsAuthenticated)
 {
@@ -295,4 +304,5 @@ else
     <script src="/js/banPopup.js"></script>
 }
 <script src="/js/formValidation.js"></script>
+<script src="/js/datepicker.js"></script>
 </body>

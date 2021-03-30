@@ -92,7 +92,7 @@ namespace Menhera.Controllers
                             var thumbnailPath = Path.Combine(_env.WebRootPath, "thumbnails");
                             var fullThumbnailPath = string.Concat(thumbnailPath, "\\", thumbnailName);
 
-                            if (extension == ".jpeg" || extension == ".jpg")
+                            if (extension == ".jpeg" || extension == ".jpg" || extension == ".png")
                             {
                                 var image = Image.FromFile(fullFilePath);
 
@@ -151,16 +151,22 @@ namespace Menhera.Controllers
         [HttpGet]
         public IActionResult Board(string prefix, int page = 1)
         {
-            var md5 = new MD5CryptoServiceProvider();
-
-            var ipHash = md5.ComputeHash(HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
+            var ipHash = _md5.ComputeHash(HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
                 .GetString();
 
             var anon = new Anon(ipHash, IpCheck.UserIsBanned(_db, ipHash));
 
             ViewBag.UserIpHash = anon.IpHash;
-            
-            ViewBag.UserIsBanned = anon.IsBanned;
+
+            ViewBag.UserIsBanned = false;
+
+            if (anon.IsBanned)
+            {
+                ViewBag.UserIsBanned = anon.IsBanned;
+                var ban = _db.Ban.First(b => b.AnonIpHash == anon.IpHash);
+                ViewBag.BanReason = ban.Reason;
+                ViewBag.BanEnd = DateTimeOffset.FromUnixTimeSeconds(ban.Term).ToLocalTime();
+            }
 
             ViewBag.Id = 0;
 
@@ -262,7 +268,6 @@ namespace Menhera.Controllers
                     PageViewModel = pageViewModel,
                     Model = items
                 };
-
 
                 ViewBag.ThreadViewModel = threadViewModel;
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -49,10 +50,20 @@ namespace Menhera.Controllers
         }
 
         [HttpPost]
-        public void BanAnon(string anonIpHash, string reason, DateTime banEndTime)
+        public void BanAnon(string anonIpHash, string reason, string banEndTime)
         {
-            var banEnd = new DateTimeOffset(banEndTime).ToUnixTimeSeconds();
+            var bans = _db.Ban.Select(b => b).Where(b => b.AnonIpHash == anonIpHash).ToList();
 
+            if (bans.Count > 0)
+            {
+                foreach (var ban in bans)
+                {
+                    _db.Ban.Remove(ban);
+                }
+            }
+            
+            var banEnd = ((DateTimeOffset)DateTime.Parse(banEndTime)).ToUnixTimeSeconds();
+            
             var adminIpHash = new MD5CryptoServiceProvider().ComputeHash
                     (HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
                 .GetString();

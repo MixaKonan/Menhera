@@ -18,7 +18,6 @@
 
     <ItemGroup>
       <Folder Include="Database" />
-      <Folder Include="Views\Ban" />
       <Folder Include="wwwroot\thumbnails" />
     </ItemGroup>
 
