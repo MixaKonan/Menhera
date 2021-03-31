@@ -44,53 +44,30 @@ namespace Menhera.Controllers
 
             if (ModelState.IsValid)
             {
-                using (_db)
+                post.AnonIpHash = ipHash;
+                DbAccess.AddThreadToBoard(_db, ref post);
+
+                if (files.Count > 0)
                 {
-                    var thread = new Thread
+                    var fileDirectory = Path.Combine(_env.WebRootPath, "images");
+
+                    var thumbnailPath = Path.Combine(_env.WebRootPath, "thumbnails");
+
+                    foreach (var file in files)
                     {
-                        AnonName = post.AnonName,
-                        BoardId = post.BoardId,
-                        OpIpHash = ipHash,
-                        IsClosed = false,
-                    };
-
-                    _db.Thread.Add(thread);
-                    _db.SaveChanges();
-
-                    var addPost = new Post
-                    {
-                        ThreadId = thread.ThreadId,
-                        AnonName = post.AnonName,
-                        AnonIpHash = ipHash,
-                        BoardId = post.BoardId,
-                        Subject = post.Subject,
-                        TimeInUnixSeconds = DateTimeOffset.Now.ToUnixTimeSeconds(),
-                        Comment = post.Comment,
-                        Email = post.Email
-                    };
-
-                    _db.Post.Add(addPost);
-                    _db.SaveChanges();
-
-                    if (files.Count > 0)
-                    {
-                        var fileDirectory = Path.Combine(_env.WebRootPath, "images");
-
-                        var thumbnailPath = Path.Combine(_env.WebRootPath, "thumbnails");
-
-                        foreach (var file in files)
+                        if (file.Length > 0)
                         {
-                            if (file.Length > 0)
+                            using (var creator = new ImageThumbnailCreator(file, fileDirectory, thumbnailPath))
                             {
-                                using (var creator = new ImageThumbnailCreator(file, fileDirectory, thumbnailPath))
-                                {
-                                    await creator.CreateThumbnail(ThumbW, ThumbH);
+                                await creator.CreateThumbnail(ThumbW, ThumbH);
 
+                                using (_db)
+                                {
                                     _db.File.Add(new File
                                     {
-                                        BoardId = addPost.BoardId,
-                                        ThreadId = addPost.ThreadId,
-                                        PostId = addPost.PostId,
+                                        BoardId = post.BoardId,
+                                        ThreadId = post.ThreadId,
+                                        PostId = post.PostId,
                                         FileName = creator.FileName,
                                         ThumbnailName = creator.ThumbnailName,
                                         Info = $"{creator.ImageInfo}"
@@ -98,15 +75,15 @@ namespace Menhera.Controllers
                                     _db.SaveChanges();
                                 }
                             }
-                            else
-                            {
-                                ModelState.AddModelError("FileLengthNotValid", "Файл пустой.");
-                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("FileLengthNotValid", "Файл пустой.");
                         }
                     }
-
-                    return RedirectToAction("Thread", "Thread", new {id = thread.ThreadId});
                 }
+
+                return RedirectToAction("Thread", "Thread", new {id = post.ThreadId});
             }
             return RedirectToAction("Board");
         }
@@ -188,27 +165,21 @@ namespace Menhera.Controllers
                             firstPostFiles = posts[0].File.ToList();
                         }
 
-                        var lTp = _db.Thread.Where(t => t.ThreadId == thread.ThreadId)
-                            .Include(t => t.Post).ToList()[0].Post
-                            .Take(3).ToArray().OrderByDescending(p => p.TimeInUnixSeconds).ToArray();
+                        var threadPosts = _db.Thread.Where(t => t.ThreadId == thread.ThreadId)
+                            .Include(t => t.Post).ToList()[0].Post;
+
+                        var lTp = new List<Post>();
+                        
+                        if (threadPosts.Count > 3)
+                        {
+                            lTp = threadPosts.Take(3).ToArray().OrderByDescending(p => p.TimeInUnixSeconds).ToList();
+                        }
 
                         var lTpFiles = new Dictionary<Post, List<File>>();
 
                         foreach (var post in lTp)
                         {
-                            lTpFiles.Add(post, _db.Post.Where(p => p.PostId == post.PostId).Join(_db.File,
-                                p => p.PostId,
-                                f => f.PostId,
-                                (pt, file) => new File
-                                {
-                                    FileId = file.FileId,
-                                    BoardId = file.BoardId,
-                                    ThreadId = file.ThreadId,
-                                    PostId = file.PostId,
-                                    FileName = file.FileName,
-                                    ThumbnailName = file.ThumbnailName,
-                                    Info = file.Info
-                                }).ToList());
+                            lTpFiles.Add(post, post.File.ToList());
                         }
 
                         threadPostPostsList.Add(new ThreadPostLastThreePosts

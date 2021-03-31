@@ -31,7 +31,7 @@
 <section>
 @if (ViewBag.UserIsBanned)
 {
-    <div style="text-align: center">
+    <div style="text-align: center; margin: 0 300px 0 10%;">
         <h1 >Вы забанены</h1>
         <h2>По причине: @ViewBag.BanReason</h2>
         <h2>Конец бана: @ViewBag.BanEnd</h2>
@@ -60,10 +60,7 @@ else
             {
                 <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
             }
-            @Html.TextAreaFor(p => p.Comment, new
-            {
-                @class = "field comment", placeholder = "( . .)φ__"
-            })
+            <textarea asp-for="Comment" class="field comment" placeholder="( . .)φ__"></textarea>
             if (ViewBag.Board.FilesAreAllowed)
             {
                 <input type="file" name="files" id="files" multiple class="field">
@@ -125,8 +122,9 @@ else
                         {
                             @admin.Login
                         }
+                        <i></i>
                         @DateTimeOffset.FromUnixTimeSeconds(item.FirstPost.Key.TimeInUnixSeconds).DateTime
-                        <a asp-controller="Thread" asp-action="Thread" asp-route-id="@item.FirstPost.Key.ThreadId">@item.FirstPost.Key.ThreadId</a>
+                        <a href="/Thread/Thread/@item.FirstPost.Key.ThreadId#@item.FirstPost.Key.PostId">#@item.FirstPost.Key.ThreadId</a>
                         <a asp-controller="Board" asp-action="Report" asp-route-postId="@item.FirstPost.Key.PostId">Репорт</a>
                         if (User.Identity.IsAuthenticated)
                         {
@@ -223,7 +221,7 @@ else
                                         @admin_.Login
                                     }
                                     @DateTimeOffset.FromUnixTimeSeconds(post.Key.TimeInUnixSeconds).DateTime
-                                    <a asp-controller="Thread" asp-action="Thread" asp-route-id="@post.Key.ThreadId">@post.Key.ThreadId</a>
+                                    <a href="/Thread/Thread/@post.Key.ThreadId#@post.Key.PostId">@post.Key.ThreadId</a>
                                     <a asp-controller="Board" asp-action="Report" asp-route-postId="@post.Key.PostId">Репорт</a>
                                     if (User.Identity.IsAuthenticated)
                                     {

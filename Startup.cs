@@ -27,16 +27,16 @@ namespace Menhera
             services.AddDbContext<MenherachanContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString(
                     "DefaultConnection")));
-            
+
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
             {
                 options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
             });
-            
+
             services.AddControllersWithViews();
             services.AddSingleton<IFileProvider>(
                 new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
-            
+
             services.AddTransient<IBoardCollection, BoardCollection>();
             services.AddTransient<IAdminCollection, AdminCollection>();
         }
@@ -49,10 +49,12 @@ namespace Menhera
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error/Error");
                 app.UseHsts();
             }
 
+            app.UseStatusCodePages();
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

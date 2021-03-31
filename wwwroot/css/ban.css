@@ -1,5 +1,5 @@
 .form-popup {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Ubuntu', sans-serif;
     display: none;
     position: fixed;
     bottom: 0;
@@ -93,7 +93,7 @@
 .ui-widget select,
 .ui-widget textarea,
 .ui-widget button {
-    font-family: Arial,Helvetica,sans-serif;
+    font-family: 'Ubuntu', sans-serif;
     font-size: 1em;
 }
 

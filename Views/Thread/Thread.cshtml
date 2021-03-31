@@ -1,4 +1,7 @@
-﻿@model Thread
+﻿@using Menhera.Classes
+@model Post
+@inject Menhera.Intefaces.IBoardCollection BoardCollection
+@inject Menhera.Intefaces.IAdminCollection AdminCollection
 
 @{
     Layout = "_Layout";
@@ -8,16 +11,204 @@
 
 <html lang="en">
 <head>
-    <title>Тред №@Model.ThreadId</title>
+    <title>Тред №@ViewBag.Thread.ThreadId</title>
 </head>
 <body>
-<div>
-    @foreach (var post in ViewBag.Posts)
+<header>
+    <div class="to-main">
+        <a asp-action="Main" asp-controller="MainPage">
+            На башорг!
+        </a>
+    </div>
+    <div class="board">
+        /@ViewBag.Board.Prefix/<span class="postfix">@BoardCollection.PrePostFixes.First(pair => pair.Key == ViewBag.Board.Prefix).Value</span>
+    </div>
+    <div class="title">
+        @ViewBag.Board.Title
+        <div class="description">
+            @ViewBag.Board.Description
+        </div>
+    </div>
+</header>
+<section>
+    @if (ViewBag.UserIsBanned)
     {
-        <div class="comment">
-            @post.Comment
+        <div style="text-align: center;">
+            <h1 >Вы забанены</h1>
+            <h2 style="margin: 0 300px 0 10%;">По причине: @ViewBag.BanReason</h2>
+            <h2>Конец бана: @ViewBag.BanEnd</h2>
         </div>
     }
-</div>
+    else
+    {
+        if (ViewBag.Thread.IsClosed)
+        {
+            <div style="text-align: center">
+                <h1 >Тред закрыт</h1>
+            </div>
+        }
+        else
+        {
+            <div class="form" style="margin-bottom: 17px">
+                @using (Html.BeginForm("AddPost", "Thread", FormMethod.Post, new {enctype = "multipart/form-data"}))
+                {
+                    if (ViewBag.Board.AnonHasNoName)
+                    {
+                        <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field full-email">
+                    }
+                    else
+                    {
+                        <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field email">
+                        <input asp-for="AnonName" type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
+                    }
+
+                    <input type="submit" value="Пост" class="field submit" id="submit">
+                    <input asp-for="BoardId" type="hidden" value="@ViewBag.Board.BoardId">
+                    <input asp-for="ThreadId" type="hidden" value="@ViewBag.Thread.ThreadId">
+                    <input asp-for="AnonIpHash" type="hidden" value="@ViewBag.UserIp">
+
+                    if (ViewBag.Board.HasSubject)
+                    {
+                        <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
+                    }
+                    <textarea asp-for="Comment" class="field comment" placeholder="( . .)φ__"></textarea>
+                    if (ViewBag.Board.FilesAreAllowed)
+                    {
+                        <input type="file" name="files" id="files" multiple class="field">
+                    }
+                    <input type="checkbox" name="op" value="1" id="op">
+                    <label for="op">
+                        оп
+                    </label>
+                }
+            </div>
+        }
+    }
+    <div class="functional-menu">
+        <a asp-controller="MainPage" asp-action="Main">Главная</a>
+        <a asp-controller="Board" asp-action="Search" asp-route-prefix="@ViewBag.Board.Prefix">Поиск</a>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a asp-controller="Admin" asp-action="Panel">Управление</a>
+        }
+    </div>
+    <div class="posts threads">
+        @foreach (var postsFiles in ViewBag.PostsFiles)
+        {
+            <span id="@postsFiles.Key.PostId">
+                @{
+                    var className = "post";
+                    if (postsFiles.Key.AnonIpHash == ViewBag.UserIpHash)
+                    {
+                        className = "your-post";
+                    }
+                }
+                <article class="@className">
+                    <div class="thread-header">
+                        @{
+                            if (!string.IsNullOrEmpty(postsFiles.Key.Subject))
+                            {
+                                <span class="subject">
+                                    @postsFiles.Key.Subject
+                                </span>
+                            }
+                            if (!string.IsNullOrEmpty(postsFiles.Key.Email) && !string.IsNullOrEmpty(postsFiles.Key.AnonName))
+                            {
+                                <span class="name">
+                                    <a href="mailto:@postsFiles.Key.Email">
+                                        @postsFiles.Key.AnonName
+                                    </a>
+                                </span>
+                            }
+                            else if (!string.IsNullOrEmpty(postsFiles.Key.AnonName))
+                            {
+                                <span class="name">
+                                    @postsFiles.Key.AnonName
+                                </span>
+                            }
+                            if (postsFiles.Key.AnonIpHash == ViewBag.Thread.OpIpHash)
+                            {
+                                <span style="color: green; ">
+                                    #OP
+                                </span>
+                            }
+                            if (IpCheck.IpBelongsToAdmin(postsFiles.Key.AnonIpHash, AdminCollection.Admins, out Admin admin_))
+                            {
+                                @admin_.Login
+                            }
+                            <i></i>
+                            @DateTimeOffset.FromUnixTimeSeconds(postsFiles.Key.TimeInUnixSeconds).DateTime
+                            <a href="#@postsFiles.Key.PostId">#@postsFiles.Key.PostId</a>
+                            <a asp-controller="Board" asp-action="Report" asp-route-postId="@postsFiles.Key.PostId">Репорт</a>
+                            if (User.Identity.IsAuthenticated)
+                            {
+                                ViewBag.Id += 1;
+                                <a class="deletePost" id="deleteLink-@ViewBag.Id">Удалить пост</a>
+                                <input class="deleteInput" id="deleteInput-@ViewBag.Id" type="hidden" value="@postsFiles.Key.PostId">
+                                <i></i>
+                                <a class="open-button" id="open-button-@ViewBag.Id">
+                                    Забанить
+                                </a>
+                                <div class="form-popup form-container" id="myForm-@ViewBag.Id">
+                                    <button type="button" class="close-button" id="close-button-@ViewBag.Id">X</button>
+                                    <h1 class="popup-title"> (。U ω U。) Причина</h1>
+                                    <textarea class="report-reason" id="report-reason-@ViewBag.Id" required></textarea>
+                                    <div class="popup-banTime">
+                                        Окончанние бана:
+                                        <input type="text" class="banCalendar" id="banCalendar-@ViewBag.Id">
+                                    </div>
+                                    <input type="hidden" class="banIpHash" id="banIpHash-@ViewBag.Id" value="@postsFiles.Key.AnonIpHash">
+                                    <button type="submit" class="report-btn" id="report-btn-@ViewBag.Id">Забанить</button>
+                                </div>
+                            }
+                            <a asp-controller="Thread" asp-action="Thread" asp-route-id="@postsFiles.Key.PostId">Ответ</a>
+                            if (postsFiles.Key.IsPinned)
+                            {
+                                <img src="images/pinned.png" alt="pinned.png">
+                            }
+                            if (ViewBag.Thread.IsClosed)
+                            {
+                                <img src="images/closed.png" alt="closed.png">
+                            }
+                            foreach (var file in postsFiles.Value)
+                            {
+                                <figure>
+                                    <figcaption>
+                                        <a href="/images/@file.FileName" title="@file.FileName" target="_blank">
+                                            @file.ThumbnailName
+                                        </a>
+                                        <br>
+                                        @file.Info
+                                    </figcaption>
+                                    <a href="/images/@file.FileName" target="_blank">
+                                        <img src="/thumbnails/@file.ThumbnailName" alt="@file.ThumbnailName">
+                                    </a>
+                                </figure>
+                            }
+                            <div class="comment">
+                                @postsFiles.Key.Comment
+                            </div>
+                        }
+                    </div>
+                </article>
+            </span>
+        }
+    </div>
+</section>
+<input type="hidden" value="@ViewBag.FileLimit" id="fileLimit">
+<input type="hidden" value="@ViewBag.Board.Prefix" id="boardPrefix">
+<input type="hidden" value="@ViewBag.Page" id="page">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js" integrity="sha512-s5u/JBtkPg+Ff2WEr49/cJsod95UgLHbC00N/GglqdQuLnYhALncz8ZHiW/LxDRGduijLKzeYb7Aal9h3codZA==" crossorigin="anonymous"></script>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <script src="/js/moderation.js"></script>
+    <script src="/js/banPopup.js"></script>
+}
+<script src="/js/formValidation.js"></script>
+<script src="/js/datepicker.js"></script>
 </body>
 </html>
