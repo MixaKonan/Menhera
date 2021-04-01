@@ -1,4 +1,4 @@
-﻿namespace Menhera.Classes
+﻿namespace Menhera.Classes.Anon
 {
     public class Anon
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using Menhera.Database;
 using Menhera.Models;
 
-namespace Menhera.Classes
+namespace Menhera.Classes.Anon
 {
     public static class IpCheck
     {

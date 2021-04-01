@@ -9,7 +9,9 @@ using Menhera.Database;
 using Menhera.Extensions;
 using Menhera.Intefaces;
 using Menhera.Models;
-using Menhera.Classes;
+using Menhera.Classes.Anon;
+using Menhera.Classes.Db;
+using Menhera.Classes.Files;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -19,8 +21,6 @@ namespace Menhera.Controllers
 {
     public class BoardController : Controller
     {
-        private const double ThumbW = 200;
-        private const double ThumbH = 200;
         private const int PageSize = 10;
 
         private readonly MenherachanContext _db;
@@ -28,6 +28,15 @@ namespace Menhera.Controllers
         private readonly IWebHostEnvironment _env;
 
         private readonly MD5CryptoServiceProvider _md5;
+        
+        public BoardController(MenherachanContext db, IWebHostEnvironment env, IBoardCollection collection)
+        {
+            _db = db;
+            _env = env;
+            _collection = collection;
+
+            _md5 = new MD5CryptoServiceProvider();
+        }
 
         [HttpPost]
         public async Task<IActionResult> AddThread(Post post, List<IFormFile> files)
@@ -51,29 +60,17 @@ namespace Menhera.Controllers
                 {
                     var fileDirectory = Path.Combine(_env.WebRootPath, "images");
 
-                    var thumbnailPath = Path.Combine(_env.WebRootPath, "thumbnails");
+                    var thumbNailDirectory = Path.Combine(_env.WebRootPath, "thumbnails");
 
                     foreach (var file in files)
                     {
                         if (file.Length > 0)
                         {
-                            using (var creator = new ImageThumbnailCreator(file, fileDirectory, thumbnailPath))
+                            using (var creator = new ImageThumbnailCreator(file, fileDirectory, thumbNailDirectory))
                             {
-                                await creator.CreateThumbnail(ThumbW, ThumbH);
+                                await creator.CreateThumbnailAsync();
 
-                                using (_db)
-                                {
-                                    _db.File.Add(new File
-                                    {
-                                        BoardId = post.BoardId,
-                                        ThreadId = post.ThreadId,
-                                        PostId = post.PostId,
-                                        FileName = creator.FileName,
-                                        ThumbnailName = creator.ThumbnailName,
-                                        Info = $"{creator.ImageInfo}"
-                                    });
-                                    _db.SaveChanges();
-                                }
+                                DbAccess.AddFilesToPost(_db, post, creator.ImgInfo);
                             }
                         }
                         else
@@ -116,7 +113,7 @@ namespace Menhera.Controllers
             {
                 ViewBag.Board = _collection.Boards.First(brd => brd.Prefix == prefix);
 
-                var threadPostPostsList = new List<ThreadPostLastThreePosts>();
+                var item = new List<KeyValuePair<Thread, List<KeyValuePair<Post, List<File>>>>>();
 
                 var boards = _db.Board.Where(b => b.Prefix == prefix).Include(b => b.Thread).ToList();
 
@@ -128,82 +125,46 @@ namespace Menhera.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("SequenceContainsNoElements", "Такой доски не существует.");
                     Response.StatusCode = 404;
                     return RedirectToAction("Error", "Error", new {statusCode = 404});
                 }
 
-                foreach (var thread in board.Thread)
+                foreach (var thrd in board.Thread)
                 {
-                    var threads = _db.Thread.Where(t => t.ThreadId == thread.ThreadId).Include(t => t.Post).ToList();
+                    var thread = _db.Thread.Include(t => t.Post).First(t => t.ThreadId == thrd.ThreadId);
 
-                    Thread thrd;
-                    if (threads.Count > 0)
+                    if (thread != null)
                     {
-                        thrd = threads[0];
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("SequenceContainsNoElements", "Такой доски не существует.");
-                        Response.StatusCode = 404;
-                        return RedirectToAction("Error", "Error", new {statusCode = 404});  
-                    }
+                        var dict = new List<KeyValuePair<Post, List<File>>>();
 
-                    var postList = thrd.Post.ToList();
-
-                    if (postList.Count > 0)
-                    {
-                        var firstPost = postList[0];
-
-                        var posts =
-                            _db.Post.Where(p => p.PostId == firstPost.PostId).Include(p => p.File).ToList();
-
-                        var firstPostFiles = new List<File>();
-
-                        if (posts.Count > 0)
+                        if (thread.Post.Count >= 4)
                         {
-                            firstPostFiles = posts[0].File.ToList();
+                            var posts = new List<Post> {thread.Post.ToArray()[0]};
+
+                            posts.AddRange(thread.Post.ToList().OrderByDescending(p => p.TimeInUnixSeconds).Take(3));
+
+                            foreach (var post in posts)
+                            {
+                                var p = _db.Post.Include(pp => pp.File).First(pp => pp.PostId == post.PostId);
+                                dict.Add(new KeyValuePair<Post, List<File>>(p, p.File.ToList()));
+                            }
+                            
+                            item.Add(new KeyValuePair<Thread, List<KeyValuePair<Post, List<File>>>>(thread, dict));
+
                         }
-
-                        var threadPosts = _db.Thread.Where(t => t.ThreadId == thread.ThreadId)
-                            .Include(t => t.Post).ToList()[0].Post;
-
-                        var lTp = new List<Post>();
-                        
-                        if (threadPosts.Count > 3)
+                        else if(thread.Post.Count > 0 && thread.Post.Count <= 3)
                         {
-                            lTp = threadPosts.Take(3).ToArray().OrderByDescending(p => p.TimeInUnixSeconds).ToList();
+                            var p = _db.Post.Include(pp => pp.File).First(pp => pp.ThreadId == thread.ThreadId);
+                            dict.Add(new KeyValuePair<Post, List<File>>(p, p.File.ToList()));
+                            
+                            item.Add(new KeyValuePair<Thread, List<KeyValuePair<Post, List<File>>>>(thread, dict));
                         }
-
-                        var lTpFiles = new Dictionary<Post, List<File>>();
-
-                        foreach (var post in lTp)
-                        {
-                            lTpFiles.Add(post, post.File.ToList());
-                        }
-
-                        threadPostPostsList.Add(new ThreadPostLastThreePosts
-                        {
-                            Thread = thread,
-
-                            FirstPost = new KeyValuePair<Post, List<File>>(firstPost, firstPostFiles),
-
-                            LastThreePosts = lTpFiles
-                        });
                     }
                 }
-
-                var count = threadPostPostsList.Count;
-                var items = threadPostPostsList.Skip((page - 1) * PageSize).Take(PageSize).ToList();
-
-                var pageViewModel = new PageViewModel(count, page, PageSize);
-                var threadViewModel = new ThreadViewModel
-                {
-                    PageViewModel = pageViewModel,
-                    Model = items
-                };
-
-                ViewBag.ThreadViewModel = threadViewModel;
+                
+                //TODO: Добавить пагинацию
+                
+                ViewBag.BoardViewModel = item;
             }
             catch (InvalidOperationException)
             {
@@ -226,13 +187,6 @@ namespace Menhera.Controllers
             return View(board);
         }
 
-        public BoardController(MenherachanContext db, IWebHostEnvironment env, IBoardCollection collection)
-        {
-            _db = db;
-            _env = env;
-            _collection = collection;
-
-            _md5 = new MD5CryptoServiceProvider();
-        }
+ 
     }
 }

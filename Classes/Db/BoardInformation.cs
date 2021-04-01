@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Menhera.Database;
 using Menhera.Models;
-using Microsoft.EntityFrameworkCore;
 
-namespace Menhera.Classes
+namespace Menhera.Classes.Db
 {
     public class BoardInformation
     {

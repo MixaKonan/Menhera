@@ -1,32 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using Menhera.Classes;
+using Menhera.Classes.Anon;
+using Menhera.Classes.Db;
+using Menhera.Classes.Files;
 using Menhera.Database;
 using Menhera.Extensions;
-using Menhera.Intefaces;
 using Menhera.Models;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using File = Menhera.Models.File;
 
 namespace Menhera.Controllers
 {
     public class ThreadController : Controller
     {
         private readonly MenherachanContext _db;
-        private readonly IBoardCollection _collection;
         private readonly IWebHostEnvironment _env;
         
         private readonly MD5CryptoServiceProvider _md5;
-
-
-        public ThreadController(MenherachanContext db, IWebHostEnvironment env, IBoardCollection collection)
+        
+        public ThreadController(MenherachanContext db, IWebHostEnvironment env)
         {
             _db = db;
             _env = env;
-            _collection = collection;
 
             _md5 = new MD5CryptoServiceProvider();
         }
@@ -93,7 +94,7 @@ namespace Menhera.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddPost(Post post)
+        public IActionResult AddPost(Post post, List<IFormFile> files)
         {
             try
             {
@@ -116,8 +117,39 @@ namespace Menhera.Controllers
 
                 post.AnonIpHash = ipHash;
                 post.TimeInUnixSeconds = DateTimeOffset.Now.ToUnixTimeSeconds();
-                
-                DbAccess.AddPostToThread(_db, post);
+
+                if (ModelState.IsValid)
+                {
+                    DbAccess.AddPostToThread(_db, post);
+
+                    if (files.Count > 0)
+                    {
+                        var fileDirectory = Path.Combine(_env.WebRootPath, "images");
+
+                        var thumbNailDirectory = Path.Combine(_env.WebRootPath, "thumbnails");
+
+                        foreach (var file in files)
+                        {
+                            if (file.Length > 0)
+                            {
+                                using (var creator = new ImageThumbnailCreator(file, fileDirectory, thumbNailDirectory))
+                                {
+                                    creator.CreateThumbnail();
+
+                                    DbAccess.AddFilesToPost(_db, post, creator.ImgInfo);
+                                }
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("FileLengthNotValid", "Файл пустой.");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    RedirectToAction("Error", "Error", new {statusCode = 500});
+                }
             }
             catch (InvalidOperationException)
             {

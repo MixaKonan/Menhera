@@ -2,15 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Menhera.Classes.Files;
 using Menhera.Database;
 using Menhera.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
-namespace Menhera.Classes
+namespace Menhera.Classes.Db
 {
     public static class DbAccess
     {
-        
         //Тред не может быть создан без поста, поэтому передаем сам новый пост,
         //а внутри метода создаём новый тред, в который добавляем этот пост
         public static void AddThreadToBoard(MenherachanContext db, ref Post firstThreadPost)
@@ -35,18 +36,29 @@ namespace Menhera.Classes
 
         public static void AddPostToThread(MenherachanContext db, Post post)
         {
-            using (db)
-            {
-                var thread = db.Thread.First(t => t.ThreadId == post.ThreadId);
+            var thread = db.Thread.First(t => t.ThreadId == post.ThreadId);
 
-                if (thread == null)
-                {
-                    throw new InvalidOperationException();
-                }
-                
-                db.Post.Add(post);
-                db.SaveChanges();
+            if (thread == null)
+            {
+                throw new InvalidOperationException();
             }
+
+            db.Post.Add(post);
+            db.SaveChanges();
+        }
+
+        public static void AddFilesToPost(MenherachanContext db, Post post, ImageInformation info)
+        {
+            db.File.Add(new File
+            {
+                BoardId = post.BoardId,
+                ThreadId = post.ThreadId,
+                PostId = post.PostId,
+                FileName = info.FileName,
+                ThumbnailName = info.ThumbnailName,
+                Info = $"{info.Information}"
+            });
+            db.SaveChanges();
         }
     }
 }

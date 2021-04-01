@@ -1,4 +1,4 @@
-﻿@using Menhera.Classes
+﻿@using Menhera.Classes.Anon
 @model Post
 @inject Menhera.Intefaces.IBoardCollection BoardCollection
 @inject Menhera.Intefaces.IAdminCollection AdminCollection
@@ -195,7 +195,7 @@
         }
     </div>
 </section>
-<input type="hidden" value="@ViewBag.FileLimit" id="fileLimit">
+<input type="hidden" value="@ViewBag.Board.FileLimit" id="fileLimit">
 <input type="hidden" value="@ViewBag.Board.Prefix" id="boardPrefix">
 <input type="hidden" value="@ViewBag.Page" id="page">
 
@@ -207,8 +207,8 @@
 {
     <script src="/js/moderation.js"></script>
     <script src="/js/banPopup.js"></script>
+    <script src="/js/datepicker.js"></script>
 }
 <script src="/js/formValidation.js"></script>
-<script src="/js/datepicker.js"></script>
 </body>
 </html>

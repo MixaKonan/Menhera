@@ -299,7 +299,6 @@ article .comment {
 
 .post,
 .your-post {
-    display: inline-block;
     max-height: 400px;
     border-radius: 4px;
     background: rgba(220, 210, 223, 0.4);
