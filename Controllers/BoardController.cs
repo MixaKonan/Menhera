@@ -12,6 +12,7 @@ using Menhera.Models;
 using Menhera.Classes.Anon;
 using Menhera.Classes.Db;
 using Menhera.Classes.Files;
+using Menhera.Classes.Pagination;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,7 @@ namespace Menhera.Controllers
         private readonly IWebHostEnvironment _env;
 
         private readonly MD5CryptoServiceProvider _md5;
-        
+
         public BoardController(MenherachanContext db, IWebHostEnvironment env, IBoardCollection collection)
         {
             _db = db;
@@ -82,6 +83,7 @@ namespace Menhera.Controllers
 
                 return RedirectToAction("Thread", "Thread", new {id = post.ThreadId});
             }
+
             return RedirectToAction("Board");
         }
 
@@ -108,12 +110,12 @@ namespace Menhera.Controllers
             ViewBag.Id = 0;
 
             ViewBag.Page = page;
-            
+
             try
             {
                 ViewBag.Board = _collection.Boards.First(brd => brd.Prefix == prefix);
 
-                var item = new List<KeyValuePair<Thread, List<KeyValuePair<Post, List<File>>>>>();
+                var allThreads = new List<KeyValuePair<Thread, List<KeyValuePair<Post, List<File>>>>>();
 
                 var boards = _db.Board.Where(b => b.Prefix == prefix).Include(b => b.Thread).ToList();
 
@@ -135,7 +137,7 @@ namespace Menhera.Controllers
 
                     if (thread != null)
                     {
-                        var dict = new List<KeyValuePair<Post, List<File>>>();
+                        var postFiles = new List<KeyValuePair<Post, List<File>>>();
 
                         if (thread.Post.Count >= 4)
                         {
@@ -146,25 +148,43 @@ namespace Menhera.Controllers
                             foreach (var post in posts)
                             {
                                 var p = _db.Post.Include(pp => pp.File).First(pp => pp.PostId == post.PostId);
-                                dict.Add(new KeyValuePair<Post, List<File>>(p, p.File.ToList()));
+                                postFiles.Add(new KeyValuePair<Post, List<File>>(p, p.File.ToList()));
                             }
-                            
-                            item.Add(new KeyValuePair<Thread, List<KeyValuePair<Post, List<File>>>>(thread, dict));
 
+                            allThreads.Add(
+                                new KeyValuePair<Thread, List<KeyValuePair<Post, List<File>>>>(thread, postFiles));
                         }
-                        else if(thread.Post.Count > 0 && thread.Post.Count <= 3)
+                        else if (thread.Post.Count > 0 && thread.Post.Count <= 3)
                         {
                             var p = _db.Post.Include(pp => pp.File).First(pp => pp.ThreadId == thread.ThreadId);
-                            dict.Add(new KeyValuePair<Post, List<File>>(p, p.File.ToList()));
-                            
-                            item.Add(new KeyValuePair<Thread, List<KeyValuePair<Post, List<File>>>>(thread, dict));
+                            postFiles.Add(new KeyValuePair<Post, List<File>>(p, p.File.ToList()));
+
+                            allThreads.Add(
+                                new KeyValuePair<Thread, List<KeyValuePair<Post, List<File>>>>(thread, postFiles));
                         }
                     }
                 }
+
+                var pageInfo = new PageInfo( page, PageSize, allThreads.Count);
+
+                var pageThreads = new List<KeyValuePair<Thread, List<KeyValuePair<Post, List<File>>>>>();
+
+
+                for (var i = (page - 1) * PageSize; i < page * PageSize; i++)
+                {
+                    try
+                    {
+                        pageThreads.Add(allThreads[i]);
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        break;
+                    }
+                }
+
+                ViewBag.PageInfo = pageInfo;
                 
-                //TODO: Добавить пагинацию
-                
-                ViewBag.BoardViewModel = item;
+                ViewBag.BoardViewModel = pageThreads;
             }
             catch (InvalidOperationException)
             {
@@ -186,7 +206,5 @@ namespace Menhera.Controllers
 
             return View(board);
         }
-
- 
     }
 }

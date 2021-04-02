@@ -103,16 +103,9 @@ namespace Menhera.Controllers
 
                 var anon = new Anon(ipHash, IpCheck.UserIsBanned(_db, ipHash));
 
-                ViewBag.UserIpHash = anon.IpHash;
-
-                ViewBag.UserIsBanned = false;
-
                 if (anon.IsBanned)
                 {
-                    ViewBag.UserIsBanned = anon.IsBanned;
-                    var ban = _db.Ban.First(b => b.AnonIpHash == anon.IpHash);
-                    ViewBag.BanReason = ban.Reason;
-                    ViewBag.BanEnd = DateTimeOffset.FromUnixTimeSeconds(ban.Term).ToLocalTime();
+                    return RedirectToAction("YouAreBanned", "Ban");
                 }
 
                 post.AnonIpHash = ipHash;

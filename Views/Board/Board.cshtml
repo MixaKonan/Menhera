@@ -8,7 +8,7 @@
     Layout = "_Layout";
 }
 <head>
-    
+
     <title>@ViewBag.Board.Title</title>
 </head>
 <body>
@@ -29,175 +29,189 @@
     </div>
 </header>
 <section>
-@if (ViewBag.UserIsBanned)
-{
-    <div style="text-align: center; margin: 0 300px 0 10%;">
-        <h1 >Вы забанены</h1>
-        <h2>По причине: @ViewBag.BanReason</h2>
-        <h2>Конец бана: @ViewBag.BanEnd</h2>
-    </div>
-}
-else
-{
-    <div class="form" style="margin-bottom: 17px">
-        @using (Html.BeginForm("AddThread", "Board", FormMethod.Post, new {enctype = "multipart/form-data"}))
+    @if (ViewBag.UserIsBanned)
+    {
+        <div style="text-align: center;">
+            <h1 >Вы забанены</h1>
+            <h2>По причине: @ViewBag.BanReason</h2>
+            <h2>Конец бана: @ViewBag.BanEnd</h2>
+        </div>
+    }
+    else
+    {
+        <div class="form" style="margin-bottom: 17px">
+            @using (Html.BeginForm("AddThread", "Board", FormMethod.Post, new {enctype = "multipart/form-data"}))
+            {
+                if (ViewBag.Board.AnonHasNoName)
+                {
+                    <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field full-email">
+                }
+                else
+                {
+                    <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field email">
+                    <input asp-for="AnonName" type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
+                }
+
+                <input type="submit" value="Пост" class="field submit" id="submit">
+                <input asp-for="BoardId" type="hidden" value="@ViewBag.Board.BoardId">
+                <input asp-for="AnonIpHash" type="hidden" value="@ViewBag.UserIp">
+
+                if (ViewBag.Board.HasSubject)
+                {
+                    <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
+                }
+                <textarea asp-for="Comment" class="field comment" placeholder="( . .)φ__"></textarea>
+                if (ViewBag.Board.FilesAreAllowed)
+                {
+                    <input type="file" name="files" id="files" multiple class="field">
+                }
+                <input type="checkbox" name="op" value="1" id="op">
+                <label for="op">
+                    оп
+                </label>
+            }
+        </div>
+    }
+    <div class="functional-menu">
+        <a asp-controller="MainPage" asp-action="Main">Главная</a>
+        <a asp-controller="Board" asp-action="Search" asp-route-prefix="@ViewBag.Board.Prefix">Поиск</a>
+        @if (User.Identity.IsAuthenticated)
         {
-            if (ViewBag.Board.AnonHasNoName)
-            {
-                <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field full-email">
-            }
-            else
-            {
-                <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field email">
-                <input asp-for="AnonName" type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
-            }
-
-            <input type="submit" value="Пост" class="field submit" id="submit">
-            <input asp-for="BoardId" type="hidden" value="@ViewBag.Board.BoardId">
-            <input asp-for="AnonIpHash" type="hidden" value="@ViewBag.UserIp">
-
-            if (ViewBag.Board.HasSubject)
-            {
-                <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
-            }
-            <textarea asp-for="Comment" class="field comment" placeholder="( . .)φ__"></textarea>
-            if (ViewBag.Board.FilesAreAllowed)
-            {
-                <input type="file" name="files" id="files" multiple class="field">
-            }
-            <input type="checkbox" name="op" value="1" id="op">
-            <label for="op">
-                оп
-            </label>
+            <a asp-controller="Admin" asp-action="Panel">Управление</a>
         }
     </div>
-}
-<div class="functional-menu">
-    <a asp-controller="MainPage" asp-action="Main">Главная</a>
-    <a asp-controller="Board" asp-action="Search" asp-route-prefix="@ViewBag.Board.Prefix">Поиск</a>
-    @if (User.Identity.IsAuthenticated)
-    {
-        <a asp-controller="Admin" asp-action="Panel">Управление</a>
-    }
-</div>
-<div class="threads">
-    @foreach (var item in ViewBag.BoardViewModel)
-    {
-        ViewBag.Thread = item.Key;
-        ViewBag.PostFiles = item.Value;
-        @foreach (var postFiles in ViewBag.PostFiles)
+    <div class="threads">
+        @foreach (var item in ViewBag.BoardViewModel)
         {
-            ViewBag.Post = postFiles.Key;
-            ViewBag.Files = postFiles.Value;
-            <span id="@ViewBag.Thread.ThreadId">
-                <article>
-                    <div class="thread-header">
-                        @{
-                            if (!string.IsNullOrEmpty(ViewBag.Post.Subject))
-                            {
-                                <span class="subject">
-                                    @ViewBag.Post.Subject
-                                </span>
-                            }
-                            if (ViewBag.Post.AnonIpHash == ViewBag.UserIpHash)
-                            {
-                                <span class="your-thread">
-                                </span>
-                            }
-                            if (!string.IsNullOrEmpty(ViewBag.Post.Email) && !string.IsNullOrEmpty(ViewBag.Post.AnonName))
-                            {
-                                <span class="name">
-                                    <a href="mailto:@ViewBag.FirstPost.Email">
+            ViewBag.Thread = item.Key;
+            ViewBag.PostFiles = item.Value;
+            @foreach (var postFiles in ViewBag.PostFiles)
+            {
+                ViewBag.Post = postFiles.Key;
+                ViewBag.Files = postFiles.Value;
+                <span id="@ViewBag.Thread.ThreadId">
+                    <article>
+                        <div class="thread-header">
+                            @{
+                                if (!string.IsNullOrEmpty(ViewBag.Post.Subject))
+                                {
+                                    <span class="subject">
+                                        @ViewBag.Post.Subject
+                                    </span>
+                                }
+                                if (ViewBag.Post.AnonIpHash == ViewBag.UserIpHash)
+                                {
+                                    <span class="your-thread">
+                                    </span>
+                                }
+                                if (!string.IsNullOrEmpty(ViewBag.Post.Email) && !string.IsNullOrEmpty(ViewBag.Post.AnonName))
+                                {
+                                    <span class="name">
+                                        <a href="mailto:@ViewBag.FirstPost.Email">
+                                            @ViewBag.Post.AnonName
+                                        </a>
+                                    </span>
+                                }
+                                else if (!string.IsNullOrEmpty(ViewBag.Post.AnonName))
+                                {
+                                    <span class="name">
                                         @ViewBag.Post.AnonName
-                                    </a>
-                                </span>
-                            }
-                            else if (!string.IsNullOrEmpty(ViewBag.Post.AnonName))
-                            {
-                                <span class="name">
-                                    @ViewBag.Post.AnonName
-                                </span>
-                            }
-                            if (ViewBag.Post.AnonIpHash == ViewBag.Thread.OpIpHash)
-                            {
-                                <span style="color: green; ">
-                                    #OP
-                                </span>
-                            }
-                            if (IpCheck.IpBelongsToAdmin(ViewBag.Post.AnonIpHash, AdminCollection.Admins, out Admin admin))
-                            {
-                                @admin.Login
-                            }
-                            <i></i>
-                            @DateTimeOffset.FromUnixTimeSeconds(ViewBag.Post.TimeInUnixSeconds).DateTime
-                            <a href="/Thread/Thread/@ViewBag.Post.ThreadId#@ViewBag.Post.PostId">#@ViewBag.Post.ThreadId</a>
-            <a asp-controller="Board" asp-action="Report" asp-route-postId="@ViewBag.Post.PostId">Репорт</a>
-                            if (User.Identity.IsAuthenticated)
-                            {
-                                ViewBag.Id += 1;
-                                <a class="deletePost" id="deleteLink-@ViewBag.Id">Удалить пост</a>
-                                <input class="deleteInput" id="deleteInput-@ViewBag.Id" type="hidden" value="@ViewBag.Post.PostId">
+                                    </span>
+                                }
+                                if (ViewBag.Post.AnonIpHash == ViewBag.Thread.OpIpHash)
+                                {
+                                    <span style="color: green; ">
+                                        #OP
+                                    </span>
+                                }
+                                if (IpCheck.IpBelongsToAdmin(ViewBag.Post.AnonIpHash, AdminCollection.Admins, out Admin admin))
+                                {
+                                    @admin.Login
+                                }
                                 <i></i>
-                                <a class="open-button" id="open-button-@ViewBag.Id">
-                                    Забанить
-                                </a>
-                                <div class="form-popup form-container" id="myForm-@ViewBag.Id">
-                                    <button type="button" class="close-button" id="close-button-@ViewBag.Id">X</button>
-                                    <h1 class="popup-title"> (。U ω U。) Причина</h1>
-                                    <textarea class="report-reason" id="report-reason-@ViewBag.Id" required></textarea>
-                                    <div class="popup-banTime">Окончанние бана:
-                                        <input type="text" class="banCalendar" id="banCalendar-@ViewBag.Id" required>
+                                @DateTimeOffset.FromUnixTimeSeconds(ViewBag.Post.TimeInUnixSeconds).DateTime
+                                <i></i>
+                                <a href="/Thread/Thread/@ViewBag.Post.ThreadId#@ViewBag.Post.PostId">#@ViewBag.Post.ThreadId</a>
+                                <span id="options">
+                                    @{ ViewBag.Id += 1; }
+                                    <a style="padding: 4px;">
+                                        Ответ
+                                    </a>
+                                    <button class="optionsButton" id="optionsButton-@ViewBag.Id">▶</button>
+                                    <div class="optionsList" id="optionsList-@ViewBag.Id">
+                                        <a asp-controller="Board" asp-action="Report" asp-route-postId="@ViewBag.Post.PostId" style="padding-left: 4px;">
+                                            Репорт
+                                        </a>
+                                        @if (User.Identity.IsAuthenticated)
+                                        {
+                                            <br>
+                                            <a class="deletePost" id="deleteLink-@ViewBag.Id" style="padding: 4px;">
+                                                Удалить пост
+                                            </a>
+                                            <input class="deleteInput" id="deleteInput-@ViewBag.Id" type="hidden" value="@ViewBag.Post.PostId">
+                                            <br>
+                                            <a class="open-button" id="open-button-@ViewBag.Id" style="padding-left: 4px;">
+                                                Забанить
+                                            </a>
+                                            <div class="form-popup form-container" id="myForm-@ViewBag.Id">
+                                                <button type="button" class="close-button" id="close-button-@ViewBag.Id">X</button>
+                                                <h1 class="popup-title"> (。U ω U。) Причина</h1>
+                                                <textarea class="report-reason" id="report-reason-@ViewBag.Id" required></textarea>
+                                                <div class="popup-banTime">
+                                                    Окончанние бана:
+                                                    <input type="text" class="banCalendar" id="banCalendar-@ViewBag.Id" required>
+                                                </div>
+                                                <input type="hidden" class="banIpHash" id="banIpHash-@ViewBag.Id" value="@ViewBag.Post.AnonIpHash">
+                                                <button type="submit" class="report-btn" id="report-btn-@ViewBag.Id">Забанить</button>
+                                            </div>
+                                        }
                                     </div>
-                                    <input type="hidden" class="banIpHash" id="banIpHash-@ViewBag.Id" value="@ViewBag.Post.AnonIpHash">
-                                    <button type="submit" class="report-btn" id="report-btn-@ViewBag.Id">Забанить</button>
+                                </span>
+                                if (ViewBag.Post.IsPinned)
+                                {
+                                    <img src="images/pinned.png" alt="pinned.png">
+                                }
+                                if (ViewBag.Thread.IsClosed)
+                                {
+                                    <img src="images/closed.png" alt="closed.png">
+                                }
+                                foreach (var file in ViewBag.Files)
+                                {
+                                    <figure>
+                                        <figcaption>
+                                            <a href="/images/@file.FileName" title="@file.FileName" target="_blank">
+                                                @file.ThumbnailName
+                                            </a>
+                                            <br>
+                                            @file.Info
+                                        </figcaption>
+                                        <a href="/images/@file.FileName" target="_blank">
+                                            <img src="/thumbnails/@file.ThumbnailName" alt="@file.ThumbnailName">
+                                        </a>
+                                    </figure>
+                                }
+                                <div class="comment">
+                                    @ViewBag.Post.Comment
                                 </div>
                             }
-            <a asp-controller="Thread" asp-action="Thread" asp-route-id="@ViewBag.Post.PostId">Ответ</a>
-                            if (ViewBag.Post.IsPinned)
-                            {
-                                <img src="images/pinned.png" alt="pinned.png">
-                            }
-                            if (ViewBag.Thread.IsClosed)
-                            {
-                                <img src="images/closed.png" alt="closed.png">
-                            }
-                            foreach (var file in ViewBag.Files)
-                            {
-                                <figure>
-                                    <figcaption>
-                                        <a href="/images/@file.FileName" title="@file.FileName" target="_blank">
-                                            @file.ThumbnailName
-                                        </a>
-                                        <br>
-                                        @file.Info
-                                    </figcaption>
-                                    <a href="/images/@file.FileName" target="_blank">
-                                        <img src="/thumbnails/@file.ThumbnailName" alt="@file.ThumbnailName">
-                                    </a>
-                                </figure>
-                            }
-                            <div class="comment">
-                                @ViewBag.Post.Comment
-                            </div>
-                        }
-                    </div>
-                </article>
-                <br>
-            </span>
+                        </div>
+                    </article>
+                    <br>
+                </span>
+            }
         }
+    </div>
+    @if (ViewBag.PageInfo.TotalPages > 1)
+    {
+        <div class="pages-num">
+            @for (var i = 1; i <= ViewBag.PageInfo.TotalPages; i++)
+            {
+                <a asp-action="Board" asp-route-prefix="@ViewBag.Board.Prefix" asp-route-page="@i">
+                    @i
+                </a>
+            }
+        </div>
     }
-</div>
-@* @if (ViewBag.ThreadViewModel.PageViewModel.TotalPages > 1) *@
-@* { *@
-@*     <div class="pages-num"> *@
-@*         @for (var i = 1; i <= ViewBag.ThreadViewModel.PageViewModel.TotalPages; i++) *@
-@*         { *@
-@*             <a asp-action="Board" asp-route-prefix="@ViewBag.Board.Prefix" asp-route-page="@i"> *@
-@*                 @i *@
-@*             </a> *@
-@*         } *@
-@*     </div> *@
-@* } *@
 </section>
 <input type="hidden" value="@ViewBag.FileLimit" id="fileLimit">
 <input type="hidden" value="@ViewBag.Board.Prefix" id="boardPrefix">
@@ -213,5 +227,7 @@ else
     <script src="/js/banPopup.js"></script>
 }
 <script src="/js/formValidation.js"></script>
+<script src="/js/postMenuPopup.js"></script>
 <script src="/js/datepicker.js"></script>
+<script src="/js/postFormat.js"></script>
 </body>

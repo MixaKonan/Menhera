@@ -224,9 +224,6 @@ aside a {
     color: #fff;
 }
 
-.form {
-}
-
 .form input[type="checkbox"] {
     float: left;
 }
@@ -255,6 +252,20 @@ aside a {
     color: #d68eea;
     content: '●';
     vertical-align: text-bottom;
+}
+
+.optionsButton {
+    border: none;
+    background: rgb(220, 210, 223);
+    padding: 0px 2px 1px 4px;
+    color: rgb(156, 104, 171);
+}
+
+.optionsList {
+    display: none;
+    position: relative;
+    background: rgb(220, 210, 223);
+    left: auto;
 }
 
 article .subject {
