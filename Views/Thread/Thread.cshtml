@@ -1,5 +1,4 @@
 ﻿@using Menhera.Classes.Anon
-@using System.Text.RegularExpressions
 @model Post
 @inject Menhera.Intefaces.IBoardCollection BoardCollection
 @inject Menhera.Intefaces.IAdminCollection AdminCollection
@@ -11,6 +10,7 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
     <title>Тред №@ViewBag.Thread.ThreadId</title>
 </head>
@@ -187,7 +187,7 @@
                                 </figure>
                             }
                             <div class="comment">
-                                @postsFiles.Key.Comment
+                                <span style="white-space: pre-line">@Html.Raw(postsFiles.Key.Comment)</span>
                             </div>
                         }
                     </div>
@@ -211,5 +211,6 @@
     <script src="/js/datepicker.js"></script>
 }
 <script src="/js/formValidation.js"></script>
+@* <script src="/js/postFormat.js"></script> *@
 </body>
 </html>

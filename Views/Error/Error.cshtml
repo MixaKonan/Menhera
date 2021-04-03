@@ -33,26 +33,29 @@
         </ul>
     </nav>
 </aside>
-<div class="container">
-    <h1 class="error">@ViewBag.StatusCode</h1>
-    <br>
-    @if (ViewBag.StatusCode == 500)
-    {
-        <h2 class="error-msg">Внутренняя ошибка сервера</h2>
-    }
-    @if (ViewBag.StatusCode == 404)
-    {
-        <h2 class="error-msg">Такой странички не существует</h2>
-    }
-    else
-    {
-        <h2 class="error-msg">Ошибка</h2>
-    }
-    <br>
-    <a asp-controller="MainPage" asp-action="Main">Вернуться на главную</a>
-    <br/>
-    <img class="ops" src="/images/menhera-oops.png" alt="menhera"/>
-</div>
+<div class="anime">
+            <div class="error">
+                <div class="error-container">
+                    @switch (ViewBag.StatusCode)
+                    {
+                        case 500:
+                            <h1>500</h1>
+                            <h2>Внутренняя ошибка сервера</h2>
+                            break;
+                            
+                        case 404:
+                            <h1>404</h1>
+                            <h2>Такой странички не существует</h2>
+                            break;
+                            
+                        default:
+                            <h1>500</h1>
+                            <h2>Произошла ошибка</h2>
+                           break;
+                    }
+                    <a asp-controller="MainPage" asp-action="Main">Вернуться на главную</a>
+                </div>
+            </div>
+        </div>
 </body>
-
 </html>

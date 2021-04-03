@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using Menhera.Classes.Anon;
+using Menhera.Classes.Constants;
 using Menhera.Classes.Db;
 using Menhera.Classes.Files;
+using Menhera.Classes.PostFormatting;
 using Menhera.Database;
 using Menhera.Extensions;
 using Menhera.Models;
@@ -23,6 +26,10 @@ namespace Menhera.Controllers
         private readonly IWebHostEnvironment _env;
         
         private readonly MD5CryptoServiceProvider _md5;
+
+        private readonly Regex _lineBreakRegex;
+        private readonly Regex _postReferenceRegex;
+        
         
         public ThreadController(MenherachanContext db, IWebHostEnvironment env)
         {
@@ -30,6 +37,9 @@ namespace Menhera.Controllers
             _env = env;
 
             _md5 = new MD5CryptoServiceProvider();
+            
+            _lineBreakRegex = new Regex(Constants.HTML_POST_END_LINE_BREAK_PATTERN, RegexOptions.Compiled);
+            _postReferenceRegex = new Regex(Constants.HTML_POST_REFERENCE_PATTERN, RegexOptions.Compiled);
         }
 
         [HttpGet]
@@ -70,6 +80,8 @@ namespace Menhera.Controllers
 
                         foreach (var post in posts)
                         {
+                            post.Comment = PostFormatter.GetFormattedPostText(post);
+                            
                             postsFiles.Add(post, post.File.ToList());
                         }
 
@@ -117,7 +129,7 @@ namespace Menhera.Controllers
 
                     if (files.Count > 0)
                     {
-                        var fileDirectory = Path.Combine(_env.WebRootPath, "images");
+                        var fileDirectory = Path.Combine(_env.WebRootPath, "postImages");
 
                         var thumbNailDirectory = Path.Combine(_env.WebRootPath, "thumbnails");
 

@@ -21,9 +21,6 @@ namespace Menhera.Classes.Files
         private string FileFullPath { get; }
         private string ThumbnailDirectory { get; }
         private string ThumbnailFullPath { get; }
-        
-        private const double ThumbW = 200;
-        private const double ThumbH = 200;
 
         public ImageThumbnailCreator(IFormFile file, string fileDirectory, string thumbNailDirectory)
         {
@@ -46,7 +43,7 @@ namespace Menhera.Classes.Files
             ImgInfo = new ImageInformation(FileName, ThumbnailName, ImageInfo);
         }
 
-        public async Task CreateThumbnailAsync(double width = ThumbW, double height = ThumbH)
+        public async Task CreateThumbnailAsync(double width = Constants.Constants.THUMBNAIL_WIDTH, double height = Constants.Constants.THUMBNAIL_HEIGHT)
         {
             await using (Stream fileSaveStream = new FileStream(FileFullPath, FileMode.Create))
             {
@@ -94,7 +91,7 @@ namespace Menhera.Classes.Files
             }
         }
         
-        public void CreateThumbnail(double width = ThumbW, double height = ThumbH)
+        public void CreateThumbnail(double width = Constants.Constants.THUMBNAIL_WIDTH, double height = Constants.Constants.THUMBNAIL_HEIGHT)
         {
             using (Stream fileSaveStream = new FileStream(FileFullPath, FileMode.Create))
             {

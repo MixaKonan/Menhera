@@ -191,7 +191,7 @@
                                     </figure>
                                 }
                                 <div class="comment">
-                                    @ViewBag.Post.Comment
+                                    <span style="white-space: pre-line">@Html.Raw(ViewBag.Post.Comment)</span>
                                 </div>
                             }
                         </div>
@@ -229,5 +229,4 @@
 <script src="/js/formValidation.js"></script>
 <script src="/js/postMenuPopup.js"></script>
 <script src="/js/datepicker.js"></script>
-<script src="/js/postFormat.js"></script>
 </body>

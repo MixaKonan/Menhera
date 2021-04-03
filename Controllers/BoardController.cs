@@ -13,6 +13,7 @@ using Menhera.Classes.Anon;
 using Menhera.Classes.Db;
 using Menhera.Classes.Files;
 using Menhera.Classes.Pagination;
+using Menhera.Classes.PostFormatting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -59,7 +60,7 @@ namespace Menhera.Controllers
 
                 if (files.Count > 0)
                 {
-                    var fileDirectory = Path.Combine(_env.WebRootPath, "images");
+                    var fileDirectory = Path.Combine(_env.WebRootPath, "postImages");
 
                     var thumbNailDirectory = Path.Combine(_env.WebRootPath, "thumbnails");
 
@@ -168,8 +169,7 @@ namespace Menhera.Controllers
                 var pageInfo = new PageInfo( page, PageSize, allThreads.Count);
 
                 var pageThreads = new List<KeyValuePair<Thread, List<KeyValuePair<Post, List<File>>>>>();
-
-
+                
                 for (var i = (page - 1) * PageSize; i < page * PageSize; i++)
                 {
                     try
@@ -179,6 +179,14 @@ namespace Menhera.Controllers
                     catch (ArgumentOutOfRangeException)
                     {
                         break;
+                    }
+                }
+                
+                foreach (var pt in pageThreads)
+                {
+                    foreach (var pf in pt.Value)
+                    {
+                        pf.Key.Comment = PostFormatter.GetFormattedPostText(pf.Key);
                     }
                 }
 
