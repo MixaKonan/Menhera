@@ -203,10 +203,6 @@ namespace Menhera.Controllers
             return View();
         }
 
-        [HttpPost]
-        public void Report(int postId)
-        {
-        }
 
         public IActionResult Search(string prefix)
         {

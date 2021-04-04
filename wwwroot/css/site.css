@@ -315,6 +315,7 @@ article .comment {
     border-radius: 4px;
     background: rgba(220, 210, 223, 0.4);
     padding: 8px;
+    margin-right: 250px;
     overflow-y: auto;
 }
 
