@@ -1,0 +1,16 @@
+.optionsButton {
+    border: none;
+    background: rgb(220, 210, 223);
+    padding: 0 2px 1px 4px;
+    color: rgb(156, 104, 171);
+}
+
+.dropdown {
+    display: inline-block;
+}
+
+.optionsList{
+    display: none;
+    position: absolute;
+    background: rgb(220, 210, 223);
+}

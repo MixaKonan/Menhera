@@ -1,0 +1,123 @@
+﻿@using Menhera.Classes.Anon
+@model Menhera.Models.Report
+@inject Menhera.Intefaces.IBoardCollection BoardCollection
+@inject Menhera.Intefaces.IAdminCollection AdminCollection
+
+@{
+    ViewBag.Title = "Репорт";
+    Layout = "_Layout";
+}
+<head>
+    <title>@ViewBag.Board.Title</title>
+</head>
+<body>
+<header>
+    <div class="to-main">
+        <a asp-action="Main" asp-controller="MainPage">
+            На башорг!
+        </a>
+    </div>
+    <div class="board">
+        /@ViewBag.Board.Prefix/<span class="postfix">@BoardCollection.PrePostFixes.First(pair => pair.Key == ViewBag.Board.Prefix).Value</span>
+    </div>
+    <div class="title">
+        @ViewBag.Board.Title
+        <div class="description">
+            @ViewBag.Board.Description
+        </div>
+    </div>
+</header>
+<section>
+    @if (ViewBag.UserIsBanned)
+    {
+        <div style="text-align: center;">
+            <h1 >Вы забанены</h1>
+            <h2>По причине: @ViewBag.BanReason</h2>
+            <h2>Конец бана: @ViewBag.BanEnd</h2>
+        </div>
+    }
+    else
+    {
+        <div class="form" style="margin-bottom: 17px">
+            <input id="post-id" value="@ViewBag.PostFiles.Key.PostId" type="hidden">
+            <textarea id="reason" asp-for="Reason" class="field comment" placeholder="Опишите причину репорта. Макс. количество символов -- 5000"></textarea>
+            <button type="submit" class="field submit" id="submit">Репорт</button>
+        </div>
+    }
+    <div class="posts threads">
+        <span id="@ViewBag.PostFiles.Key.PostId">
+            @{
+                var className = "post";
+                if (ViewBag.PostFiles.Key.AnonIpHash == ViewBag.UserIpHash)
+                {
+                    className = "your-post";
+                }
+            }
+            <article class="@className">
+                <div class="thread-header">
+                    @{
+                        if (!string.IsNullOrEmpty(ViewBag.PostFiles.Key.Subject))
+                        {
+                            <span class="subject">
+                                @ViewBag.PostFiles.Key.Subject
+                            </span>
+                        }
+                        if (!string.IsNullOrEmpty(ViewBag.PostFiles.Key.Email) && !string.IsNullOrEmpty(ViewBag.PostFiles.Key.AnonName))
+                        {
+                            <span class="name">
+                                <a href="mailto:@ViewBag.PostFiles.Key.Email">
+                                    @ViewBag.PostFiles.Key.AnonName
+                                </a>
+                            </span>
+                        }
+                        else if (!string.IsNullOrEmpty(ViewBag.PostFiles.Key.AnonName))
+                        {
+                            <span class="name">
+                                @ViewBag.PostFiles.Key.AnonName
+                            </span>
+                        }
+                        if (ViewBag.PostFiles.Key.AnonIpHash == ViewBag.Thread.OpIpHash)
+                        {
+                            <span style="color: green; ">
+                                #OP
+                            </span>
+                        }
+                        if (IpCheck.IpBelongsToAdmin(ViewBag.PostFiles.Key.AnonIpHash, AdminCollection.Admins, out Admin admin_))
+                        {
+                            @admin_.Login
+                        }
+                        <i></i>
+                        @DateTimeOffset.FromUnixTimeSeconds(ViewBag.PostFiles.Key.TimeInUnixSeconds).DateTime
+                        <i></i>
+                        <a href="/Thread/Thread/@ViewBag.PostFiles.Key.ThreadId#@ViewBag.PostFiles.Key.PostId">#@ViewBag.PostFiles.Key.PostId</a>
+                        foreach (var file in ViewBag.PostFiles.Value)
+                        {
+                            <figure>
+                                <figcaption>
+                                    <a href="/images/@file.FileName" title="@file.FileName" target="_blank">
+                                        @file.ThumbnailName
+                                    </a>
+                                    <br>
+                                    @file.Info
+                                </figcaption>
+                                <a href="/images/@file.FileName" target="_blank">
+                                    <img src="/thumbnails/@file.ThumbnailName" alt="@file.ThumbnailName">
+                                </a>
+                            </figure>
+                        }
+                        <div class="comment">
+                            <span style="white-space: pre-line">@Html.Raw(ViewBag.PostFiles.Key.Comment)</span>
+                        </div>
+                    }
+                </div>
+            </article>
+        </span>
+
+    </div>
+</section>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js" integrity="sha512-s5u/JBtkPg+Ff2WEr49/cJsod95UgLHbC00N/GglqdQuLnYhALncz8ZHiW/LxDRGduijLKzeYb7Aal9h3codZA==" crossorigin="anonymous"></script>
+
+<script src="/js/report.js"></script>
+</body>
