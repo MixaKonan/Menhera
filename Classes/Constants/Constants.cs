@@ -17,5 +17,11 @@
         public const string HTML_POST_UNDERLINED_TEXT_PATTERN = @"\[u\](.+)\[/u\]";
         
         public const string HTML_POST_INCORRECT_TEXT_PATTERN = @"\[s\](.+)\[/s\]";
+
+        public const string HTML_POST_QUOTE_TEXT_PATTERN = @"^(>)\s*(.+)[\r|\n|$]";
+        
+        public const string HTML_TAGS_TEXT_PATTERN = @"<.*?>";
+        
+        public const int BOARD_PAGE_SIZE = 10;
     }
 }

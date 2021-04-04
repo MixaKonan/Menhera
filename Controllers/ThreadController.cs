@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 using Menhera.Classes.Anon;
-using Menhera.Classes.Constants;
 using Menhera.Classes.Db;
 using Menhera.Classes.Files;
 using Menhera.Classes.PostFormatting;
@@ -27,19 +25,12 @@ namespace Menhera.Controllers
         
         private readonly MD5CryptoServiceProvider _md5;
 
-        private readonly Regex _lineBreakRegex;
-        private readonly Regex _postReferenceRegex;
-        
-        
         public ThreadController(MenherachanContext db, IWebHostEnvironment env)
         {
             _db = db;
             _env = env;
 
             _md5 = new MD5CryptoServiceProvider();
-            
-            _lineBreakRegex = new Regex(Constants.HTML_POST_END_LINE_BREAK_PATTERN, RegexOptions.Compiled);
-            _postReferenceRegex = new Regex(Constants.HTML_POST_REFERENCE_PATTERN, RegexOptions.Compiled);
         }
 
         [HttpGet]
@@ -120,6 +111,7 @@ namespace Menhera.Controllers
                     return RedirectToAction("YouAreBanned", "Ban");
                 }
 
+                post.Comment = PostFormatter.GetHtmlTrimmedComment(post);
                 post.AnonIpHash = ipHash;
                 post.TimeInUnixSeconds = DateTimeOffset.Now.ToUnixTimeSeconds();
 

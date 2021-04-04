@@ -10,6 +10,7 @@ using Menhera.Extensions;
 using Menhera.Intefaces;
 using Menhera.Models;
 using Menhera.Classes.Anon;
+using Menhera.Classes.Constants;
 using Menhera.Classes.Db;
 using Menhera.Classes.Files;
 using Menhera.Classes.Pagination;
@@ -23,8 +24,6 @@ namespace Menhera.Controllers
 {
     public class BoardController : Controller
     {
-        private const int PageSize = 10;
-
         private readonly MenherachanContext _db;
         private readonly IBoardCollection _collection;
         private readonly IWebHostEnvironment _env;
@@ -56,6 +55,7 @@ namespace Menhera.Controllers
             if (ModelState.IsValid)
             {
                 post.AnonIpHash = ipHash;
+                post.Comment = PostFormatter.GetHtmlTrimmedComment(post);
                 DbAccess.AddThreadToBoard(_db, ref post);
 
                 if (files.Count > 0)
@@ -166,11 +166,11 @@ namespace Menhera.Controllers
                     }
                 }
 
-                var pageInfo = new PageInfo( page, PageSize, allThreads.Count);
+                var pageInfo = new PageInfo( page, Constants.BOARD_PAGE_SIZE, allThreads.Count);
 
                 var pageThreads = new List<KeyValuePair<Thread, List<KeyValuePair<Post, List<File>>>>>();
                 
-                for (var i = (page - 1) * PageSize; i < page * PageSize; i++)
+                for (var i = (page - 1) * pageInfo.PageSize; i < page * pageInfo.PageSize; i++)
                 {
                     try
                     {
