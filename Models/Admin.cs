@@ -18,10 +18,10 @@ namespace Menhera.Models
         public string Login { get; set; }
         public string Email { get; set; }
         public string PasswordHash { get; set; }
-        public bool CanDeletePosts { get; set; }
-        public bool CanCloseThreads { get; set; }
-        public bool HasAccessToPanel { get; set; }
-        public bool CanBanUsers { get; set; }
+        public bool? CanDeletePosts { get; set; }
+        public bool? CanCloseThreads { get; set; }
+        public bool? HasAccessToPanel { get; set; }
+        public bool? CanBanUsers { get; set; }
         public string AdminIpHash { get; set; }
 
         public virtual ICollection<Ban> Ban { get; set; }

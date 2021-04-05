@@ -54,6 +54,10 @@ namespace Menhera.Controllers
 
             if (ModelState.IsValid)
             {
+                if (_db.Thread.Count() >= 20)
+                {
+                    return RedirectToAction("Board");
+                }
                 post.AnonIpHash = ipHash;
                 post.Comment = PostFormatter.GetHtmlTrimmedComment(post);
                 DbAccess.AddThreadToBoard(_db, ref post);
@@ -132,10 +136,13 @@ namespace Menhera.Controllers
                     return RedirectToAction("Error", "Error", new {statusCode = 404});
                 }
 
-                foreach (var thrd in board.Thread)
+                ViewBag.ThreadCount = board.Thread.Count;
+
+                foreach (var thrd in board.Thread.OrderByDescending(t => t.BumpInUnixTime))
                 {
                     var thread = _db.Thread.Include(t => t.Post).First(t => t.ThreadId == thrd.ThreadId);
 
+                    
                     if (thread != null)
                     {
                         var postFiles = new List<KeyValuePair<Post, List<File>>>();

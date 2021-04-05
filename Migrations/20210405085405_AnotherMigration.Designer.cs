@@ -3,14 +3,16 @@ using System;
 using Menhera.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Menhera.Migrations
 {
     [DbContext(typeof(MenherachanContext))]
-    partial class MenherachanContextModelSnapshot : ModelSnapshot
+    [Migration("20210405085405_AnotherMigration")]
+    partial class AnotherMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,22 +33,19 @@ namespace Menhera.Migrations
                         .HasAnnotation("MySql:CharSet", "utf8mb4")
                         .HasAnnotation("MySql:Collation", "utf8mb4_general_ci");
 
-                    b.Property<bool?>("CanBanUsers")
-                        .IsRequired()
+                    b.Property<bool>("CanBanUsers")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("can_ban_users")
                         .HasColumnType("tinyint(1)")
                         .HasDefaultValueSql("b'0'");
 
-                    b.Property<bool?>("CanCloseThreads")
-                        .IsRequired()
+                    b.Property<bool>("CanCloseThreads")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("can_close_threads")
                         .HasColumnType("tinyint(1)")
                         .HasDefaultValueSql("b'0'");
 
-                    b.Property<bool?>("CanDeletePosts")
-                        .IsRequired()
+                    b.Property<bool>("CanDeletePosts")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("can_delete_posts")
                         .HasColumnType("tinyint(1)")
@@ -59,8 +58,7 @@ namespace Menhera.Migrations
                         .HasAnnotation("MySql:CharSet", "utf8mb4")
                         .HasAnnotation("MySql:Collation", "utf8mb4_general_ci");
 
-                    b.Property<bool?>("HasAccessToPanel")
-                        .IsRequired()
+                    b.Property<bool>("HasAccessToPanel")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("has_access_to_panel")
                         .HasColumnType("tinyint(1)")
@@ -298,7 +296,8 @@ namespace Menhera.Migrations
                         .HasAnnotation("MySql:CharSet", "utf8mb4")
                         .HasAnnotation("MySql:Collation", "utf8mb4_general_ci");
 
-                    b.Property<bool>("IsPinned")
+                    b.Property<bool?>("IsPinned")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnName("is_pinned")
                         .HasColumnType("tinyint(1)")
@@ -315,10 +314,8 @@ namespace Menhera.Migrations
                         .HasColumnType("int(11)");
 
                     b.Property<long>("TimeInUnixSeconds")
-                        .ValueGeneratedOnAdd()
                         .HasColumnName("time_in_unix_seconds")
-                        .HasColumnType("bigint(20)")
-                        .HasDefaultValueSql("'unix_timestamp(current_timestamp())'");
+                        .HasColumnType("bigint(20)");
 
                     b.HasKey("PostId");
 

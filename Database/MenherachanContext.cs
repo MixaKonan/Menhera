@@ -32,8 +32,8 @@ namespace Menhera.Database
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql("server=192.168.0.10;port=3306;database=Menherachan;uid=mixakonan;pwd=fater181;treattinyasboolean=true",
-                    x => x.ServerVersion("10.3.27-mariadb"));
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseMySql("server=192.168.0.10;port=3306;database=Menherachan;uid=mixakonan;pwd=fater181;treattinyasboolean=false", x => x.ServerVersion("10.3.27-mariadb"));
             }
         }
 
@@ -120,7 +120,7 @@ namespace Menhera.Database
 
                 entity.Property(e => e.BanTimeInUnixSeconds)
                     .HasColumnName("ban_time_in_unix_seconds")
-                    .HasColumnType("bigint");
+                    .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.Reason)
                     .IsRequired()
@@ -309,7 +309,7 @@ namespace Menhera.Database
                 entity.Property(e => e.BoardId)
                     .HasColumnName("board_id")
                     .HasColumnType("int(11)");
-                
+
                 entity.Property(e => e.Comment)
                     .IsRequired()
                     .HasColumnName("comment")
@@ -340,7 +340,8 @@ namespace Menhera.Database
 
                 entity.Property(e => e.TimeInUnixSeconds)
                     .HasColumnName("time_in_unix_seconds")
-                    .HasColumnType("bigint");
+                    .HasColumnType("bigint(20)")
+                    .HasDefaultValueSql("'unix_timestamp(current_timestamp())'");
 
                 entity.HasOne(d => d.Board)
                     .WithMany(p => p.Post)
@@ -384,7 +385,7 @@ namespace Menhera.Database
 
                 entity.Property(e => e.ReportTimeInUnixSeconds)
                     .HasColumnName("report_time_in_unix_seconds")
-                    .HasColumnType("bigint");
+                    .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.ThreadId)
                     .HasColumnName("thread_id")
@@ -423,6 +424,10 @@ namespace Menhera.Database
                 entity.Property(e => e.BoardId)
                     .HasColumnName("board_id")
                     .HasColumnType("int(11)");
+
+                entity.Property(e => e.BumpInUnixTime)
+                    .HasColumnName("bump_in_unix_time")
+                    .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.IsClosed)
                     .IsRequired()

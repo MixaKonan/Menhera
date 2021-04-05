@@ -28,7 +28,7 @@ namespace Menhera.Classes.PostFormatting
             var breaksTrimmed = _lineBreakRegex.Replace(post.Comment, "");
             
             var referenceAdded = _postReferenceRegex.Replace(breaksTrimmed,
-                $"<a href=\"/Thread/Thread/{post.ThreadId}#$2\">$1$2</a>");
+                $"<a href=\"/Thread/Thread/{post.ThreadId}#$2\" class=\"post-link\">$1$2</a>");
             
             var boldAdded = _postBoldTextRegex.Replace(referenceAdded, "<b>$1</b>");
             var italicAdded = _postItalicTextRegex.Replace(boldAdded, "<i>$1</i>");

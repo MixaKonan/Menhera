@@ -21,6 +21,7 @@ namespace Menhera.Models
         public bool IsClosed { get; set; }
         public string OpIpHash { get; set; }
         public string AnonName { get; set; }
+        public long BumpInUnixTime { get; set; }
 
         public virtual Board Board { get; set; }
         public virtual ICollection<File> File { get; set; }

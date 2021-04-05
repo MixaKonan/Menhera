@@ -1,12 +1,9 @@
 ﻿#nullable enable
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Menhera.Classes.Files;
 using Menhera.Database;
 using Menhera.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 
 namespace Menhera.Classes.Db
 {
@@ -34,7 +31,7 @@ namespace Menhera.Classes.Db
             db.SaveChanges();
         }
 
-        public static void AddPostToThread(MenherachanContext db, Post post)
+        public static void AddPostToThread(MenherachanContext db, Post post, bool sage)
         {
             var thread = db.Thread.First(t => t.ThreadId == post.ThreadId);
 
@@ -43,6 +40,10 @@ namespace Menhera.Classes.Db
                 throw new InvalidOperationException();
             }
 
+            if (!sage)
+            {
+                thread.BumpInUnixTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            }
             db.Post.Add(post);
             db.SaveChanges();
         }

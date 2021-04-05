@@ -64,10 +64,6 @@
                 {
                     <input type="file" name="files" id="files" multiple class="field">
                 }
-                <input type="checkbox" name="op" value="1" id="op">
-                <label for="op">
-                    оп
-                </label>
             }
         </div>
     }
@@ -130,7 +126,7 @@
                                 <i></i>
                                 @DateTimeOffset.FromUnixTimeSeconds(ViewBag.Post.TimeInUnixSeconds).DateTime
                                 <i></i>
-                                <a href="/Thread/Thread/@ViewBag.Post.ThreadId#@ViewBag.Post.PostId">#@ViewBag.Post.ThreadId</a>
+                                <a href="/Thread/Thread/@ViewBag.Post.ThreadId#@ViewBag.Post.PostId" class="post-link">#@ViewBag.Post.ThreadId</a>
                                 <div class="dropdown">
                                     @{ ViewBag.Id += 1; }
                                     <a style="padding: 4px;">
@@ -215,6 +211,8 @@
 <input type="hidden" value="@ViewBag.FileLimit" id="fileLimit">
 <input type="hidden" value="@ViewBag.Board.Prefix" id="boardPrefix">
 <input type="hidden" value="@ViewBag.Page" id="page">
+<input type="hidden" value="@ViewBag.ThreadCount" id="threadCount">
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>

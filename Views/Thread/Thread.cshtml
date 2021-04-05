@@ -55,7 +55,7 @@
                 {
                     if (ViewBag.Board.AnonHasNoName)
                     {
-                        <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field full-email">
+                        <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field full-email" id="email">
                     }
                     else
                     {
@@ -77,9 +77,9 @@
                     {
                         <input type="file" name="files" id="files" multiple class="field">
                     }
-                    <input type="checkbox" name="op" value="1" id="op">
-                    <label for="op">
-                        оп
+                    <input type="checkbox" name="sage" value="true" id="sage">
+                    <label>
+                        мудрец
                     </label>
                 }
             </div>
@@ -140,7 +140,7 @@
                             <i></i>
                             @DateTimeOffset.FromUnixTimeSeconds(postFiles.Key.TimeInUnixSeconds).DateTime
                             <i></i>
-                            <a href="/Thread/Thread/@postFiles.Key.ThreadId#@postFiles.Key.PostId">#@postFiles.Key.PostId</a>
+                            <a href="/Thread/Thread/@postFiles.Key.ThreadId#@postFiles.Key.PostId" class="post-link" id="post-link-@ViewBag.Key.PostId">#@postFiles.Key.PostId</a>
                                 <div class="dropdown" id="options">
                                     @{ ViewBag.Id += 1; }
                                     <a style="padding: 4px;">
@@ -225,5 +225,7 @@
 }
 <script src="/js/formValidation.js"></script>
 <script src="/js/postMenuPopup.js"></script>
+<script src="/js/sage.js"></script>
+<script src="/js/highlight.js"></script>
 </body>
 </html>

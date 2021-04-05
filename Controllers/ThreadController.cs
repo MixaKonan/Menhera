@@ -97,7 +97,7 @@ namespace Menhera.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddPost(Post post, List<IFormFile> files)
+        public IActionResult AddPost(Post post, List<IFormFile> files, bool sage)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace Menhera.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    DbAccess.AddPostToThread(_db, post);
+                    DbAccess.AddPostToThread(_db, post, sage);
 
                     if (files.Count > 0)
                     {

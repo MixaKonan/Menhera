@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Menhera.Attributes;
-using Menhera.Classes;
-using Microsoft.AspNetCore.Http;
+
+// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
+// If you have enabled NRTs for your project, then un-comment the following line:
+// #nullable disable
 
 namespace Menhera.Models
 {
@@ -29,11 +28,5 @@ namespace Menhera.Models
         public virtual Board Board { get; set; }
         public virtual Thread Thread { get; set; }
         public virtual ICollection<File> File { get; set; }
-        
-        [NotMapped]
-        [DataType(DataType.Upload)]
-        [MaxFileSize(5242880)]
-        [AllowedExtensions(new[] {"jpeg", "jpg", "webm", "png", "gif"})]
-        public List<IFormFile> FormFiles { get; set; }
     }
 }
