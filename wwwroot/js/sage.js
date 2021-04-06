@@ -1,7 +1,7 @@
 ﻿const checkbox =  document.getElementById("sage");
 const email =  document.getElementById("email");
 
-function SageThread()
+function sageThread()
 {
     if(checkbox.checked)
     {
@@ -13,4 +13,4 @@ function SageThread()
     }
 }
 
-checkbox.onchange = SageThread;
+checkbox.onchange = sageThread;

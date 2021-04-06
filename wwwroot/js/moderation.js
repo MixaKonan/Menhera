@@ -1,7 +1,7 @@
 ﻿document.querySelectorAll(".deletePost").forEach(item =>
-    item.addEventListener('click', () => DeletePost(item.id)))
+    item.addEventListener('click', () => deletePost(item.id)))
 
-function DeletePost(stringId) {
+function deletePost(stringId) {
     let id = "";
 
     for(let i = 11; i < stringId.length; i++) {

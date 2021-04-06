@@ -1,17 +1,23 @@
 ﻿const links = document.querySelectorAll(".post-link");
 
-function Highlight(linkId) {
+async function highlight(linkId) {
     let postId = "";
-    
-    for(let i = 10; i < linkId.length; i++) {
+
+    for (let i = 10; i < linkId.length; i++) {
         postId += linkId[i];
     }
-    
-    let post = document.getElementById(postId);
-    
-    post.style.background = "rgba(249, 193, 231, 0.4)";
+
+    let post = document.getElementById("post-".concat(postId));
+
+    post.style.animationPlayState = "running";
+    await sleep(2000);
+    post.style.animationPlayState = "paused";
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 links.forEach(item => item.addEventListener('click',
-    () => Highlight(item.id)));
+    () => highlight(item.id)));
 

@@ -55,7 +55,7 @@
                 {
                     if (ViewBag.Board.AnonHasNoName)
                     {
-                        <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field full-email" id="email">
+                        <input asp-for="Email" type="text" name="email" placeholder="Email" autocomplete="off" class="field full-email" id="email">
                     }
                     else
                     {
@@ -104,7 +104,7 @@
                         className = "your-post";
                     }
                 }
-                <article class="@className">
+                <article class="@className" id="post-@postFiles.Key.PostId">
                     <div class="thread-header">
                         @{
                             if (!string.IsNullOrEmpty(postFiles.Key.Subject))
@@ -140,7 +140,7 @@
                             <i></i>
                             @DateTimeOffset.FromUnixTimeSeconds(postFiles.Key.TimeInUnixSeconds).DateTime
                             <i></i>
-                            <a href="/Thread/Thread/@postFiles.Key.ThreadId#@postFiles.Key.PostId" class="post-link" id="post-link-@ViewBag.Key.PostId">#@postFiles.Key.PostId</a>
+                            <a href="/Thread/Thread/@postFiles.Key.ThreadId#@postFiles.Key.PostId">#@postFiles.Key.PostId</a>
                                 <div class="dropdown" id="options">
                                     @{ ViewBag.Id += 1; }
                                     <a style="padding: 4px;">

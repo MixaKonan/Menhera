@@ -52,9 +52,9 @@ namespace Menhera
                 app.UseExceptionHandler("/Error/Error");
                 app.UseHsts();
             }
-
-            app.UseStatusCodePages();
             
+            app.UseStatusCodePagesWithRedirects("/Error/Error?statusCode={0}");
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

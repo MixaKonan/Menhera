@@ -82,16 +82,14 @@ namespace Menhera.Controllers
                     }
                     catch (ArgumentOutOfRangeException)
                     {
-                        Response.StatusCode = 404;
-                        return RedirectToAction("Error", "Error", new {statusCode = Response.StatusCode});
+                        return NotFound();
                     }
                    
                 }
             }
             catch (InvalidOperationException)
             {
-                Response.StatusCode = 500;
-                return RedirectToAction("Error", "Error", new {statusCode = Response.StatusCode});
+                return NotFound();
             }
             return View();
         }
@@ -145,13 +143,12 @@ namespace Menhera.Controllers
                 }
                 else
                 {
-                    RedirectToAction("Error", "Error", new {statusCode = 500});
+                    return StatusCode(500);
                 }
             }
             catch (InvalidOperationException)
             {
-                Response.StatusCode = 404;
-                return RedirectToAction("Error", "Error");
+                return NotFound();
             }
 
             return RedirectToAction("Thread", new {id = post.ThreadId});

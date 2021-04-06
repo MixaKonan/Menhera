@@ -65,7 +65,7 @@ namespace Menhera.Controllers
             }
             catch (Exception)
             {
-                return RedirectToAction("Error", "Error", new {statusCode = 404});
+                return NotFound();
             }
         }
         

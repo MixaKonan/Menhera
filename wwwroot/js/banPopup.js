@@ -4,7 +4,7 @@ const closeFormButtons = document.querySelectorAll(".close-button");
 const submitButtons = document.querySelectorAll(".report-btn");
 
 submitButtons.forEach(item => item.addEventListener('click',
-    () => BanAnon(item.id)))
+    () => banAnon(item.id)))
 
 openFormButtons.forEach(item => item.addEventListener('click',
     () => openForm(item.id)));
@@ -12,7 +12,7 @@ openFormButtons.forEach(item => item.addEventListener('click',
 closeFormButtons.forEach(item => item.addEventListener('click',
     () => closeForm(item.id)));
 
-function BanAnon(stringId) {
+function banAnon(stringId) {
     let id = "";
 
     for (let i = 11; i < stringId.length; i++) {

@@ -58,6 +58,7 @@ namespace Menhera.Controllers
                 {
                     return RedirectToAction("Board");
                 }
+
                 post.AnonIpHash = ipHash;
                 post.Comment = PostFormatter.GetHtmlTrimmedComment(post);
                 DbAccess.AddThreadToBoard(_db, ref post);
@@ -132,8 +133,7 @@ namespace Menhera.Controllers
                 }
                 else
                 {
-                    Response.StatusCode = 404;
-                    return RedirectToAction("Error", "Error", new {statusCode = 404});
+                    return NotFound();
                 }
 
                 ViewBag.ThreadCount = board.Thread.Count;
@@ -142,7 +142,7 @@ namespace Menhera.Controllers
                 {
                     var thread = _db.Thread.Include(t => t.Post).First(t => t.ThreadId == thrd.ThreadId);
 
-                    
+
                     if (thread != null)
                     {
                         var postFiles = new List<KeyValuePair<Post, List<File>>>();
@@ -173,10 +173,10 @@ namespace Menhera.Controllers
                     }
                 }
 
-                var pageInfo = new PageInfo( page, Constants.BOARD_PAGE_SIZE, allThreads.Count);
+                var pageInfo = new PageInfo(page, Constants.BOARD_PAGE_SIZE, allThreads.Count);
 
                 var pageThreads = new List<KeyValuePair<Thread, List<KeyValuePair<Post, List<File>>>>>();
-                
+
                 for (var i = (page - 1) * pageInfo.PageSize; i < page * pageInfo.PageSize; i++)
                 {
                     try
@@ -188,7 +188,7 @@ namespace Menhera.Controllers
                         break;
                     }
                 }
-                
+
                 foreach (var pt in pageThreads)
                 {
                     foreach (var pf in pt.Value)
@@ -198,24 +198,56 @@ namespace Menhera.Controllers
                 }
 
                 ViewBag.PageInfo = pageInfo;
-                
+
                 ViewBag.BoardViewModel = pageThreads;
             }
             catch (InvalidOperationException)
             {
-                Response.StatusCode = 404;
-                return RedirectToAction("Error", "Error", new {statusCode = 404});
+                return NotFound();
             }
 
             return View();
         }
 
 
-        public IActionResult Search(string prefix)
+        [HttpGet]
+        public IActionResult Search(string prefix, string query = "")
         {
-            var board = _collection.Boards.First(brd => brd.Prefix == prefix);
+            try
+            {
+                
+                var postsFiles = new Dictionary<Post, List<File>>();
+            
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        var boardId = _collection.Boards.First(brd => brd.Prefix == prefix).BoardId;
+                        
+                        var posts = _db.Post.Where(p =>
+                                p.BoardId == boardId && (p.Comment.Contains(query) || p.Subject.Contains(query)))
+                            .Include(p => p.File).ToList();
 
-            return View(board);
+                        foreach (var post in posts)
+                        {
+                            postsFiles.Add(post, post.File.ToList());
+                        }
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        return NotFound();
+                    }
+                }
+                ViewBag.Board = _collection.Boards.First(brd => brd.Prefix == prefix);
+                ViewBag.PostsFiles = postsFiles;
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound();
+            }
+
+            return View();
         }
     }
+    
 }
