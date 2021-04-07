@@ -7,164 +7,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
-  <!--  Meta  -->
-  <meta charset="UTF-8" />
-  <title>Admin Panel</title>
-  
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!--  Meta  -->
+    <meta charset="UTF-8"/>
+    <title>Admin Panel</title>
+
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
 </head>
 <body>
-  <nav class="navbar navbar-inverse">
+<nav class="navbar navbar-inverse">
     <div class="container">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" asp-action="Panel">
-          <div class="prefix">/admin/<span class="postfix">ка</span></div>
-        </a>
-      </div>
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-          <li>
-            <a asp-controller="MainPage" asp-action="Main">
-              Главная
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" asp-action="Panel">
+                <div class="prefix">/admin/<span class="postfix">ка</span></div>
             </a>
-          </li>
-        </ul>
-        <div class="pull-right">
-          <a asp-controller="Auth" asp-action="Logout" class="btn btn-info btn-lg">
-            <span class="glyphicon glyphicon-log-out"></span> Выйти
-          </a>
         </div>
-      </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a asp-controller="MainPage" asp-action="Main">
+                        Главная
+                    </a>
+                </li>
+            </ul>
+            <div class="pull-right">
+                <a asp-controller="Auth" asp-action="Logout" class="btn btn-info btn-lg">
+                    <span class="glyphicon glyphicon-log-out"></span> Выйти
+                </a>
+            </div>
+        </div>
     </div>
-  </nav>
-  <div class="breadcrumbs">
+</nav>
+<div class="breadcrumbs">
     <div class="container">
-      <ol class="breadcrumb">
-        <li><a asp-action="Panel">Главная</a></li>
-        <li class="active"><a href="#">Добавить</a></li>
-      </ol>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-action="Panel">Главная</a>
+            </li>
+            <li class="active">
+                <a href="#">Добавить</a>
+            </li>
+        </ol>
     </div>
-  </div>
-  <div class="container">
+</div>
+<div class="container">
     <br>
     <br>
     <div class="well">
-      <ul class="nav nav-pills nav-justified">
-        <li class="active"><a asp-action="Boards" data-toggle="tab">Добавить доску</a></li>
-        <li><a asp-action="Admins" data-toggle="tab">Добавить администратора</a></li>
-      </ul>
-      
-      <div class="tab-content">
-        <br>
-        <div id="add-board" class="tab-pane fade in active">
-          <div class="row">
-           <form>
-             <div class="col-xs-12">
-              <div class="form-group">
-                <label asp-for="Board.Prefix">Префикс</label>
-                <input asp-for="Board.Prefix" type="search" maxlength="15" class="form-control" placeholder="Префикс">
-              </div>
-              <div class="form-group">
-                <label asp-for="Board.Postfix">Постфикс</label>
-                <input asp-for="Board.Postfix" type="text" maxlength="15" class="form-control" placeholder="Постфикс">
-              </div>
-              <div class="form-group">
-                <label asp-for="Board.Title">Заголовок</label>
-                <input asp-for="Board.Title" type="text" maxlength="30" class="form-control" placeholder="Заголовок">
-              </div>
-              <div class="form-group">
-                <label asp-for="Board.Description">Описание</label>
-                <textarea asp-for="Board.Description" class="form-control"></textarea>
-              </div>
-            </div>
-              <div class="col-xs-3">
-                <label asp-for="Board.IsHidden">Скрывать доску?</label>
-                <select asp-for="Board.IsHidden" class="form-control">
-                  <option value="True">Да</option>
-                  <option value="False">Нет</option>
-                </select>
-              </div>
-              <div class="col-xs-3">
-                <label asp-for="Board.AnonHasNoName">Есть ли стандартное имя у анона?</label>
-                <select asp-for="Board.AnonHasNoName" class="form-control">
-                  <option value="True">Да</option>
-                  <option value="False">Нет</option>
-                </select>
-              </div>
-              <div class="col-xs-3">
-                <label asp-for="Board.HasSubject">Возможность вставлять тему?</label>
-                <select class="form-control">
-                  <option value="True">Да</option>
-                  <option value="False">Нет</option>
-                </select>
-              </div>
-            <div class="col-xs-3">
-              <label asp-for="Board.FilesAreAllowed">Разрешить файлы</label>
-              <select asp-for="Board.FilesAreAllowed" class="form-control">
-                <option value="True">Да</option>
-                <option value="False">Нет</option>
-              </select>
+        <ul class="nav nav-pills nav-justified">
+            <li class="active">
+                <a href="#add-board" data-toggle="tab">Добавить доску</a>
+            </li>
+            <li>
+                <a href="#add-admin" data-toggle="tab">Добавить администратора</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <br>
+            <div id="add-board" class="tab-pane fade in active">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <label asp-for="Board.Prefix">Префикс</label>
+                            <input asp-for="Board.Prefix" type="search" maxlength="15" class="form-control" id="board-prefix" placeholder="Префикс">
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Board.Postfix">Постфикс</label>
+                            <input asp-for="Board.Postfix" type="text" maxlength="15" class="form-control" id="board-postfix" placeholder="Постфикс">
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Board.Title">Заголовок</label>
+                            <input asp-for="Board.Title" type="text" maxlength="30" class="form-control" id="board-title" placeholder="Заголовок">
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Board.Description">Описание</label>
+                            <textarea asp-for="Board.Description" class="form-control" id="board-description"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        <label asp-for="Board.IsHidden">Скрывать доску?</label>
+                        <select asp-for="Board.IsHidden" class="form-control" id="board-isHidden">
+                            <option value="True">Да</option>
+                            <option value="False">Нет</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-3">
+                        <label asp-for="Board.AnonHasNoName">Есть ли стандартное имя у анона?</label>
+                        <select asp-for="Board.AnonHasNoName" class="form-control" id="board-anonHasNoName">
+                            <option value="True">Да</option>
+                            <option value="False">Нет</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-3">
+                        <label asp-for="Board.HasSubject">Возможность вставлять тему?</label>
+                        <select asp-for="Board.HasSubject" class="form-control" id="board-hasSubject">
+                            <option value="True">Да</option>
+                            <option value="False">Нет</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-3">
+                        <label asp-for="Board.FilesAreAllowed">Разрешить файлы</label>
+                        <select asp-for="Board.FilesAreAllowed" class="form-control" id="board-filesAreAllowed">
+                            <option value="True">Да</option>
+                            <option value="False">Нет</option>
+                        </select>
+                    </div>
+
+                    <div class="col-xs-12">
+                        <br>
+                        <div class="form-group">
+                            <label asp-for="Board.FileLimit">Лимит файлов в посте</label>
+                            <input asp-for="Board.FileLimit" type="text" class="form-control" id="board-fileLimit" placeholder="Title">
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Board.AnonName">Anon Name</label>
+                            <input type="text" maxlength="20" class="form-control" id="board-anonName" placeholder="Оставьте пустым, если не разрешаете стандартное имя.">
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <br>
+                        <div class="pull-right">
+                            <input type="submit" class="btn btn-primary" id="board-submit" value="Подтвердить"/>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-xs-12">
-              <br>
-              <div class="form-group">
-                <label asp-for="Board.FileLimit">Лимит файлов в посте</label>
-                <input asp-for="Board.FileLimit" type="text" class="form-control" placeholder="Title">
-              </div>
-              <div class="form-group">
-                <label asp-for="Board.AnonName">Anon Name</label>
-                <input type="text" maxlength="20" class="form-control" placeholder="Оставьте пустым, если не разрешаете стандартное имя.">
-              </div>
+            <div id="add-admin" class="tab-pane fade">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <br>
+                        <div class="form-group">
+                            <label asp-for="Admin.Email">Email</label>
+                            <input asp-for="Admin.Email" type="email" class="form-control" id="admin-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Admin.Login">Логин</label>
+                            <input asp-for="Admin.Login" type="text" class="form-control" id="admin-login" required>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Admin.PasswordHash">Хэш пароля (SHA-256)</label>
+                            <input asp-for="Admin.PasswordHash" type="text" class="form-control" id="admin-password" required>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Admin.AdminIpHash">Хэш IP админа (MD-5)</label>
+                            <input asp-for="Admin.AdminIpHash" type="text" class="form-control" id="admin-ipHash" required>
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        <label asp-for="Admin.CanBanUsers">Может банить</label>
+                        <select asp-for="Admin.CanBanUsers" class="form-control" id="admin-canBanUsers">
+                            <option value="True">Да</option>
+                            <option value="False">Нет</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-3">
+                        <label asp-for="Admin.CanCloseThreads">Может закрывать/удалять треды</label>
+                        <select asp-for="Admin.CanCloseThreads" class="form-control" id="admin-canCloseThreads">
+                            <option value="True">Да</option>
+                            <option value="False">Нет</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-3">
+                        <label asp-for="Admin.CanDeletePosts">Может удалять посты</label>
+                        <select asp-for="Admin.CanDeletePosts" class="form-control" id="admin-canDeletePosts">
+                            <option value="True">Да</option>
+                            <option value="False">Нет</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-3">
+                        <label asp-for="Admin.HasAccessToPanel">Имеет доступ к панели</label>
+                        <select asp-for="Admin.HasAccessToPanel" class="form-control" id="admin-hasAccessToPanel">
+                            <option value="True">Да</option>
+                            <option value="False">Нет</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="pull-right">
+                        <input type="submit" class="btn btn-primary" id="admin-submit" value="Подтвердить"/>
+                    </div>
+                </div>
             </div>
-            <div class="col-xs-12">
-              <br>
-              <div class="pull-right">
-                <input type="submit" class="btn btn-primary" value="Подтвердить"/>
-              </div>
-            </div>
-           </form>
-          </div>
         </div>
-
-        <div id="add-admin" class="tab-pane fade">
-          <div class="row">
-            <form>
-            <div class="col-xs-12">
-              <br>
-              <div class="form-group">
-                <label asp-for="Admin.Email">Email</label>
-                <input asp-for="Admin.Email" type="email" class="form-control">
-              </div>
-              <div class="form-group">
-                <label asp-for="Admin.Login">Login</label>
-                <input asp-for="Admin.Login" type="text" class="form-control">
-              </div>
-              <div class="form-group">
-                <label asp-for="Admin.PasswordHash">Password</label>
-                <input asp-for="Admin.PasswordHash" type="text" class="form-control">
-              </div>
-              <div class="pull-right">
-                <input type="submit" class="btn btn-primary" value="Подтвердить"/>
-              </div>
-            </div>
-            </form>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/addAdmin.js"></script>
+<script src="/js/addBoard.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js" integrity="sha512-s5u/JBtkPg+Ff2WEr49/cJsod95UgLHbC00N/GglqdQuLnYhALncz8ZHiW/LxDRGduijLKzeYb7Aal9h3codZA==" crossorigin="anonymous"></script>
 </body>
 </html>

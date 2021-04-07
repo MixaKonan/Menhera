@@ -210,34 +210,37 @@ namespace Menhera.Controllers
         }
 
 
-        [HttpGet]
         public IActionResult Search(string prefix, string query = "")
         {
             try
             {
-                
                 var postsFiles = new Dictionary<Post, List<File>>();
-            
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        var boardId = _collection.Boards.First(brd => brd.Prefix == prefix).BoardId;
-                        
-                        var posts = _db.Post.Where(p =>
-                                p.BoardId == boardId && (p.Comment.Contains(query) || p.Subject.Contains(query)))
-                            .Include(p => p.File).ToList();
 
-                        foreach (var post in posts)
+                if (!string.IsNullOrWhiteSpace(query) || !string.IsNullOrEmpty(query))
+                {
+                    if (ModelState.IsValid)
+                    {
+                        try
                         {
-                            postsFiles.Add(post, post.File.ToList());
+                            var boardId = _collection.Boards.First(brd => brd.Prefix == prefix).BoardId;
+
+                            var posts = _db.Post.Where(p =>
+                                    p.BoardId == boardId && (p.Comment.Contains(query) || p.Subject.Contains(query)))
+                                .Include(p => p.File).Take(50).ToList();
+
+                            foreach (var post in posts)
+                            {
+                                post.Comment = PostFormatter.GetFormattedPostText(post);
+                                postsFiles.Add(post, post.File.ToList());
+                            }
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            return NotFound();
                         }
                     }
-                    catch (InvalidOperationException)
-                    {
-                        return NotFound();
-                    }
                 }
+
                 ViewBag.Board = _collection.Boards.First(brd => brd.Prefix == prefix);
                 ViewBag.PostsFiles = postsFiles;
             }

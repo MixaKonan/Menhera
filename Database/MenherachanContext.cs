@@ -32,7 +32,6 @@ namespace Menhera.Database
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseMySql("server=192.168.0.10;port=3306;database=Menherachan;uid=mixakonan;pwd=fater181;treattinyasboolean=false", x => x.ServerVersion("10.3.27-mariadb"));
             }
         }

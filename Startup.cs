@@ -53,7 +53,7 @@ namespace Menhera
                 app.UseHsts();
             }
             
-            app.UseStatusCodePagesWithRedirects("/Error/Error?statusCode={0}");
+            //app.UseStatusCodePagesWithRedirects("/Error/Error?statusCode={0}");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
