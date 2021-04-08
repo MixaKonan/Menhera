@@ -7,7 +7,7 @@ namespace Menhera.Controllers
         public IActionResult Error(int statusCode)
         {
             ViewBag.StatusCode = statusCode;
-            
+
             return View();
         }
     }

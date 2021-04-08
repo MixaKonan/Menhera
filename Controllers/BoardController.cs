@@ -252,5 +252,4 @@ namespace Menhera.Controllers
             return View();
         }
     }
-    
 }

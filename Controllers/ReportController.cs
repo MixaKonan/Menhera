@@ -17,18 +17,17 @@ namespace Menhera.Controllers
     {
         private readonly MenherachanContext _db;
         private readonly IBoardCollection _collection;
-        
+
         private readonly MD5CryptoServiceProvider _md5;
 
         public ReportController(MenherachanContext db, IBoardCollection collection)
         {
             _db = db;
             _collection = collection;
-            
-            _md5 = new MD5CryptoServiceProvider();
 
+            _md5 = new MD5CryptoServiceProvider();
         }
-        
+
         [HttpGet]
         public IActionResult Report(int postId)
         {
@@ -48,15 +47,15 @@ namespace Menhera.Controllers
                 ViewBag.BanReason = ban.Reason;
                 ViewBag.BanEnd = DateTimeOffset.FromUnixTimeSeconds(ban.Term).ToLocalTime();
             }
-            
+
             try
             {
                 var post = _db.Post.Include(p => p.File).First(p => p.PostId == postId) ?? throw new Exception();
-                
+
                 ViewBag.Board = _collection.Boards.First(brd => brd.BoardId == post.BoardId);
 
                 ViewBag.Thread = _db.Thread.First(t => t.ThreadId == post.ThreadId);
-                
+
                 post.Comment = PostFormatter.GetFormattedPostText(post);
 
                 ViewBag.PostFiles = new KeyValuePair<Post, List<File>>(post, post.File.ToList());
@@ -68,7 +67,7 @@ namespace Menhera.Controllers
                 return NotFound();
             }
         }
-        
+
         [HttpPost]
         public void Report(int postId, string reason)
         {
@@ -82,7 +81,7 @@ namespace Menhera.Controllers
                 Reason = reason,
                 ReportTimeInUnixSeconds = DateTimeOffset.Now.ToUnixTimeSeconds(),
             };
-            
+
             _db.Report.Add(report);
             _db.SaveChanges();
         }

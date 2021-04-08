@@ -47,108 +47,108 @@
     </div>
 </section>
 <div class="posts threads">
-        @foreach (var postFiles in ViewBag.PostsFiles)
-        {
-            <span id="@postFiles.Key.PostId">
-                @{
-                    var className = "post";
-                    if (postFiles.Key.AnonIpHash == ViewBag.UserIpHash)
-                    {
-                        className = "your-post";
-                    }
+    @foreach (var postFiles in ViewBag.PostsFiles)
+    {
+        <span id="@postFiles.Key.PostId">
+            @{
+                var className = "post";
+                if (postFiles.Key.AnonIpHash == ViewBag.UserIpHash)
+                {
+                    className = "your-post";
                 }
-                <article class="@className" id="post-@postFiles.Key.PostId">
-                    <div class="thread-header">
-                        @{
-                            if (!string.IsNullOrEmpty(postFiles.Key.Subject))
-                            {
-                                <span class="subject">
-                                    @postFiles.Key.Subject
-                                </span>
-                            }
-                            if (!string.IsNullOrEmpty(postFiles.Key.Email) && !string.IsNullOrEmpty(postFiles.Key.AnonName))
-                            {
-                                <span class="name">
-                                    <a href="mailto:@postFiles.Key.Email">
-                                        @postFiles.Key.AnonName
-                                    </a>
-                                </span>
-                            }
-                            else if (!string.IsNullOrEmpty(postFiles.Key.AnonName))
-                            {
-                                <span class="name">
-                                    @postFiles.Key.AnonName
-                                </span>
-                            }
-                            if (IpCheck.IpBelongsToAdmin(postFiles.Key.AnonIpHash, AdminCollection.Admins, out Admin admin_))
-                            {
-                                @admin_.Login
-                            }
-                            <i></i>
-                            @DateTimeOffset.FromUnixTimeSeconds(postFiles.Key.TimeInUnixSeconds).DateTime
-                            <i></i>
-                            <a href="/Thread/Thread/@postFiles.Key.ThreadId#@postFiles.Key.PostId">#@postFiles.Key.PostId</a>
-                                <div class="dropdown" id="options">
-                                    @{ ViewBag.Id += 1; }
-                                    <a style="padding: 4px;">
-                                        Ответ
-                                    </a>
-                                    <button class="optionsButton" id="optionsButton-@ViewBag.Id">▶</button>
-                                    <div class="optionsList" id="optionsList-@ViewBag.Id">
-                                        <a asp-controller="Report" asp-action="Report" asp-route-postId="@postFiles.Key.PostId" style="padding-left: 4px;">
-                                            Репорт
-                                        </a>
-                                        @if (User.Identity.IsAuthenticated)
-                                        {
-                                            <br>
-                                            <a class="deletePost" id="deleteLink-@ViewBag.Id" style="padding: 4px;">
-                                                Удалить пост
-                                            </a>
-                                            <input class="deleteInput" id="deleteInput-@ViewBag.Id" type="hidden" value="@postFiles.Key.PostId">
-                                            <br>
-                                            <a class="open-button" id="open-button-@ViewBag.Id" style="padding-left: 4px;">
-                                                Забанить
-                                            </a>
-                                            <div class="form-popup form-container" id="myForm-@ViewBag.Id">
-                                                <button type="button" class="close-button" id="close-button-@ViewBag.Id">X</button>
-                                                <h1 class="popup-title"> (。U ω U。) Причина</h1>
-                                                <textarea class="report-reason" id="report-reason-@ViewBag.Id" required></textarea>
-                                                <div class="popup-banTime">
-                                                    Окончанние бана:
-                                                    <input type="text" class="banCalendar" id="banCalendar-@ViewBag.Id" required>
-                                                </div>
-                                                <input type="hidden" class="banIpHash" id="banIpHash-@ViewBag.Id" value="@postFiles.Key.AnonIpHash">
-                                                <button type="submit" class="report-btn" id="report-btn-@ViewBag.Id">Забанить</button>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            if (postFiles.Key.IsPinned)
-                            {
-                                <img src="images/pinned.png" alt="pinned.png">
-                            }
-                            foreach (var file in postFiles.Value)
-                            {
-                                <figure>
-                                    <figcaption>
-                                        <a href="/images/@file.FileName" title="@file.FileName" target="_blank">
-                                            @file.ThumbnailName
-                                        </a>
-                                        <br>
-                                        @file.Info
-                                    </figcaption>
-                                    <a href="/images/@file.FileName" target="_blank">
-                                        <img src="/thumbnails/@file.ThumbnailName" alt="@file.ThumbnailName">
-                                    </a>
-                                </figure>
-                            }
-                            <div class="comment">
-                                <span style="white-space: pre-line">@Html.Raw(postFiles.Key.Comment)</span>
-                            </div>
+            }
+            <article class="@className" id="post-@postFiles.Key.PostId">
+                <div class="thread-header">
+                    @{
+                        if (!string.IsNullOrEmpty(postFiles.Key.Subject))
+                        {
+                            <span class="subject">
+                                @postFiles.Key.Subject
+                            </span>
                         }
-                    </div>
-                </article>
-            </span>
-        }
-    </div>
+                        if (!string.IsNullOrEmpty(postFiles.Key.Email) && !string.IsNullOrEmpty(postFiles.Key.AnonName))
+                        {
+                            <span class="name">
+                                <a href="mailto:@postFiles.Key.Email">
+                                    @postFiles.Key.AnonName
+                                </a>
+                            </span>
+                        }
+                        else if (!string.IsNullOrEmpty(postFiles.Key.AnonName))
+                        {
+                            <span class="name">
+                                @postFiles.Key.AnonName
+                            </span>
+                        }
+                        if (IpCheck.IpBelongsToAdmin(postFiles.Key.AnonIpHash, AdminCollection.Admins, out Admin admin_))
+                        {
+                            @admin_.Login
+                        }
+                        <i></i>
+                        @DateTimeOffset.FromUnixTimeSeconds(postFiles.Key.TimeInUnixSeconds).DateTime
+                        <i></i>
+                        <a href="/Thread/Thread/@postFiles.Key.ThreadId#@postFiles.Key.PostId">#@postFiles.Key.PostId</a>
+                        <div class="dropdown" id="options">
+                            @{ ViewBag.Id += 1; }
+                            <a style="padding: 4px;">
+                                Ответ
+                            </a>
+                            <button class="optionsButton" id="optionsButton-@ViewBag.Id">▶</button>
+                            <div class="optionsList" id="optionsList-@ViewBag.Id">
+                                <a asp-controller="Report" asp-action="Report" asp-route-postId="@postFiles.Key.PostId" style="padding-left: 4px;">
+                                    Репорт
+                                </a>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <br>
+                                    <a class="deletePost" id="deleteLink-@ViewBag.Id" style="padding: 4px;">
+                                        Удалить пост
+                                    </a>
+                                    <input class="deleteInput" id="deleteInput-@ViewBag.Id" type="hidden" value="@postFiles.Key.PostId">
+                                    <br>
+                                    <a class="open-button" id="open-button-@ViewBag.Id" style="padding-left: 4px;">
+                                        Забанить
+                                    </a>
+                                    <div class="form-popup form-container" id="myForm-@ViewBag.Id">
+                                        <button type="button" class="close-button" id="close-button-@ViewBag.Id">X</button>
+                                        <h1 class="popup-title"> (。U ω U。) Причина</h1>
+                                        <textarea class="report-reason" id="report-reason-@ViewBag.Id" required></textarea>
+                                        <div class="popup-banTime">
+                                            Окончанние бана:
+                                            <input type="text" class="banCalendar" id="banCalendar-@ViewBag.Id" required>
+                                        </div>
+                                        <input type="hidden" class="banIpHash" id="banIpHash-@ViewBag.Id" value="@postFiles.Key.AnonIpHash">
+                                        <button type="submit" class="report-btn" id="report-btn-@ViewBag.Id">Забанить</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        if (postFiles.Key.IsPinned)
+                        {
+                            <img src="images/pinned.png" alt="pinned.png">
+                        }
+                        foreach (var file in postFiles.Value)
+                        {
+                            <figure>
+                                <figcaption>
+                                    <a href="/images/@file.FileName" title="@file.FileName" target="_blank">
+                                        @file.ThumbnailName
+                                    </a>
+                                    <br>
+                                    @file.Info
+                                </figcaption>
+                                <a href="/images/@file.FileName" target="_blank">
+                                    <img src="/thumbnails/@file.ThumbnailName" alt="@file.ThumbnailName">
+                                </a>
+                            </figure>
+                        }
+                        <div class="comment">
+                            <span style="white-space: pre-line">@Html.Raw(postFiles.Key.Comment)</span>
+                        </div>
+                    }
+                </div>
+            </article>
+        </span>
+    }
+</div>
 </body>

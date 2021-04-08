@@ -14,6 +14,7 @@ namespace Menhera.Controllers
         private readonly MenherachanContext _db;
 
         private readonly Dictionary<Board, BoardInformation> _boardInfo = new Dictionary<Board, BoardInformation>();
+
         // GET
         public IActionResult Main()
         {
@@ -21,7 +22,7 @@ namespace Menhera.Controllers
             {
                 _boardInfo.Add(board, new BoardInformation(board, _db));
             }
-            
+
             return View(_boardInfo);
         }
 

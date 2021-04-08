@@ -1,103 +1,83 @@
-﻿
-@{
-    Layout = null;
+﻿@{
+    Layout = "_AdminLayout";
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
 
-  <!--  Meta  -->
-  <meta charset="UTF-8" />
-  <title>Admin Panel</title>
-
-  <!--  Styles  -->
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-inverse">
-  <div class="container">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a asp-action="Panel" class="navbar-brand">
-        <div class="prefix">/admin/<span class="postfix">ка</span></div>
-      </a>
-    </div>
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li>
-          <a asp-action="Panel">
-            Главная
-          </a>
-        </li>
-      </ul>
-      <div class="pull-right">
-        <a asp-controller="Auth" asp-action="Logout" class="btn btn-info btn-lg">
-          <span class="glyphicon glyphicon-log-out"></span> Выйти
-        </a>
-      </div>
-    </div>
-  </div>
-</nav>
+
 <div class="breadcrumbs">
-  <div class="container">
-    <ol class="breadcrumb">
-      <li><a asp-controller="MainPage" asp-action="Main">Главная</a></li>
-      <div class="pull-right">
-        <a asp-action="Create" class="btn btn-primary">
-          Добавить
-        </a>
-      </div>
-      <div class="clearfix"></div>
-    </ol>
-  </div>
+    <div class="container">
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="MainPage" asp-action="Main">Главная</a>
+            </li>
+            <div class="pull-right">
+                <a asp-action="Create" class="btn btn-primary">
+                    Добавить
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </ol>
+    </div>
 </div>
 
 <div class="container">
-  <br>
-  <div class="col-xs-12">
-    <div class="well">
-      <div class="pull-left">
-        <p>
-          Список администраторов
-        </p>
-      </div>
-      <div class="pull-right">
-        <a asp-action="Admins" class="btn btn-default">
-          Посмотреть
-        </a>
-      </div>
-      <div class="clearfix"></div>
+    <br>
+    <div class="col-xs-12">
+        <div class="well">
+            <div class="pull-left">
+                <p>
+                    Список администраторов
+                </p>
+            </div>
+            <div class="pull-right">
+                <a asp-action="Admins" class="btn btn-default">
+                    Посмотреть
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
     </div>
-  </div>
 </div>
 
 <div class="container">
-  <div class="col-xs-12">
-    <div class="well">
-      <div class="pull-left">
-        <p>
-          Список досок
-        </p>
-      </div>
-      <div class="pull-right">
-        <a asp-action="Boards" class="btn btn-default">
-          Посмотреть
-        </a>
-      </div>
-      <div class="clearfix"></div>
+    <div class="col-xs-12">
+        <div class="well">
+            <div class="pull-left">
+                <p>
+                    Список досок
+                </p>
+            </div>
+            <div class="pull-right">
+                <a asp-action="Boards" class="btn btn-default">
+                    Посмотреть
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
     </div>
-  </div>
+</div>
+
+<div class="container">
+    <div class="col-xs-12">
+        <div class="well">
+            <div class="pull-left">
+                <p>
+                    Список тредов
+                </p>
+            </div>
+            <div class="pull-right">
+                <a asp-action="Threads" class="btn btn-default">
+                    Посмотреть
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

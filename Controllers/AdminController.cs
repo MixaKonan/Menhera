@@ -6,6 +6,7 @@ using Menhera.Extensions;
 using Menhera.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Menhera.Controllers
 {
@@ -13,18 +14,32 @@ namespace Menhera.Controllers
     public class AdminController : Controller
     {
         private readonly MenherachanContext _db;
-        
-        
+
+        public AdminController(MenherachanContext db)
+        {
+            _db = db;
+        }
+
+        [HttpGet]
         public IActionResult Panel()
         {
             return View();
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
-        
+
+        [HttpGet]
+        public IActionResult Admins()
+        {
+            ViewBag.Id = 1;
+
+            return View();
+        }
+
         [HttpPost]
         public void AddAdmin(string email, string login, string passwordHash, string ipHash,
             bool canBanUsers, bool canCloseThreads, bool canDeletePosts, bool hasAccessToPanel)
@@ -52,9 +67,18 @@ namespace Menhera.Controllers
             _db.Admin.Remove(admin);
             _db.SaveChanges();
         }
-        
+
+        [HttpGet]
+        public IActionResult Boards()
+        {
+            ViewBag.Id = 1;
+
+            return View();
+        }
+
         [HttpPost]
-        public void AddBoard(string prefix, string postfix, string title, string description, short fileLimit , string anonName,
+        public void AddBoard(string prefix, string postfix, string title, string description, short fileLimit,
+            string anonName,
             bool isHidden, bool anonHasNoName, bool hasSubject, bool filesAreAllowed)
         {
             var board = new Board
@@ -82,30 +106,57 @@ namespace Menhera.Controllers
             _db.Board.Remove(board);
             _db.SaveChanges();
         }
-        
-        public IActionResult Admins()
+
+        [HttpGet]
+        public IActionResult Threads()
         {
-            ViewBag.Id = 1;
-            
+            ViewBag.Threads = _db.Thread.Include(t => t.Board).Include(t => t.Post).ToList();
+
             return View();
         }
-        
-        public IActionResult Boards()
+
+        [HttpPost]
+        public void RemoveThread(int threadId)
         {
-            ViewBag.Id = 1;
-            
+            var thread = _db.Thread.First(t => t.ThreadId == threadId);
+
+            _db.Thread.Remove(thread);
+            _db.SaveChanges();
+        }
+
+        [HttpPost]
+        public void CloseThread(int threadId)
+        {
+            var thread = _db.Thread.First(t => t.ThreadId == threadId);
+            thread.IsClosed = true;
+
+            _db.SaveChanges();
+        }
+
+
+        [HttpGet]
+        public IActionResult Reports()
+        {
+            ViewBag.Reports = _db.Report.Include(r => r.Board).ToList();
+
             return View();
+        }
+
+        [HttpPost]
+        public void RemoveReport(int reportId)
+        {
+            var report = _db.Report.First(r => r.ReportId == reportId);
+
+            _db.Remove(report);
+            _db.SaveChanges();
         }
 
         [HttpPost]
         public void DeletePost(int postId)
         {
-            var post = new Post {PostId = postId};
-            using (_db)
-            {
-                _db.Remove(post);
-                _db.SaveChanges();
-            }
+            var post = _db.Post.First(p => p.PostId == postId);
+            _db.Post.Remove(post);
+            _db.SaveChanges();
         }
 
         [HttpPost]
@@ -120,9 +171,9 @@ namespace Menhera.Controllers
                     _db.Ban.Remove(ban);
                 }
             }
-            
-            var banEnd = ((DateTimeOffset)DateTime.Parse(banEndTime)).ToUnixTimeSeconds();
-            
+
+            var banEnd = ((DateTimeOffset) DateTime.Parse(banEndTime)).ToUnixTimeSeconds();
+
             var adminIpHash = new MD5CryptoServiceProvider().ComputeHash
                     (HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
                 .GetString();
@@ -143,11 +194,6 @@ namespace Menhera.Controllers
                 _db.Ban.Add(ban);
                 _db.SaveChanges();
             }
-        }
-
-        public AdminController(MenherachanContext db)
-        {
-            _db = db;
         }
     }
 }

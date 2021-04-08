@@ -23,7 +23,7 @@ namespace Menhera.Classes.PostFormatting
             _postItalicTextRegex = new Regex(Constants.Constants.HTML_POST_ITALIC_TEXT_PATTERN, RegexOptions.Compiled);
             _postUnderlinedTextRegex = new Regex(Constants.Constants.HTML_POST_UNDERLINED_TEXT_PATTERN, RegexOptions.Compiled);
             _postIncorrectTextRegex = new Regex(Constants.Constants.HTML_POST_INCORRECT_TEXT_PATTERN, RegexOptions.Compiled);
-            _postQuoteTextRegex = new Regex(Constants.Constants.HTML_POST_QUOTE_TEXT_PATTERN, RegexOptions.Compiled);
+            _postQuoteTextRegex = new Regex(Constants.Constants.HTML_POST_QUOTE_TEXT_PATTERN,   RegexOptions.Compiled | RegexOptions.Multiline);
             
             var breaksTrimmed = _lineBreakRegex.Replace(post.Comment, "");
             

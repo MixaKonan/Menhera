@@ -2,7 +2,7 @@
 
 namespace Menhera.Migrations
 {
-    public partial class BumpTimeDefaultDropped : Migration
+    public partial class Fk : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -30,10 +30,31 @@ namespace Menhera.Migrations
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_report_post_id",
+                table: "report",
+                column: "post_id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_report_post_post_id",
+                table: "report",
+                column: "post_id",
+                principalTable: "post",
+                principalColumn: "post_id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_report_post_post_id",
+                table: "report");
+
+            migrationBuilder.DropIndex(
+                name: "IX_report_post_id",
+                table: "report");
+
             migrationBuilder.AlterColumn<long>(
                 name: "report_time_in_unix_seconds",
                 table: "report",

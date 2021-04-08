@@ -22,7 +22,7 @@ namespace Menhera.Controllers
     {
         private readonly MenherachanContext _db;
         private readonly IWebHostEnvironment _env;
-        
+
         private readonly MD5CryptoServiceProvider _md5;
 
         public ThreadController(MenherachanContext db, IWebHostEnvironment env)
@@ -44,7 +44,7 @@ namespace Menhera.Controllers
             ViewBag.UserIpHash = anon.IpHash;
 
             ViewBag.UserIsBanned = false;
-            
+
             ViewBag.Id = 0;
 
             if (anon.IsBanned)
@@ -61,9 +61,8 @@ namespace Menhera.Controllers
                 {
                     try
                     {
-                        var thread = _db.Thread.Where(t => t.ThreadId == id).
-                            Include(t => t.Board).
-                            Include(t => t.Post).ToList()[0];
+                        var thread = _db.Thread.Where(t => t.ThreadId == id).Include(t => t.Board).Include(t => t.Post)
+                            .ToList()[0];
 
                         var posts = _db.Post.Where(p => p.ThreadId == id).Include(p => p.File).ToList();
 
@@ -72,7 +71,7 @@ namespace Menhera.Controllers
                         foreach (var post in posts)
                         {
                             post.Comment = PostFormatter.GetFormattedPostText(post);
-                            
+
                             postsFiles.Add(post, post.File.ToList());
                         }
 
@@ -84,13 +83,13 @@ namespace Menhera.Controllers
                     {
                         return NotFound();
                     }
-                   
                 }
             }
             catch (InvalidOperationException)
             {
                 return NotFound();
             }
+
             return View();
         }
 

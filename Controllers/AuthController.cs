@@ -24,7 +24,7 @@ namespace Menhera.Controllers
         {
             _db = db;
         }
-        
+
         [HttpGet]
         public IActionResult Login()
         {
@@ -43,7 +43,7 @@ namespace Menhera.Controllers
                 try
                 {
                     var admin = _db.Admin.First(a => a.Email == loginModel.Email);
-                    
+
                     if (admin != null)
                     {
                         if (!HashComparator.CompareStringHashes(admin.PasswordHash, loginPassHash))
@@ -70,7 +70,7 @@ namespace Menhera.Controllers
 
             return View(loginModel);
         }
-        
+
         [Authorize]
         public async Task<IActionResult> Logout()
         {
@@ -84,8 +84,9 @@ namespace Menhera.Controllers
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
             };
-            var id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultNameClaimType);
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+            var id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType,
+                ClaimsIdentity.DefaultNameClaimType);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
     }
 }

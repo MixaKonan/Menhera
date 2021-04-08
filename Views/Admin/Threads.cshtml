@@ -1,0 +1,79 @@
+﻿@{
+    Layout = "_AdminLayout";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+</head>
+<body>
+<div class="breadcrumbs">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="MainPage" asp-action="Main">Главная</a>
+            </li>
+            <li>
+                <a href="#">Список тредов</a>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="container">
+    <br>
+    <br>
+    <div class="well">
+        <div class="title">
+            Список тредов
+            <div class="label label-warning">
+                @ViewBag.Threads.Count
+            </div>
+        </div>
+        <br>
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Доска</th>
+                    <th scope="col">Количество собщенний</th>
+                    <th scope="col">Ссылка на тред</th>
+                    <th scope="col">Открыть</th>
+                    <th scope="col">Закрыть</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (Thread thread in ViewBag.Threads)
+                {
+                    <tr>
+                        <th scope="row">@thread.ThreadId</th>
+                        <td>@thread.Board.Prefix/@thread.Board.Postfix/</td>
+                        <td>@thread.Post.Count</td>
+                        <td>
+                            <a href="/Thread/Thread/@thread.ThreadId" class="btn btn-link" role="button">Перейти</a>
+                        </td>
+                        <td>
+                            @if (thread.IsClosed)
+                            {
+                                <span class="badge badge-dark">Тред закрыт</span>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-danger close-thread" id="ct-@thread.ThreadId">Закрыть</button>
+                            }
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger delete-thread" id="dt-@thread.ThreadId">Удалить тред</button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="/js/thread/removeThread.js"></script>
+<script src="/js/thread/closeThread.js"></script>
+</body>
+</html>

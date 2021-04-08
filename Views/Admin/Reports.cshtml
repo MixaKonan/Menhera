@@ -1,0 +1,68 @@
+﻿@{
+    Layout = "_AdminLayout";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+</head>
+<body>
+
+<div class="breadcrumbs">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="MainPage" asp-action="Main">Главная</a>
+            </li>
+            <li>
+                <a href="#">Список репортов</a>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="container">
+    <br>
+    <br>
+    <div class="well">
+        <div class="tittle">
+            Список репортов
+            <div class="label label-warning">3</div>
+        </div>
+        <br>
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Доска</th>
+                    <th scope="col">Тред</th>
+                    <th scope="col">Номер поста</th>
+                    <th scope="col">Причина</th>
+                    <th scope="col">Ссылка на пост</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (Report report in ViewBag.Reports)
+                {
+                    <tr>
+                        <th scope="row">@report.ReportId</th>
+                        <td>@report.Board.Prefix/@report.Board.Postfix/</td>
+                        <td>@report.ThreadId</td>
+                        <td>@report.PostId</td>
+                        <td>@report.Reason</td>
+                        <td>
+                            <a href="/Thread/Thread/@report.ThreadId#@report.PostId" class="btn btn-primary btn-sm" role="button">Перейти</a>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger delete-report-button" id="dr-@report.ReportId">Удалить репорт</button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="/js/report/removeReport.js"></script>
+</body>
+</html>

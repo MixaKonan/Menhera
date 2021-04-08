@@ -32,7 +32,9 @@ namespace Menhera.Database
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql("server=192.168.0.10;port=3306;database=Menherachan;uid=mixakonan;pwd=fater181;treattinyasboolean=false", x => x.ServerVersion("10.3.27-mariadb"));
+                optionsBuilder.UseMySql(
+                    "server=192.168.0.10;port=3306;database=Menherachan;uid=mixakonan;pwd=fater181;treattinyasboolean=false",
+                    x => x.ServerVersion("10.3.27-mariadb"));
             }
         }
 
