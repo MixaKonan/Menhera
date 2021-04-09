@@ -1,6 +1,6 @@
-﻿const deleteButtons = document.querySelectorAll(".delete-thread");
+﻿const deleteThreadButtons = document.querySelectorAll(".delete-thread");
 
-deleteButtons.forEach(item => item.addEventListener('click',
+deleteThreadButtons.forEach(item => item.addEventListener('click',
     () => removeThread(item.id)));
 
 function removeThread(buttonId) {

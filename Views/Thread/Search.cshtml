@@ -28,9 +28,9 @@
 </header>
 <section>
     <div class="form">
-        @using (Html.BeginForm("Search", "Board", FormMethod.Post, new {enctype = "multipart/form-data"}))
+        @using (Html.BeginForm("Search", "Thread", FormMethod.Post, new {enctype = "multipart/form-data"}))
         {
-            <input name="prefix" type="hidden" value="@ViewBag.Board.Prefix">
+            <input name="threadId" type="hidden" value="@ViewBag.Thread.ThreadId">
             <input name="query" placeholder="Поиск" class="field full-email">
             <input type="submit" value="Найти" class="field submit">
         }
@@ -39,10 +39,10 @@
         <a asp-controller="Board" asp-action="Board" asp-route-prefix="@ViewBag.Board.Prefix">
             ← К доске
         </a>
+        <a asp-controller="Thread" asp-action="Thread" asp-route-id="@ViewBag.Thread.ThreadId">
+                    ← К треду
+                </a>
         <a asp-controller="MainPage" asp-action="Main">Главная</a>
-        @{
-            //if(user.HasAccess) { <a href="/controls">Управление</a> }
-        }
         <hr>
     </div>
 </section>

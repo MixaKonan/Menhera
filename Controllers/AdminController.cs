@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using Menhera.Database;
 using Menhera.Extensions;
 using Menhera.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,10 +16,12 @@ namespace Menhera.Controllers
     public class AdminController : Controller
     {
         private readonly MenherachanContext _db;
+        private readonly IWebHostEnvironment _env;
 
-        public AdminController(MenherachanContext db)
+        public AdminController(MenherachanContext db, IWebHostEnvironment env)
         {
             _db = db;
+            _env = env;
         }
 
         [HttpGet]
@@ -77,8 +81,7 @@ namespace Menhera.Controllers
         }
 
         [HttpPost]
-        public void AddBoard(string prefix, string postfix, string title, string description, short fileLimit,
-            string anonName,
+        public void AddBoard(string prefix, string postfix, string title, string description, short fileLimit, string anonName,
             bool isHidden, bool anonHasNoName, bool hasSubject, bool filesAreAllowed)
         {
             var board = new Board
@@ -103,7 +106,20 @@ namespace Menhera.Controllers
         public void RemoveBoard(int boardId)
         {
             var board = _db.Board.First(b => b.BoardId == boardId);
+            
+            var posts = _db.Post.Include(p => p.File).Where(p => p.BoardId == board.BoardId).ToList();
+            
             _db.Board.Remove(board);
+            
+            foreach (var post in posts)     
+            {
+                foreach (var file in post.File)
+                {
+                    System.IO.File.Delete(Path.Combine(_env.WebRootPath, "postImages" ,file.FileName));
+                    System.IO.File.Delete(Path.Combine(_env.WebRootPath, "thumbnails" ,file.ThumbnailName));
+                }
+            }
+            
             _db.SaveChanges();
         }
 
@@ -120,7 +136,19 @@ namespace Menhera.Controllers
         {
             var thread = _db.Thread.First(t => t.ThreadId == threadId);
 
+            var posts = _db.Post.Include(p => p.File).Where(p => p.ThreadId == thread.ThreadId).ToList();
+
             _db.Thread.Remove(thread);
+            
+            foreach (var post in posts)     
+            {
+                foreach (var file in post.File)
+                {
+                    System.IO.File.Delete(Path.Combine(_env.WebRootPath, "postImages" ,file.FileName));
+                    System.IO.File.Delete(Path.Combine(_env.WebRootPath, "thumbnails" ,file.ThumbnailName));
+                }
+            }
+            
             _db.SaveChanges();
         }
 
@@ -154,8 +182,19 @@ namespace Menhera.Controllers
         [HttpPost]
         public void DeletePost(int postId)
         {
-            var post = _db.Post.First(p => p.PostId == postId);
+            var post = _db.Post.Include(p => p.File).First(p => p.PostId == postId);
+            
             _db.Post.Remove(post);
+            
+            if (post.File.Count > 0)
+            {
+                foreach (var file in post.File)
+                {
+                    System.IO.File.Delete(Path.Combine(_env.WebRootPath, "postImages" ,file.FileName));
+                    System.IO.File.Delete(Path.Combine(_env.WebRootPath, "thumbnails" ,file.ThumbnailName));
+                }
+            }
+            
             _db.SaveChanges();
         }
 

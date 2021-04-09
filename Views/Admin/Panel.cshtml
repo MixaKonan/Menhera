@@ -13,13 +13,8 @@
     <div class="container">
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="MainPage" asp-action="Main">Главная</a>
+                <a asp-action="Panel">Главная</a>
             </li>
-            <div class="pull-right">
-                <a asp-action="Create" class="btn btn-primary">
-                    Добавить
-                </a>
-            </div>
             <div class="clearfix"></div>
         </ol>
     </div>
@@ -31,7 +26,7 @@
         <div class="well">
             <div class="pull-left">
                 <p>
-                    Список администраторов
+                    Администраторы
                 </p>
             </div>
             <div class="pull-right">
@@ -49,7 +44,7 @@
         <div class="well">
             <div class="pull-left">
                 <p>
-                    Список досок
+                    Доски
                 </p>
             </div>
             <div class="pull-right">
@@ -67,11 +62,29 @@
         <div class="well">
             <div class="pull-left">
                 <p>
-                    Список тредов
+                    Треды
                 </p>
             </div>
             <div class="pull-right">
                 <a asp-action="Threads" class="btn btn-default">
+                    Посмотреть
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-xs-12">
+        <div class="well">
+            <div class="pull-left">
+                <p>
+                    Репорты
+                </p>
+            </div>
+            <div class="pull-right">
+                <a asp-action="Reports" class="btn btn-default">
                     Посмотреть
                 </a>
             </div>

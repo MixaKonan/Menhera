@@ -1,6 +1,6 @@
-﻿const closeButtons = document.querySelectorAll(".close-thread");
+﻿const closeThreadButtons = document.querySelectorAll(".close-thread");
 
-closeButtons.forEach(item => item.addEventListener('click',
+closeThreadButtons.forEach(item => item.addEventListener('click',
     () => closeThread(item.id)));
 
 function closeThread(buttonId) {

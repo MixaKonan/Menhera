@@ -11,6 +11,6 @@
 
 .optionsList{
     display: none;
-    position: absolute;
+    position: absolute !important; 
     background: rgb(220, 210, 223);
 }

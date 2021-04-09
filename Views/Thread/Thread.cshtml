@@ -59,8 +59,8 @@
                     }
                     else
                     {
-                        <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field email">
-                        <input asp-for="AnonName" type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
+                        <input asp-for="Email" type="text" name="email" placeholder="Email" autocomplete="off" class="field email">
+                        <input asp-for="AnonName" type="text" name="anonname" placeholder="Имя" autocomplete="off" class="field email">
                     }
 
                     <input type="submit" value="Пост" class="field submit" id="submit">
@@ -87,10 +87,12 @@
     }
     <div class="functional-menu">
         <a asp-controller="MainPage" asp-action="Main">Главная</a>
-        <a asp-controller="Board" asp-action="Search" asp-route-prefix="@ViewBag.Board.Prefix">Поиск</a>
+        <a asp-controller="Thread" asp-action="Search" asp-route-threadId="@ViewBag.Thread.ThreadId">Поиск</a>
         @if (User.Identity.IsAuthenticated)
         {
             <a asp-controller="Admin" asp-action="Panel">Управление</a>
+            <a class="close-thread" id="ct-@ViewBag.Thread.ThreadId">Закрыть тред</a>
+            <a class="delete-thread" id="dt-@ViewBag.Thread.ThreadId">Удалить тред</a>
         }
     </div>
     <div class="posts threads">
@@ -113,7 +115,17 @@
                                     @postFiles.Key.Subject
                                 </span>
                             }
-                            if (!string.IsNullOrEmpty(postFiles.Key.Email) && !string.IsNullOrEmpty(postFiles.Key.AnonName))
+                            if (postFiles.Key.AnonIpHash == ViewBag.Thread.OpIpHash)
+                            {
+                                <span style="color: green; ">
+                                    #OP
+                                </span>
+                            }
+                            if (IpCheck.IpBelongsToAdmin(postFiles.Key.AnonIpHash, AdminCollection.Admins, out Admin admin_))
+                            {
+                                @admin_.Login
+                            }
+                            else if (!string.IsNullOrEmpty(postFiles.Key.Email) && !string.IsNullOrEmpty(postFiles.Key.AnonName))
                             {
                                 <span class="name">
                                     <a href="mailto:@postFiles.Key.Email">
@@ -127,15 +139,9 @@
                                     @postFiles.Key.AnonName
                                 </span>
                             }
-                            if (postFiles.Key.AnonIpHash == ViewBag.Thread.OpIpHash)
+                            else if (!string.IsNullOrEmpty(ViewBag.Board.AnonName))
                             {
-                                <span style="color: green; ">
-                                    #OP
-                                </span>
-                            }
-                            if (IpCheck.IpBelongsToAdmin(postFiles.Key.AnonIpHash, AdminCollection.Admins, out Admin admin_))
-                            {
-                                @admin_.Login
+                                @ViewBag.Board.AnonName
                             }
                             <i></i>
                             @DateTimeOffset.FromUnixTimeSeconds(postFiles.Key.TimeInUnixSeconds).DateTime
@@ -188,13 +194,13 @@
                             {
                                 <figure>
                                     <figcaption>
-                                        <a href="/images/@file.FileName" title="@file.FileName" target="_blank">
+                                        <a href="/postImages/@file.FileName" title="@file.FileName" target="_blank">
                                             @file.ThumbnailName
                                         </a>
                                         <br>
                                         @file.Info
                                     </figcaption>
-                                    <a href="/images/@file.FileName" target="_blank">
+                                    <a href="/postImages/@file.FileName" target="_blank">
                                         <img src="/thumbnails/@file.ThumbnailName" alt="@file.ThumbnailName">
                                     </a>
                                 </figure>
@@ -222,6 +228,8 @@
     <script src="/js/moderation.js"></script>
     <script src="/js/banPopup.js"></script>
     <script src="/js/datepicker.js"></script>
+    <script src="/js/thread/closeThread.js"></script>
+    <script src="/js/thread/removeThread.js"></script>
 }
 <script src="/js/formValidation.js"></script>
 <script src="/js/postMenuPopup.js"></script>

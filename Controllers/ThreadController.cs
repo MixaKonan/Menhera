@@ -152,5 +152,46 @@ namespace Menhera.Controllers
 
             return RedirectToAction("Thread", new {id = post.ThreadId});
         }
+
+        public IActionResult Search(int threadId, string query = "")
+        {
+            try
+            {
+                var postsFiles = new Dictionary<Post, List<File>>();
+
+                if (!string.IsNullOrWhiteSpace(query) || !string.IsNullOrEmpty(query))
+                {
+                    if (ModelState.IsValid)
+                    {
+                        try
+                        {
+                            var posts = _db.Post.Where(p =>
+                                    p.ThreadId == threadId && (p.Comment.Contains(query) || p.Subject.Contains(query)))
+                                .Include(p => p.File).Take(50).ToList();
+
+                            foreach (var post in posts)
+                            {
+                                post.Comment = PostFormatter.GetFormattedPostText(post);
+                                postsFiles.Add(post, post.File.ToList());
+                            }
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            return NotFound();
+                        }
+                    }
+                }
+
+                ViewBag.Thread = _db.Thread.Include(t => t.Board).First(t => t.ThreadId == threadId);
+                ViewBag.Board = ViewBag.Thread.Board;
+                ViewBag.PostsFiles = postsFiles;
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound();
+            }
+
+            return View();
+        }
     }
 }

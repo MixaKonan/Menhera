@@ -30,13 +30,13 @@ namespace Menhera.Classes.Files
 
             FileDirectory = fileDirectory;
 
-            FileName = file.FileName;
+            FileName = string.Concat(Guid.NewGuid().ToString(), FileExtension);
 
             FileFullPath = Path.Combine(FileDirectory, FileName ?? throw new InvalidOperationException());
 
             ThumbnailDirectory = thumbNailDirectory;
 
-            ThumbnailName = string.Concat(new Random().Next(int.MaxValue).ToString(), Path.GetExtension(file.FileName));
+            ThumbnailName = string.Concat("thmb-" ,FileName);
 
             ThumbnailFullPath = Path.Combine(ThumbnailDirectory, ThumbnailName);
 
