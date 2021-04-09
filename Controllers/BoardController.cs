@@ -54,9 +54,11 @@ namespace Menhera.Controllers
 
             if (ModelState.IsValid)
             {
-                if (_db.Thread.Count() >= 20)
+                var board = _db.Board.First(b => b.BoardId == post.BoardId);
+                
+                if (_db.Thread.Count(t => t.BoardId == post.BoardId) >= 20)
                 {
-                    return RedirectToAction("Board");
+                    return RedirectToAction("Board", new {prefix = board.Prefix});
                 }
 
                 post.AnonIpHash = ipHash;

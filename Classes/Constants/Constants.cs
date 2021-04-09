@@ -17,6 +17,8 @@
         public const string HTML_POST_UNDERLINED_TEXT_PATTERN = @"\[u\](.+)\[/u\]";
 
         public const string HTML_POST_INCORRECT_TEXT_PATTERN = @"\[s\](.+)\[/s\]";
+        
+        public const string HTML_POST_SPOILER_TEXT_PATTERN = @"\[spoiler\](.+)\[/spoiler\]";
 
         public const string HTML_POST_QUOTE_TEXT_PATTERN = @"^(>)\s*(.+)$";
 

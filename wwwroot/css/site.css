@@ -28,6 +28,18 @@ a:hover {
     text-decoration: underline;
 }
 
+.spoiler-text {
+    background: gray;
+    color: gray;
+    padding: 0 8px;
+}
+
+
+.spoiler-text:hover {
+    background: none;
+    color: black;
+}
+
 form {
     display: inline-block;
     margin: -1px 0 0 0;

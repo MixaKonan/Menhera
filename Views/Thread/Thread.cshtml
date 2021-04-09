@@ -149,7 +149,7 @@
                             <a href="/Thread/Thread/@postFiles.Key.ThreadId#@postFiles.Key.PostId">#@postFiles.Key.PostId</a>
                                 <div class="dropdown" id="options">
                                     @{ ViewBag.Id += 1; }
-                                    <a style="padding: 4px;">
+                                    <a style="padding: 4px;" class="reply-link" id="rl-@postFiles.Key.PostId">
                                         Ответ
                                     </a>
                                     <button class="optionsButton" id="optionsButton-@ViewBag.Id">▶</button>
@@ -231,9 +231,10 @@
     <script src="/js/thread/closeThread.js"></script>
     <script src="/js/thread/removeThread.js"></script>
 }
-<script src="/js/formValidation.js"></script>
+<script src="/js/thread/newPostFormValidation.js"></script>
 <script src="/js/postMenuPopup.js"></script>
 <script src="/js/sage.js"></script>
 <script src="/js/highlight.js"></script>
+<script src="/js/moveFormToReply.js"></script>
 </body>
 </html>
