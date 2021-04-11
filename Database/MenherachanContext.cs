@@ -1,11 +1,5 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 using Menhera.Models;
-
-// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
-// If you have enabled NRTs for your project, then un-comment the following line:
-// #nullable disable
 
 namespace Menhera.Database
 {
@@ -32,7 +26,7 @@ namespace Menhera.Database
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql(Environment.GetEnvironmentVariable("MariaDbConnection"),
+                optionsBuilder.UseMySql("server=192.168.0.10;port=3306;database=Menherachan;uid=mixakonan;pwd=fater181;",
                     x => x.ServerVersion("10.3.27-mariadb"));
             }
         }
