@@ -7,39 +7,13 @@ using Microsoft.AspNetCore.Http;
 
 namespace Menhera.Classes.Files
 {
-    public class ImageThumbnailCreator : IDisposable
+    public class ImageThumbnailCreator : ThumbnailCreator, IDisposable
     {
         public ImageInformation ImgInfo { get; }
-        
-        private string FileName { get; }
-        private string ThumbnailName { get; }
-        private string ImageInfo { get; set; }
         private Image Image { get; set; }
-        private IFormFile File { get; }
-        private string FileExtension { get; }
-        private string FileDirectory { get; }
-        private string FileFullPath { get; }
-        private string ThumbnailDirectory { get; }
-        private string ThumbnailFullPath { get; }
 
-        public ImageThumbnailCreator(IFormFile file, string fileDirectory, string thumbNailDirectory)
+        public ImageThumbnailCreator(IFormFile file, string fileDirectory, string thumbNailDirectory) : base(file, fileDirectory, thumbNailDirectory)
         {
-            File = file;
-
-            FileExtension = Path.GetExtension(file.FileName);
-
-            FileDirectory = fileDirectory;
-
-            FileName = string.Concat(Guid.NewGuid().ToString(), FileExtension);
-
-            FileFullPath = Path.Combine(FileDirectory, FileName ?? throw new InvalidOperationException());
-
-            ThumbnailDirectory = thumbNailDirectory;
-
-            ThumbnailName = string.Concat("thmb-" ,FileName);
-
-            ThumbnailFullPath = Path.Combine(ThumbnailDirectory, ThumbnailName);
-
             ImgInfo = new ImageInformation(FileName, ThumbnailName, ImageInfo);
         }
 

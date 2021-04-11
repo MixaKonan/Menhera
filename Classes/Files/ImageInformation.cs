@@ -1,16 +1,10 @@
 ﻿namespace Menhera.Classes.Files
 {
-    public class ImageInformation
+    public class ImageInformation : FileInformation
     {
-        public string FileName { get; }
-        public string ThumbnailName { get; }
-        public string Information { get; }
-
-        public ImageInformation(string fileName, string thumbnailName, string info)
+        public ImageInformation(string fileName, string thumbnailName, string info) : base(fileName, thumbnailName, info)
         {
-            FileName = fileName;
-            ThumbnailName = thumbnailName;
-            Information = info;
+            
         }
     }
 }
