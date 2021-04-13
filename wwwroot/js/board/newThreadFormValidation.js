@@ -2,8 +2,8 @@
 const submit = document.getElementById("submit");
 const textarea = document.getElementById("Comment")
 
-const commentLimit = 5000;
 const threadLimit = 20;
+const commentLimit = 5000;
 
 textarea.setAttribute("required", "required");
 textarea.setAttribute("maxlength", commentLimit.toString());

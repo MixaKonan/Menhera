@@ -72,7 +72,15 @@
                     {
                         <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
                     }
-                    <textarea asp-for="Comment" class="field comment" placeholder="( . .)φ__"></textarea>
+                    <textarea asp-for="Comment" class="field comment" id="comment" placeholder="( . .)φ__"></textarea>
+                    <div class="formating-btn">
+                        <button type="button" class="frm-btn bold" onclick="doAddTags('[b]', '[/b]', formTextArea)"></button>
+                        <button type="button" class="frm-btn italic" onclick="doAddTags('[i]', '[/i]', formTextArea)"></button>
+                        <button type="button" class="frm-btn quote" onclick="doAddTags('>', '', formTextArea)"></button>
+                        <button type="button" class="frm-btn underline" onclick="doAddTags('[u]', '[/u]', formTextArea)"></button>
+                        <button type="button" class="frm-btn spoiler" onclick="doAddTags('[spoiler]', '[/spoiler]', formTextArea)"></button>
+                        <button type="button" class="frm-btn strikethrough" onclick="doAddTags('[s]', '[/s]', formTextArea)"> </button>
+                    </div>
                     if (ViewBag.Board.FilesAreAllowed)
                     {
                         <input type="file" name="files" id="files" multiple class="field">
@@ -121,9 +129,9 @@
                                     #OP
                                 </span>
                             }
-                            if (IpCheck.IpBelongsToAdmin(postFiles.Key.AnonIpHash, AdminCollection.Admins, out Admin admin_))
+                            if (IpCheck.IpBelongsToAdmin(postFiles.Key.AnonIpHash, AdminCollection.Admins, out Admin admin))
                             {
-                                @admin_.Login
+                                <span style="color: blue">##@admin.Login</span>
                             }
                             else if (!string.IsNullOrEmpty(postFiles.Key.Email) && !string.IsNullOrEmpty(postFiles.Key.AnonName))
                             {
@@ -147,41 +155,41 @@
                             @DateTimeOffset.FromUnixTimeSeconds(postFiles.Key.TimeInUnixSeconds).DateTime
                             <i></i>
                             <a href="/Thread/Thread/@postFiles.Key.ThreadId#@postFiles.Key.PostId">#@postFiles.Key.PostId</a>
-                                <div class="dropdown" id="options">
-                                    @{ ViewBag.Id += 1; }
-                                    <a style="padding: 4px;" class="reply-link" id="rl-@postFiles.Key.PostId">
-                                        Ответ
+                            <div class="dropdown" id="options">
+                                @{ ViewBag.Id += 1; }
+                                <a style="padding: 4px;" class="reply-link" id="rl-@postFiles.Key.PostId">
+                                    Ответ
+                                </a>
+                                <button class="optionsButton" id="optionsButton-@ViewBag.Id">▶</button>
+                                <div class="optionsList" id="optionsList-@ViewBag.Id">
+                                    <a asp-controller="Report" asp-action="Report" asp-route-postId="@postFiles.Key.PostId" style="padding-left: 4px;">
+                                        Репорт
                                     </a>
-                                    <button class="optionsButton" id="optionsButton-@ViewBag.Id">▶</button>
-                                    <div class="optionsList" id="optionsList-@ViewBag.Id">
-                                        <a asp-controller="Report" asp-action="Report" asp-route-postId="@postFiles.Key.PostId" style="padding-left: 4px;">
-                                            Репорт
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <br>
+                                        <a class="deletePost" id="deleteLink-@ViewBag.Id" style="padding: 4px;">
+                                            Удалить пост
                                         </a>
-                                        @if (User.Identity.IsAuthenticated)
-                                        {
-                                            <br>
-                                            <a class="deletePost" id="deleteLink-@ViewBag.Id" style="padding: 4px;">
-                                                Удалить пост
-                                            </a>
-                                            <input class="deleteInput" id="deleteInput-@ViewBag.Id" type="hidden" value="@postFiles.Key.PostId">
-                                            <br>
-                                            <a class="open-button" id="open-button-@ViewBag.Id" style="padding-left: 4px;">
-                                                Забанить
-                                            </a>
-                                            <div class="form-popup form-container" id="myForm-@ViewBag.Id">
-                                                <button type="button" class="close-button" id="close-button-@ViewBag.Id">X</button>
-                                                <h1 class="popup-title"> (。U ω U。) Причина</h1>
-                                                <textarea class="report-reason" id="report-reason-@ViewBag.Id" required></textarea>
-                                                <div class="popup-banTime">
-                                                    Окончанние бана:
-                                                    <input type="text" class="banCalendar" id="banCalendar-@ViewBag.Id" required>
-                                                </div>
-                                                <input type="hidden" class="banIpHash" id="banIpHash-@ViewBag.Id" value="@postFiles.Key.AnonIpHash">
-                                                <button type="submit" class="report-btn" id="report-btn-@ViewBag.Id">Забанить</button>
+                                        <input class="deleteInput" id="deleteInput-@ViewBag.Id" type="hidden" value="@postFiles.Key.PostId">
+                                        <br>
+                                        <a class="open-button" id="open-button-@ViewBag.Id" style="padding-left: 4px;">
+                                            Забанить
+                                        </a>
+                                        <div class="form-popup form-container" id="myForm-@ViewBag.Id">
+                                            <button type="button" class="close-button" id="close-button-@ViewBag.Id">X</button>
+                                            <h1 class="popup-title"> (。U ω U。) Причина</h1>
+                                            <textarea class="report-reason" id="report-reason-@ViewBag.Id" required></textarea>
+                                            <div class="popup-banTime">
+                                                Окончанние бана:
+                                                <input type="text" class="banCalendar" id="banCalendar-@ViewBag.Id" required>
                                             </div>
-                                        }
-                                    </div>
+                                            <input type="hidden" class="banIpHash" id="banIpHash-@ViewBag.Id" value="@postFiles.Key.AnonIpHash">
+                                            <button type="submit" class="report-btn" id="report-btn-@ViewBag.Id">Забанить</button>
+                                        </div>
+                                    }
                                 </div>
+                            </div>
                             if (postFiles.Key.IsPinned)
                             {
                                 <img src="/images/pinned.png" alt="pinned.png">
@@ -232,9 +240,11 @@
     <script src="/js/thread/removeThread.js"></script>
 }
 <script src="/js/thread/newPostFormValidation.js"></script>
+<script src="/js/thread/formButtons.js"></script>
 <script src="/js/postMenuPopup.js"></script>
 <script src="/js/sage.js"></script>
 <script src="/js/highlight.js"></script>
 <script src="/js/moveFormToReply.js"></script>
+<script src="/js/getDate.js"></script>
 </body>
 </html>

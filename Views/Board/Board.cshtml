@@ -121,24 +121,24 @@
                                 }
                                 if (IpCheck.IpBelongsToAdmin(ViewBag.Post.AnonIpHash, AdminCollection.Admins, out Admin admin))
                                 {
-                                    @admin.Login
+                                    <span style="color: blue">##@admin.Login</span>
                                 }
                                 <i></i>
-                                @DateTimeOffset.FromUnixTimeSeconds(ViewBag.Post.TimeInUnixSeconds).DateTime
+                                <span class="post-time">@ViewBag.Post.TimeInUnixSeconds</span>
                                 <i></i>
-                                <a href="/Thread/Thread/@ViewBag.Post.ThreadId#@ViewBag.Post.PostId" class="post-link">#@ViewBag.Post.ThreadId</a>
-                                <div class="dropdown">
-                                    @{ ViewBag.Id += 1; }
-                                    <a style="padding: 4px;">
-                                        Ответ
-                                    </a>
-                                    <button class="optionsButton" id="optionsButton-@ViewBag.Id">▶</button>
-                                    <div class="optionsList" id="optionsList-@ViewBag.Id">
-                                        <a asp-controller="Report" asp-action="Report" asp-route-postId="@ViewBag.Post.PostId" style="padding-left: 4px;">
-                                            Репорт
-                                        </a>
-                                        @if (User.Identity.IsAuthenticated)
-                                        {
+                                <a href="/Thread/Thread/@ViewBag.Post.ThreadId" class="post-link">#@ViewBag.Post.ThreadId</a>
+                                <a style="padding: 4px;" href="/Thread/Thread/@ViewBag.Post.ThreadId#@ViewBag.Post.PostId">
+                                    Перейти к посту
+                                </a>
+                                if (User.Identity.IsAuthenticated)
+                                {
+                                    <div class="dropdown">
+                                        @{ ViewBag.Id += 1; }
+                                        <button class="optionsButton" id="optionsButton-@ViewBag.Id">▶</button>
+                                        <div class="optionsList" id="optionsList-@ViewBag.Id">
+                                            <a asp-controller="Report" asp-action="Report" asp-route-postId="@ViewBag.Post.PostId" style="padding-left: 4px;">
+                                                Репорт
+                                            </a>
                                             <br>
                                             <a class="deletePost" id="deleteLink-@ViewBag.Id" style="padding: 4px;">
                                                 Удалить пост
@@ -159,9 +159,16 @@
                                                 <input type="hidden" class="banIpHash" id="banIpHash-@ViewBag.Id" value="@ViewBag.Post.AnonIpHash">
                                                 <button type="submit" class="report-btn" id="report-btn-@ViewBag.Id">Забанить</button>
                                             </div>
-                                        }
+
+                                        </div>
                                     </div>
-                                </div>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Report" asp-action="Report" asp-route-postId="@ViewBag.Post.PostId" style="padding-left: 4px;">
+                                        Репорт
+                                    </a>
+                                }
                                 if (ViewBag.Post.IsPinned)
                                 {
                                     <img src="/images/pinned.png" alt="pinned.png">
@@ -226,4 +233,5 @@
 }
 <script src="/js/board/newThreadFormValidation.js"></script>
 <script src="/js/postMenuPopup.js"></script>
+<script src="/js/getDate.js"></script>
 </body>
