@@ -108,6 +108,7 @@ header {
 }
 
 .to-main {
+    font-family: Raleway, sans-serif !important;
     top: 16px;
     left: 16px;
     font-size: 0.400em;
@@ -124,6 +125,7 @@ header {
 }
 
 aside {
+    font-family: Raleway, sans-serif !important;
     position: fixed;
     top: 8px;
     right: 8px;
@@ -250,7 +252,6 @@ aside a {
     display: block;
     font-size: 0.929em;
     margin-bottom: 10px;
-    padding-right: 300px;
 }
 
 .thread-header img {
@@ -349,6 +350,33 @@ article .comment {
     font-size: 3em;
 }
 
+.frm-btn{
+    margin-top: 5px;
+    margin-left: 2px;
+    height: 30px;
+    width: 30px;
+    border: none;
+    border-radius: 5px;
+}
+.bold{
+    background: #fff url("../images/bold.png") no-repeat;
+}
+.italic{
+    background: #fff url("../images/italic.png") no-repeat;
+}
+.quote{
+    background: #fff url("../images/quote.png") no-repeat;
+}
+.spoiler{
+    background: #fff url("../images/spoiler.png") no-repeat;
+}
+.strikethrough{
+    background: #fff url("../images/strikethrough.png") no-repeat;
+}
+.underline{
+    background: #fff url("../images/underline.png") no-repeat;
+}
+
 @keyframes highlight {
     
     0% {
@@ -406,6 +434,7 @@ article .comment {
     }
 
     .board {
+        font-family: Raleway, sans-serif !important;
         display: none;
     }
 
