@@ -59,7 +59,7 @@
                 {
                     <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
                 }
-                <textarea asp-for="Comment" class="field comment" placeholder="( . .)φ__"></textarea>
+                <textarea asp-for="Comment" class="field comment" id="comment" placeholder="( . .)φ__"></textarea>
                 if (ViewBag.Board.FilesAreAllowed)
                 {
                     <input type="file" name="files" id="files" multiple class="field">

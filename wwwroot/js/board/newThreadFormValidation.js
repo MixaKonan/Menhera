@@ -1,9 +1,11 @@
 ﻿const fileInput = document.getElementById("files");
 const submit = document.getElementById("submit");
-const textarea = document.getElementById("сomment")
+const textarea = document.getElementById("comment");
 
 const threadLimit = 20;
 const commentLimit = 5000;
+
+const _allowedMimeFileExtensions = ['image/jpeg', 'image/png', 'image/gif'];
 
 textarea.setAttribute("required", "required");
 textarea.setAttribute("maxlength", commentLimit.toString());
