@@ -2,6 +2,9 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+      <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+      <AllowUntrustedCertificate>True</AllowUntrustedCertificate>
+      <UserSecretsId>eb29b6e4-9587-44d2-a000-3c394445352f</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,6 +22,12 @@
 
     <ItemGroup>
       <Folder Include="Database" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Web.Deployment">
+        <HintPath>..\..\..\..\Program Files\IIS\Microsoft Web Deploy\Microsoft.Web.Deployment.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>
