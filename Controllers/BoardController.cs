@@ -13,11 +13,13 @@ using Menhera.Classes.Anon;
 using Menhera.Classes.Constants;
 using Menhera.Classes.Db;
 using Menhera.Classes.Files;
+using Menhera.Classes.Logging;
 using Menhera.Classes.Pagination;
 using Menhera.Classes.PostFormatting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using static Menhera.Classes.Logging.Logger;
 using File = Menhera.Models.File;
 
 namespace Menhera.Controllers
@@ -27,6 +29,8 @@ namespace Menhera.Controllers
         private readonly MenherachanContext _db;
         private readonly IBoardCollection _collection;
         private readonly IWebHostEnvironment _env;
+        
+        private readonly string _logDirectory;
 
         private readonly MD5CryptoServiceProvider _md5;
 
@@ -36,67 +40,81 @@ namespace Menhera.Controllers
             _env = env;
             _collection = collection;
 
+            _logDirectory = Path.Combine(_env.WebRootPath, "logs", "board_logs.log");
+            
             _md5 = new MD5CryptoServiceProvider();
         }
 
         [HttpPost]
         public async Task<IActionResult> AddThread(Post post, List<IFormFile> files)
         {
-            var ipHash = _md5.ComputeHash(HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
-                .GetString();
-
-            var anon = new Anon(ipHash, IpCheck.UserIsBanned(_db, ipHash));
-
-            if (anon.IsBanned)
+            try
             {
-                return RedirectToAction("YouAreBanned", "Ban");
-            }
+                var ipHash = _md5.ComputeHash(HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
+                    .GetString();
 
-            if (ModelState.IsValid)
-            {
-                var board = _db.Board.First(b => b.BoardId == post.BoardId);
-                
-                if (_db.Thread.Count(t => t.BoardId == post.BoardId) >= 20)
+                var anon = new Anon(ipHash, IpCheck.UserIsBanned(_db, ipHash));
+
+                if (anon.IsBanned)
                 {
-                    return RedirectToAction("Board", new {prefix = board.Prefix});
+                    return RedirectToAction("YouAreBanned", "Ban");
                 }
 
-                post.AnonIpHash = ipHash;
-                post.Comment = PostFormatter.GetHtmlTrimmedComment(post);
-                DbAccess.AddThreadToBoard(_db, ref post);
-
-                if (files.Count > 0)
+                if (ModelState.IsValid)
                 {
-                    var fileDirectory = Path.Combine(_env.WebRootPath, "postImages");
-
-                    var thumbNailDirectory = Path.Combine(_env.WebRootPath, "thumbnails");
-
-                    foreach (var file in files)
+                    var board = _db.Board.First(b => b.BoardId == post.BoardId);
+                
+                    if (_db.Thread.Count(t => t.BoardId == post.BoardId) >= 20)
                     {
-                        if (file.Length > 0)
-                        {
-                            using (var creator = new ImageThumbnailCreator(file, fileDirectory, thumbNailDirectory))
-                            {
-                                await creator.CreateThumbnailAsync();
+                        return RedirectToAction("Board", new {prefix = board.Prefix});
+                    }
 
-                                DbAccess.AddFilesToPost(_db, post, creator.ImgInfo);
+                    post.AnonIpHash = ipHash;
+                    post.Comment = PostFormatter.GetHtmlTrimmedComment(post);
+                    DbAccess.AddThreadToBoard(_db, ref post);
+
+                    if (files.Count > 0)
+                    {
+                        var fileDirectory = Path.Combine(_env.WebRootPath, "postImages");
+
+                        var thumbNailDirectory = Path.Combine(_env.WebRootPath, "thumbnails");
+
+                        foreach (var file in files)
+                        {
+                            if (file.Length > 0)
+                            {
+                                using (var creator = new ImageThumbnailCreator(file, fileDirectory, thumbNailDirectory))
+                                {
+                                    await creator.CreateThumbnailAsync();
+
+                                    DbAccess.AddFilesToPost(_db, post, creator.ImgInfo);
+                                }
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("FileLengthNotValid", "Файл пустой.");
                             }
                         }
-                        else
-                        {
-                            ModelState.AddModelError("FileLengthNotValid", "Файл пустой.");
-                        }
                     }
+                    await LogIntoFile(_logDirectory, string.Concat("Added new thread: ", post.ThreadId),
+                        LoggingInformationKind.Info);
+                    return RedirectToAction("Thread", "Thread", new {id = post.ThreadId});
                 }
-
-                return RedirectToAction("Thread", "Thread", new {id = post.ThreadId});
             }
+            catch (Exception e)
+            {
+                await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+                Console.WriteLine(e);
+                return StatusCode(500);
+            }
+            
 
             return RedirectToAction("Board");
         }
 
         [HttpGet]
-        public IActionResult Board(string prefix, int page = 1)
+        public async Task<IActionResult> Board(string prefix, int page = 1)
         {
             var ipHash = _md5.ComputeHash(HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
                 .GetString();
@@ -185,9 +203,15 @@ namespace Menhera.Controllers
                     {
                         pageThreads.Add(allThreads[i]);
                     }
-                    catch (ArgumentOutOfRangeException)
+                    catch (ArgumentOutOfRangeException e)
                     {
                         break;
+                    }
+                    catch (Exception e)
+                    {
+                        await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                            LoggingInformationKind.Error);
+                        return StatusCode(500);
                     }
                 }
 
@@ -203,16 +227,24 @@ namespace Menhera.Controllers
 
                 ViewBag.BoardViewModel = pageThreads;
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException e)
             {
+                await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
                 return NotFound();
+            }
+            catch (Exception e)
+            {
+                await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+                return StatusCode(500);
             }
 
             return View();
         }
 
 
-        public IActionResult Search(string prefix, string query = "")
+        public async Task<IActionResult> Search(string prefix, string query = "")
         {
             try
             {
@@ -236,9 +268,17 @@ namespace Menhera.Controllers
                                 postsFiles.Add(post, post.File.ToList());
                             }
                         }
-                        catch (InvalidOperationException)
+                        catch (InvalidOperationException e)
                         {
+                            await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                                LoggingInformationKind.Error);
                             return NotFound();
+                        }
+                        catch (Exception e)
+                        {
+                            await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                                LoggingInformationKind.Error);
+                            return StatusCode(500);
                         }
                     }
                 }
@@ -246,9 +286,15 @@ namespace Menhera.Controllers
                 ViewBag.Board = _collection.Boards.First(brd => brd.Prefix == prefix);
                 ViewBag.PostsFiles = postsFiles;
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException e)
             {
+                await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
                 return NotFound();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500);
             }
 
             return View();

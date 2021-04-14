@@ -11,7 +11,7 @@ namespace Menhera.Models
     {
         public override string ToString()
         {
-            return $"Admin: {this.Admin.Login}. Ban time: {this.BanTimeInUnixSeconds}.";
+            return $"Admin: {this.Admin.Login}. Ban time: {DateTimeOffset.FromUnixTimeSeconds(this.BanTimeInUnixSeconds).Date}.";
         }
 
         public int BanId { get; set; }

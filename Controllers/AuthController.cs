@@ -1,28 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Menhera.Classes.Hash;
+using Menhera.Classes.Logging;
 using Menhera.Database;
 using Menhera.Extensions;
 using Menhera.Models.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using static Menhera.Classes.Logging.Logger;
+
 
 namespace Menhera.Controllers
 {
     public class AuthController : Controller
     {
         private readonly MenherachanContext _db;
+        private readonly IWebHostEnvironment _env;
 
-        public AuthController(MenherachanContext db)
+        private readonly string _logDirectory;
+
+
+        public AuthController(MenherachanContext db, IWebHostEnvironment env)
         {
             _db = db;
+            _env = env;
+            
+            _logDirectory = Path.Combine(_env.WebRootPath, "logs", "auth_logs.log");
+
         }
 
         [HttpGet]
@@ -53,7 +66,9 @@ namespace Menhera.Controllers
                         else
                         {
                             await Authenticate(loginModel.Email);
-
+                            await LogIntoFile(_logDirectory, string.Concat
+                                    ("New login from: ", admin.AdminIpHash, " ", admin.ToString()),
+                                LoggingInformationKind.Info);
                             return RedirectToAction("Main", "MainPage");
                         }
                     }
@@ -62,8 +77,10 @@ namespace Menhera.Controllers
                         ModelState.AddModelError("SequenceContainsNoElements", "Вы не модератор.");
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                        LoggingInformationKind.Error);
                     ModelState.AddModelError("SequenceContainsNoElements", "Мы не знаем такого модератора!");
                 }
             }

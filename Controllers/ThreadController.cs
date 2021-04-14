@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using Menhera.Classes.Anon;
 using Menhera.Classes.Db;
 using Menhera.Classes.Files;
+using Menhera.Classes.Logging;
 using Menhera.Classes.PostFormatting;
 using Menhera.Database;
 using Menhera.Extensions;
@@ -14,6 +16,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static Menhera.Classes.Logging.Logger;
 using File = Menhera.Models.File;
 
 namespace Menhera.Controllers
@@ -22,6 +25,9 @@ namespace Menhera.Controllers
     {
         private readonly MenherachanContext _db;
         private readonly IWebHostEnvironment _env;
+        
+        private readonly string _logDirectory;
+
 
         private readonly MD5CryptoServiceProvider _md5;
 
@@ -30,11 +36,13 @@ namespace Menhera.Controllers
             _db = db;
             _env = env;
 
+            _logDirectory = Path.Combine(_env.WebRootPath, "logs", "thread_logs.log");
+
             _md5 = new MD5CryptoServiceProvider();
         }
 
         [HttpGet]
-        public IActionResult Thread(int id)
+        public async Task<IActionResult> Thread(int id)
         {
             var ipHash = _md5.ComputeHash(HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
                 .GetString();
@@ -83,18 +91,28 @@ namespace Menhera.Controllers
                     {
                         return NotFound();
                     }
+                    catch (Exception e)
+                    {
+                        await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                            LoggingInformationKind.Error);
+                    }
                 }
             }
             catch (InvalidOperationException)
             {
                 return NotFound();
             }
+            catch (Exception e)
+            {
+                await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+            }
 
             return View();
         }
 
         [HttpPost]
-        public IActionResult AddPost(Post post, List<IFormFile> files, bool sage)
+        public async Task<IActionResult> AddPost(Post post, List<IFormFile> files, bool sage)
         {
             try
             {
@@ -139,6 +157,8 @@ namespace Menhera.Controllers
                             }
                         }
                     }
+                    await LogIntoFile(_logDirectory, string.Concat("Added new post: ", post.PostId, "at thread: ", post.ThreadId),
+                        LoggingInformationKind.Info);
                 }
                 else
                 {
@@ -149,11 +169,16 @@ namespace Menhera.Controllers
             {
                 return NotFound();
             }
+            catch (Exception e)
+            {
+                await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+            }
 
             return RedirectToAction("Thread", new {id = post.ThreadId});
         }
 
-        public IActionResult Search(int threadId, string query = "")
+        public async Task<IActionResult> Search(int threadId, string query = "")
         {
             try
             {
@@ -189,6 +214,12 @@ namespace Menhera.Controllers
             catch (InvalidOperationException)
             {
                 return NotFound();
+            }
+            catch (Exception e)
+            {
+                await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+                return StatusCode(500);
             }
 
             return View();

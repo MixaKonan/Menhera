@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using Menhera.Classes.Logging;
 using Menhera.Database;
 using Menhera.Extensions;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static Menhera.Classes.Logging.Logger;
 
 namespace Menhera.Controllers
 {
@@ -18,7 +20,9 @@ namespace Menhera.Controllers
     {
         private readonly MenherachanContext _db;
         private readonly IWebHostEnvironment _env;
+
         private readonly string _logDirectory;
+        private readonly string _errorLogDirectory;
 
         public AdminController(MenherachanContext db, IWebHostEnvironment env)
         {
@@ -26,6 +30,7 @@ namespace Menhera.Controllers
             _env = env;
 
             _logDirectory = Path.Combine(_env.WebRootPath, "logs", "admin_logs.log");
+            _errorLogDirectory = Path.Combine(_env.WebRootPath, "logs", "admin_error_logs.log");
         }
 
         [HttpGet]
@@ -49,7 +54,7 @@ namespace Menhera.Controllers
         }
 
         [HttpPost]
-        public void AddAdmin(string email, string login, string passwordHash, string ipHash,
+        public async Task<IActionResult> AddAdminAsync(string email, string login, string passwordHash, string ipHash,
             bool canBanUsers, bool canCloseThreads, bool canDeletePosts, bool hasAccessToPanel)
         {
             try
@@ -69,20 +74,22 @@ namespace Menhera.Controllers
                 _db.Admin.Add(admin);
                 _db.SaveChanges();
 
-                Logger.LogIntoFile(_logDirectory, string.Concat("Added new admin", admin.ToString()),
+                await LogIntoFile(_logDirectory, string.Concat("Added new admin", admin.ToString()),
                     LoggingInformationKind.Info);
             }
             catch (Exception e)
             {
-                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                await LogIntoFile(_errorLogDirectory, string.Concat(e.Message, "\n", e.StackTrace),
                     LoggingInformationKind.Error);
                 Console.WriteLine(e);
-                throw;
+                return StatusCode(500);
             }
+
+            return StatusCode(200);
         }
 
         [HttpPost]
-        public void RemoveAdmin(int adminId)
+        public async Task<IActionResult> RemoveAdminAsync(int adminId)
         {
             try
             {
@@ -95,17 +102,18 @@ namespace Menhera.Controllers
                 _db.Admin.Remove(admin);
                 _db.SaveChanges();
 
-                Logger.LogIntoFile(_logDirectory, string.Concat("Removed admin. ", _admin.ToString()),
+                await LogIntoFile(_logDirectory, string.Concat("Removed admin. ", _admin.ToString()),
                     LoggingInformationKind.Info);
             }
             catch (Exception e)
             {
-                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                await LogIntoFile(_errorLogDirectory, string.Concat(e.Message, "\n", e.StackTrace),
                     LoggingInformationKind.Error);
                 Console.WriteLine(e);
-
-                throw;
+                return StatusCode(500);
             }
+
+            return StatusCode(200);
         }
 
         [HttpGet]
@@ -117,7 +125,8 @@ namespace Menhera.Controllers
         }
 
         [HttpPost]
-        public void AddBoard(string prefix, string postfix, string title, string description, short fileLimit,
+        public async void AddBoardAsync(string prefix, string postfix, string title, string description,
+            short fileLimit,
             string anonName,
             bool isHidden, bool anonHasNoName, bool hasSubject, bool filesAreAllowed)
         {
@@ -140,20 +149,19 @@ namespace Menhera.Controllers
                 _db.Board.Add(board);
                 _db.SaveChanges();
 
-                Logger.LogIntoFile(_logDirectory, string.Concat("Added new board. ", board.ToString()),
+                await LogIntoFile(_logDirectory, string.Concat("Added new board. ", board.ToString()),
                     LoggingInformationKind.Info);
             }
             catch (Exception e)
             {
-                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                await LogIntoFile(_errorLogDirectory, string.Concat(e.Message, "\n", e.StackTrace),
                     LoggingInformationKind.Error);
                 Console.WriteLine(e);
-                throw;
             }
         }
 
         [HttpPost]
-        public void RemoveBoard(int boardId)
+        public async void RemoveBoardAsync(int boardId)
         {
             try
             {
@@ -175,15 +183,14 @@ namespace Menhera.Controllers
 
                 _db.SaveChanges();
 
-                Logger.LogIntoFile(_logDirectory, string.Concat("Removed board. ", _board.ToString()),
+                await LogIntoFile(_logDirectory, string.Concat("Removed board. ", _board.ToString()),
                     LoggingInformationKind.Info);
             }
             catch (Exception e)
             {
-                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                await LogIntoFile(_errorLogDirectory, string.Concat(e.Message, "\n", e.StackTrace),
                     LoggingInformationKind.Error);
                 Console.WriteLine(e);
-                throw;
             }
         }
 
@@ -196,7 +203,7 @@ namespace Menhera.Controllers
         }
 
         [HttpPost]
-        public void RemoveThread(int threadId)
+        public async Task<IActionResult> RemoveThreadAsync(int threadId)
         {
             try
             {
@@ -204,7 +211,10 @@ namespace Menhera.Controllers
 
                 var posts = _db.Post.Include(p => p.File).Where(p => p.ThreadId == thread.ThreadId).ToList();
 
-                _db.Thread.Remove(thread);
+                if (posts.Count > 0)
+                {
+                    _db.Thread.Remove(thread);
+                }
 
                 foreach (var post in posts)
                 {
@@ -217,20 +227,22 @@ namespace Menhera.Controllers
 
                 _db.SaveChanges();
 
-                Logger.LogIntoFile(_logDirectory, string.Concat("Removed thread: ", threadId),
+                await LogIntoFile(_logDirectory, string.Concat("Removed thread: ", threadId),
                     LoggingInformationKind.Info);
             }
             catch (Exception e)
             {
-                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                await LogIntoFile(_errorLogDirectory, string.Concat(e.Message, "\n", e.StackTrace),
                     LoggingInformationKind.Error);
                 Console.WriteLine(e);
-                throw;
+                return StatusCode(500);
             }
+
+            return StatusCode(200);
         }
 
         [HttpPost]
-        public void CloseThread(int threadId)
+        public async Task<IActionResult> CloseThreadAsyncAsync(int threadId)
         {
             try
             {
@@ -239,16 +251,18 @@ namespace Menhera.Controllers
 
                 _db.SaveChanges();
 
-                Logger.LogIntoFile(_logDirectory, string.Concat("Closed thread: ", threadId),
+                await LogIntoFile(_logDirectory, string.Concat("Closed thread: ", threadId),
                     LoggingInformationKind.Info);
             }
             catch (Exception e)
             {
-                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                await LogIntoFile(_errorLogDirectory, string.Concat(e.Message, "\n", e.StackTrace),
                     LoggingInformationKind.Error);
                 Console.WriteLine(e);
-                throw;
+                return StatusCode(500);
             }
+
+            return StatusCode(200);
         }
 
 
@@ -261,7 +275,7 @@ namespace Menhera.Controllers
         }
 
         [HttpPost]
-        public void RemoveReport(int reportId)
+        public async void RemoveReportAsync(int reportId)
         {
             try
             {
@@ -270,20 +284,19 @@ namespace Menhera.Controllers
                 _db.Remove(report);
                 _db.SaveChanges();
 
-                Logger.LogIntoFile(_logDirectory, string.Concat("Removed report: ", report),
+                await LogIntoFile(_logDirectory, string.Concat("Removed report: ", report),
                     LoggingInformationKind.Info);
             }
             catch (Exception e)
             {
-                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                await LogIntoFile(_errorLogDirectory, string.Concat(e.Message, "\n", e.StackTrace),
                     LoggingInformationKind.Error);
                 Console.WriteLine(e);
-                throw;
             }
         }
 
         [HttpPost]
-        public void DeletePost(int postId)
+        public async void DeletePostAsync(int postId)
         {
             try
             {
@@ -302,19 +315,18 @@ namespace Menhera.Controllers
 
                 _db.SaveChanges();
 
-                Logger.LogIntoFile(_logDirectory, string.Concat("Removed post: ", postId), LoggingInformationKind.Info);
+                await LogIntoFile(_logDirectory, string.Concat("Removed post: ", postId), LoggingInformationKind.Info);
             }
             catch (Exception e)
             {
-                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                await LogIntoFile(_errorLogDirectory, string.Concat(e.Message, "\n", e.StackTrace),
                     LoggingInformationKind.Error);
                 Console.WriteLine(e);
-                throw;
             }
         }
 
         [HttpPost]
-        public void BanAnon(string anonIpHash, string reason, string banEndTime)
+        public async Task<IActionResult> BanAnonAsync(string anonIpHash, string reason, string banEndTime)
         {
             try
             {
@@ -349,17 +361,20 @@ namespace Menhera.Controllers
 
                     _db.Ban.Add(ban);
                     _db.SaveChanges();
-                    
-                    Logger.LogIntoFile(_logDirectory, string.Concat("Added new ban: ", ban), LoggingInformationKind.Info);
+
+                    await LogIntoFile(_logDirectory, string.Concat("Added new ban: ", ban),
+                        LoggingInformationKind.Info);
                 }
             }
             catch (Exception e)
             {
-                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace), LoggingInformationKind.Error);
+                await LogIntoFile(_errorLogDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
                 Console.WriteLine(e);
-                throw;
+                return StatusCode(500);
             }
-            
+
+            return StatusCode(200);
         }
     }
 }
