@@ -85,10 +85,11 @@
                     {
                         <input type="file" name="files" id="files" multiple class="field">
                     }
-                    <input type="checkbox" name="sage" value="true" id="sage">
-                    <label>
-                        мудрец
-                    </label>
+                    <div class="sage">
+                        <input class="checkbox-sage" type="checkbox" name="sage" value="true" id="sage">
+                        <label for="sage"></label>
+                        <span>Мудрец</span>
+                    </div>
                 }
             </div>
         }
@@ -240,7 +241,7 @@
     <script src="/js/thread/removeThread.js"></script>
 }
 <script src="/js/thread/newPostFormValidation.js"></script>
-<script src="/js/thread/formButtons.js"></script>
+<script src="/js/formButtons.js"></script>
 <script src="/js/postMenuPopup.js"></script>
 <script src="/js/sage.js"></script>
 <script src="/js/highlight.js"></script>

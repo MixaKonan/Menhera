@@ -60,6 +60,14 @@
                     <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
                 }
                 <textarea asp-for="Comment" class="field comment" id="comment" placeholder="( . .)φ__"></textarea>
+                <div class="formating-btn">
+                    <button type="button" class="frm-btn bold" onclick="doAddTags('[b]', '[/b]', formTextArea)"></button>
+                    <button type="button" class="frm-btn italic" onclick="doAddTags('[i]', '[/i]', formTextArea)"></button>
+                    <button type="button" class="frm-btn quote" onclick="doAddTags('>', '', formTextArea)"></button>
+                    <button type="button" class="frm-btn underline" onclick="doAddTags('[u]', '[/u]', formTextArea)"></button>
+                    <button type="button" class="frm-btn spoiler" onclick="doAddTags('[spoiler]', '[/spoiler]', formTextArea)"></button>
+                    <button type="button" class="frm-btn strikethrough" onclick="doAddTags('[s]', '[/s]', formTextArea)"> </button>
+                </div>
                 if (ViewBag.Board.FilesAreAllowed)
                 {
                     <input type="file" name="files" id="files" multiple class="field">
@@ -233,5 +241,6 @@
 }
 <script src="/js/board/newThreadFormValidation.js"></script>
 <script src="/js/postMenuPopup.js"></script>
+<script src="/js/formButtons.js"></script>
 <script src="/js/getDate.js"></script>
 </body>

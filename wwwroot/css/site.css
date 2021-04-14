@@ -238,16 +238,6 @@ aside a {
     color: #fff;
 }
 
-.form input[type="checkbox"] {
-    float: left;
-}
-
-.form label {
-    float: left;
-    margin-top: 2px;
-    font-size: 0.923em;
-}
-
 .thread-header {
     display: block;
     font-size: 0.929em;
@@ -375,6 +365,34 @@ article .comment {
 }
 .underline{
     background: #fff url("../images/underline.png") no-repeat;
+}
+
+.sage{
+    position: relative;
+
+}
+.sage label{
+    background-color: #fff;
+    border: 2px solid #a670ba;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 12px;
+    left: 2px;
+    position: absolute;
+    top: 2px;
+    width: 12px;
+}
+
+.sage input[type="checkbox"]{
+    visibility: hidden;
+}
+
+.sage input[type="checkbox"]:checked + label{
+    background-color: #a670ba;
+    border-color: #a670ba;
+}
+.sage input[type="checkbox"]:checked + label:after {
+    opacity: 1;
 }
 
 @keyframes highlight {
