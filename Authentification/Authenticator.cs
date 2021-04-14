@@ -5,7 +5,7 @@ using Menhera.Extensions;
 
 namespace Menhera.Authentification
 {
-    public class Authentificator
+    public class Authenticator
     {
         
         public string GetHashString(string password)

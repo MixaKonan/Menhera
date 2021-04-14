@@ -71,6 +71,7 @@ namespace Menhera.Controllers
 
                     post.AnonIpHash = ipHash;
                     post.Comment = PostFormatter.GetHtmlTrimmedComment(post);
+                    
                     DbAccess.AddThreadToBoard(_db, ref post);
 
                     if (files.Count > 0)
@@ -108,8 +109,6 @@ namespace Menhera.Controllers
                 Console.WriteLine(e);
                 return StatusCode(500);
             }
-            
-
             return RedirectToAction("Board");
         }
 
