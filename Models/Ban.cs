@@ -9,6 +9,11 @@ namespace Menhera.Models
 {
     public partial class Ban
     {
+        public override string ToString()
+        {
+            return $"Admin: {this.Admin.Login}. Ban time: {this.BanTimeInUnixSeconds}.";
+        }
+
         public int BanId { get; set; }
         public int AdminId { get; set; }
         public string AnonIpHash { get; set; }

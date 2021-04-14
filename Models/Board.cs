@@ -16,6 +16,11 @@ namespace Menhera.Models
             Thread = new HashSet<Thread>();
         }
 
+        public override string ToString()
+        {
+            return $"/{this.Prefix}/{this.Postfix}";
+        }
+
         public int BoardId { get; set; }
         public string Prefix { get; set; }
         public string Postfix { get; set; }

@@ -15,7 +15,7 @@ namespace Menhera.Models
             Post = new HashSet<Post>();
             Report = new HashSet<Report>();
         }
-
+        
         public int ThreadId { get; set; }
         public int BoardId { get; set; }
         public bool IsClosed { get; set; }

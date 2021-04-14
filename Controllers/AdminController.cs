@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using Menhera.Classes.Logging;
 using Menhera.Database;
 using Menhera.Extensions;
 using Menhera.Models;
@@ -17,11 +18,14 @@ namespace Menhera.Controllers
     {
         private readonly MenherachanContext _db;
         private readonly IWebHostEnvironment _env;
+        private readonly string _logDirectory;
 
         public AdminController(MenherachanContext db, IWebHostEnvironment env)
         {
             _db = db;
             _env = env;
+
+            _logDirectory = Path.Combine(_env.WebRootPath, "logs", "admin_logs.log");
         }
 
         [HttpGet]
@@ -48,28 +52,60 @@ namespace Menhera.Controllers
         public void AddAdmin(string email, string login, string passwordHash, string ipHash,
             bool canBanUsers, bool canCloseThreads, bool canDeletePosts, bool hasAccessToPanel)
         {
-            var admin = new Admin
+            try
             {
-                Email = email,
-                Login = login,
-                PasswordHash = passwordHash,
-                AdminIpHash = ipHash,
-                CanBanUsers = canBanUsers,
-                CanCloseThreads = canCloseThreads,
-                CanDeletePosts = canDeletePosts,
-                HasAccessToPanel = hasAccessToPanel
-            };
+                var admin = new Admin
+                {
+                    Email = email,
+                    Login = login,
+                    PasswordHash = passwordHash,
+                    AdminIpHash = ipHash,
+                    CanBanUsers = canBanUsers,
+                    CanCloseThreads = canCloseThreads,
+                    CanDeletePosts = canDeletePosts,
+                    HasAccessToPanel = hasAccessToPanel
+                };
 
-            _db.Admin.Add(admin);
-            _db.SaveChanges();
+                _db.Admin.Add(admin);
+                _db.SaveChanges();
+
+                Logger.LogIntoFile(_logDirectory, string.Concat("Added new admin", admin.ToString()),
+                    LoggingInformationKind.Info);
+            }
+            catch (Exception e)
+            {
+                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         [HttpPost]
         public void RemoveAdmin(int adminId)
         {
-            var admin = _db.Admin.First(a => a.AdminId == adminId);
-            _db.Admin.Remove(admin);
-            _db.SaveChanges();
+            try
+            {
+                var admin = _db.Admin.First(a => a.AdminId == adminId);
+                var _admin = new Admin
+                {
+                    Login = admin.Login,
+                    Email = admin.Email
+                };
+                _db.Admin.Remove(admin);
+                _db.SaveChanges();
+
+                Logger.LogIntoFile(_logDirectory, string.Concat("Removed admin. ", _admin.ToString()),
+                    LoggingInformationKind.Info);
+            }
+            catch (Exception e)
+            {
+                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+                Console.WriteLine(e);
+
+                throw;
+            }
         }
 
         [HttpGet]
@@ -81,46 +117,74 @@ namespace Menhera.Controllers
         }
 
         [HttpPost]
-        public void AddBoard(string prefix, string postfix, string title, string description, short fileLimit, string anonName,
+        public void AddBoard(string prefix, string postfix, string title, string description, short fileLimit,
+            string anonName,
             bool isHidden, bool anonHasNoName, bool hasSubject, bool filesAreAllowed)
         {
-            var board = new Board
+            try
             {
-                Prefix = prefix,
-                Postfix = postfix,
-                Title = title,
-                Description = description,
-                FileLimit = fileLimit,
-                AnonName = anonName,
-                IsHidden = isHidden,
-                AnonHasNoName = anonHasNoName,
-                HasSubject = hasSubject,
-                FilesAreAllowed = filesAreAllowed
-            };
+                var board = new Board
+                {
+                    Prefix = prefix,
+                    Postfix = postfix,
+                    Title = title,
+                    Description = description,
+                    FileLimit = fileLimit,
+                    AnonName = anonName,
+                    IsHidden = isHidden,
+                    AnonHasNoName = anonHasNoName,
+                    HasSubject = hasSubject,
+                    FilesAreAllowed = filesAreAllowed
+                };
 
-            _db.Board.Add(board);
-            _db.SaveChanges();
+                _db.Board.Add(board);
+                _db.SaveChanges();
+
+                Logger.LogIntoFile(_logDirectory, string.Concat("Added new board. ", board.ToString()),
+                    LoggingInformationKind.Info);
+            }
+            catch (Exception e)
+            {
+                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         [HttpPost]
         public void RemoveBoard(int boardId)
         {
-            var board = _db.Board.First(b => b.BoardId == boardId);
-            
-            var posts = _db.Post.Include(p => p.File).Where(p => p.BoardId == board.BoardId).ToList();
-            
-            _db.Board.Remove(board);
-            
-            foreach (var post in posts)     
+            try
             {
-                foreach (var file in post.File)
+                var board = _db.Board.First(b => b.BoardId == boardId);
+                var _board = new Board {Prefix = board.Prefix, Postfix = board.Postfix};
+
+                var posts = _db.Post.Include(p => p.File).Where(p => p.BoardId == board.BoardId).ToList();
+
+                _db.Board.Remove(board);
+
+                foreach (var post in posts)
                 {
-                    System.IO.File.Delete(Path.Combine(_env.WebRootPath, "postImages" ,file.FileName));
-                    System.IO.File.Delete(Path.Combine(_env.WebRootPath, "thumbnails" ,file.ThumbnailName));
+                    foreach (var file in post.File)
+                    {
+                        System.IO.File.Delete(Path.Combine(_env.WebRootPath, "postImages", file.FileName));
+                        System.IO.File.Delete(Path.Combine(_env.WebRootPath, "thumbnails", file.ThumbnailName));
+                    }
                 }
+
+                _db.SaveChanges();
+
+                Logger.LogIntoFile(_logDirectory, string.Concat("Removed board. ", _board.ToString()),
+                    LoggingInformationKind.Info);
             }
-            
-            _db.SaveChanges();
+            catch (Exception e)
+            {
+                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         [HttpGet]
@@ -134,31 +198,57 @@ namespace Menhera.Controllers
         [HttpPost]
         public void RemoveThread(int threadId)
         {
-            var thread = _db.Thread.First(t => t.ThreadId == threadId);
-
-            var posts = _db.Post.Include(p => p.File).Where(p => p.ThreadId == thread.ThreadId).ToList();
-
-            _db.Thread.Remove(thread);
-            
-            foreach (var post in posts)     
+            try
             {
-                foreach (var file in post.File)
+                var thread = _db.Thread.First(t => t.ThreadId == threadId);
+
+                var posts = _db.Post.Include(p => p.File).Where(p => p.ThreadId == thread.ThreadId).ToList();
+
+                _db.Thread.Remove(thread);
+
+                foreach (var post in posts)
                 {
-                    System.IO.File.Delete(Path.Combine(_env.WebRootPath, "postImages" ,file.FileName));
-                    System.IO.File.Delete(Path.Combine(_env.WebRootPath, "thumbnails" ,file.ThumbnailName));
+                    foreach (var file in post.File)
+                    {
+                        System.IO.File.Delete(Path.Combine(_env.WebRootPath, "postImages", file.FileName));
+                        System.IO.File.Delete(Path.Combine(_env.WebRootPath, "thumbnails", file.ThumbnailName));
+                    }
                 }
+
+                _db.SaveChanges();
+
+                Logger.LogIntoFile(_logDirectory, string.Concat("Removed thread: ", threadId),
+                    LoggingInformationKind.Info);
             }
-            
-            _db.SaveChanges();
+            catch (Exception e)
+            {
+                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         [HttpPost]
         public void CloseThread(int threadId)
         {
-            var thread = _db.Thread.First(t => t.ThreadId == threadId);
-            thread.IsClosed = true;
+            try
+            {
+                var thread = _db.Thread.First(t => t.ThreadId == threadId);
+                thread.IsClosed = true;
 
-            _db.SaveChanges();
+                _db.SaveChanges();
+
+                Logger.LogIntoFile(_logDirectory, string.Concat("Closed thread: ", threadId),
+                    LoggingInformationKind.Info);
+            }
+            catch (Exception e)
+            {
+                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
 
@@ -173,66 +263,103 @@ namespace Menhera.Controllers
         [HttpPost]
         public void RemoveReport(int reportId)
         {
-            var report = _db.Report.First(r => r.ReportId == reportId);
+            try
+            {
+                var report = _db.Report.First(r => r.ReportId == reportId);
 
-            _db.Remove(report);
-            _db.SaveChanges();
+                _db.Remove(report);
+                _db.SaveChanges();
+
+                Logger.LogIntoFile(_logDirectory, string.Concat("Removed report: ", report),
+                    LoggingInformationKind.Info);
+            }
+            catch (Exception e)
+            {
+                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         [HttpPost]
         public void DeletePost(int postId)
         {
-            var post = _db.Post.Include(p => p.File).First(p => p.PostId == postId);
-            
-            _db.Post.Remove(post);
-            
-            if (post.File.Count > 0)
+            try
             {
-                foreach (var file in post.File)
+                var post = _db.Post.Include(p => p.File).First(p => p.PostId == postId);
+
+                _db.Post.Remove(post);
+
+                if (post.File.Count > 0)
                 {
-                    System.IO.File.Delete(Path.Combine(_env.WebRootPath, "postImages" ,file.FileName));
-                    System.IO.File.Delete(Path.Combine(_env.WebRootPath, "thumbnails" ,file.ThumbnailName));
+                    foreach (var file in post.File)
+                    {
+                        System.IO.File.Delete(Path.Combine(_env.WebRootPath, "postImages", file.FileName));
+                        System.IO.File.Delete(Path.Combine(_env.WebRootPath, "thumbnails", file.ThumbnailName));
+                    }
                 }
+
+                _db.SaveChanges();
+
+                Logger.LogIntoFile(_logDirectory, string.Concat("Removed post: ", postId), LoggingInformationKind.Info);
             }
-            
-            _db.SaveChanges();
+            catch (Exception e)
+            {
+                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         [HttpPost]
         public void BanAnon(string anonIpHash, string reason, string banEndTime)
         {
-            var bans = _db.Ban.Select(b => b).Where(b => b.AnonIpHash == anonIpHash).ToList();
-
-            if (bans.Count > 0)
+            try
             {
-                foreach (var ban in bans)
+                var bans = _db.Ban.Select(b => b).Where(b => b.AnonIpHash == anonIpHash).ToList();
+
+                if (bans.Count > 0)
                 {
-                    _db.Ban.Remove(ban);
+                    foreach (var ban in bans)
+                    {
+                        _db.Ban.Remove(ban);
+                    }
+                }
+
+                var banEnd = ((DateTimeOffset) DateTime.Parse(banEndTime)).ToUnixTimeSeconds();
+
+                var adminIpHash = new MD5CryptoServiceProvider().ComputeHash
+                        (HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
+                    .GetString();
+
+                using (_db)
+                {
+                    var adminId = _db.Admin.First(a => a.AdminIpHash == adminIpHash).AdminId;
+                    var banTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+                    var ban = new Ban
+                    {
+                        AdminId = adminId,
+                        AnonIpHash = anonIpHash,
+                        BanTimeInUnixSeconds = banTime,
+                        Term = banEnd,
+                        Reason = reason
+                    };
+
+                    _db.Ban.Add(ban);
+                    _db.SaveChanges();
+                    
+                    Logger.LogIntoFile(_logDirectory, string.Concat("Added new ban: ", ban), LoggingInformationKind.Info);
                 }
             }
-
-            var banEnd = ((DateTimeOffset) DateTime.Parse(banEndTime)).ToUnixTimeSeconds();
-
-            var adminIpHash = new MD5CryptoServiceProvider().ComputeHash
-                    (HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
-                .GetString();
-
-            using (_db)
+            catch (Exception e)
             {
-                var adminId = _db.Admin.First(a => a.AdminIpHash == adminIpHash).AdminId;
-                var banTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-                var ban = new Ban
-                {
-                    AdminId = adminId,
-                    AnonIpHash = anonIpHash,
-                    BanTimeInUnixSeconds = banTime,
-                    Term = banEnd,
-                    Reason = reason
-                };
-
-                _db.Ban.Add(ban);
-                _db.SaveChanges();
+                Logger.LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace), LoggingInformationKind.Error);
+                Console.WriteLine(e);
+                throw;
             }
+            
         }
     }
 }

@@ -14,6 +14,11 @@ namespace Menhera.Models
             Ban = new HashSet<Ban>();
         }
 
+        public override string ToString()
+        {
+            return $"Login: {this.Login}, Email: {this.Email}";
+        }
+
         public int AdminId { get; set; }
         public string Login { get; set; }
         public string Email { get; set; }
