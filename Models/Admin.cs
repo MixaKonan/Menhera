@@ -27,7 +27,7 @@ namespace Menhera.Models
         public bool CanCloseThreads { get; set; }
         public bool HasAccessToPanel { get; set; }
         public bool CanBanUsers { get; set; }
-        public string AdminIpHash { get; set; }
+        public string NicknameColorCode { get; set; }
 
         public virtual ICollection<Ban> Ban { get; set; }
     }

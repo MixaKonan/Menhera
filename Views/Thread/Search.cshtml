@@ -66,23 +66,26 @@
                                 @postFiles.Key.Subject
                             </span>
                         }
-                        if (!string.IsNullOrEmpty(postFiles.Key.Email) && !string.IsNullOrEmpty(postFiles.Key.AnonName))
+                        if (postFiles.Key.AnonIpHash == ViewBag.Thread.OpIpHash)
                         {
-                            <span class="name">
-                                <a href="mailto:@postFiles.Key.Email">
-                                    @postFiles.Key.AnonName
-                                </a>
+                            <span style="color: green; ">
+                                #OP
                             </span>
                         }
-                        else if (!string.IsNullOrEmpty(postFiles.Key.AnonName))
+                        if (!string.IsNullOrEmpty(postFiles.Key.AnonName))
                         {
-                            <span class="name">
-                                @postFiles.Key.AnonName
-                            </span>
-                        }
-                        if (IpCheck.IpBelongsToAdmin(postFiles.Key.AnonIpHash, AdminCollection.Admins, out Admin admin_))
-                        {
-                            @admin_.Login
+                            if (!string.IsNullOrEmpty(postFiles.Key.Email))
+                            {
+                                <span class="name">
+                                    <a href="mailto:@postFiles.Key.Email">
+                                        @Html.Raw(postFiles.Key.AnonName)
+                                    </a>
+                                </span>
+                            }
+                            else
+                            {
+                                @Html.Raw(postFiles.Key.AnonName)
+                            }
                         }
                         <i></i>
                         @DateTimeOffset.FromUnixTimeSeconds(postFiles.Key.TimeInUnixSeconds).DateTime

@@ -48,11 +48,16 @@ namespace Menhera.Classes.PostFormatting
             return quoteAdded;
         }
 
-        public static string GetHtmlTrimmedComment(Post post)
+        public static string GetFormattedAdminName(string name, string colorCode)
+        {
+            return $"<span style=\"color: {colorCode}\">##{name}</span>";
+        }
+        
+        public static string GetHtmlTrimmedString(string str)
         {
             _postHtmlTagsRegex = new Regex(Constants.Constants.HTML_TAGS_TEXT_PATTERN, RegexOptions.Compiled);
 
-            return _postHtmlTagsRegex.Replace(post.Comment, string.Empty);
+            return string.IsNullOrEmpty(str) ? string.Empty : _postHtmlTagsRegex.Replace(str, string.Empty);
         }
     }
 }

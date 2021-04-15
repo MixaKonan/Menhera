@@ -102,34 +102,26 @@
                                         @ViewBag.Post.Subject
                                     </span>
                                 }
-                                if (ViewBag.Post.AnonIpHash == ViewBag.UserIpHash)
-                                {
-                                    <span class="your-thread">
-                                    </span>
-                                }
-                                if (!string.IsNullOrEmpty(ViewBag.Post.Email) && !string.IsNullOrEmpty(ViewBag.Post.AnonName))
-                                {
-                                    <span class="name">
-                                        <a href="mailto:@ViewBag.FirstPost.Email">
-                                            @ViewBag.Post.AnonName
-                                        </a>
-                                    </span>
-                                }
-                                else if (!string.IsNullOrEmpty(ViewBag.Post.AnonName))
-                                {
-                                    <span class="name">
-                                        @ViewBag.Post.AnonName
-                                    </span>
-                                }
                                 if (ViewBag.Post.AnonIpHash == ViewBag.Thread.OpIpHash)
                                 {
                                     <span style="color: green; ">
                                         #OP
                                     </span>
                                 }
-                                if (IpCheck.IpBelongsToAdmin(ViewBag.Post.AnonIpHash, AdminCollection.Admins, out Admin admin))
+                                if (!string.IsNullOrEmpty(ViewBag.Post.AnonName))
                                 {
-                                    <span style="color: blue">##@admin.Login</span>
+                                    if (!string.IsNullOrEmpty(ViewBag.Post.Email))
+                                    {
+                                        <span class="name">
+                                            <a href="mailto:@ViewBag.Post.Email">
+                                                @Html.Raw(ViewBag.Post.AnonName)
+                                            </a>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw(ViewBag.Post.AnonName)
+                                    }
                                 }
                                 <i></i>
                                 <span class="post-time">@ViewBag.Post.TimeInUnixSeconds</span>

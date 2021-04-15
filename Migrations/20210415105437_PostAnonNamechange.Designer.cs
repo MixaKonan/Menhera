@@ -2,14 +2,16 @@
 using Menhera.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Menhera.Migrations
 {
     [DbContext(typeof(MenherachanContext))]
-    partial class MenherachanContextModelSnapshot : ModelSnapshot
+    [Migration("20210415105437_PostAnonNamechange")]
+    partial class PostAnonNamechange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -273,7 +275,7 @@ namespace Menhera.Migrations
 
                     b.Property<string>("AnonName")
                         .HasColumnName("anon_name")
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("varchar(45)")
                         .HasAnnotation("MySql:CharSet", "utf8mb4")
                         .HasAnnotation("MySql:Collation", "utf8mb4_general_ci");
 
@@ -378,7 +380,7 @@ namespace Menhera.Migrations
 
                     b.Property<string>("AnonName")
                         .HasColumnName("anon_name")
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("varchar(45)")
                         .HasAnnotation("MySql:CharSet", "utf8mb4")
                         .HasAnnotation("MySql:Collation", "utf8mb4_general_ci");
 

@@ -69,8 +69,19 @@ namespace Menhera.Controllers
                         return RedirectToAction("Board", new {prefix = board.Prefix});
                     }
 
+                    
                     post.AnonIpHash = ipHash;
-                    post.Comment = PostFormatter.GetHtmlTrimmedComment(post);
+                    if (!string.IsNullOrEmpty(post.AnonName)) ;
+                    {
+                        post.AnonName = PostFormatter.GetHtmlTrimmedString(post.AnonName);
+                    }
+                    post.Comment = PostFormatter.GetHtmlTrimmedString(post.Comment);
+                    
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        var admin = _db.Admin.First(a => a.Email == User.Identity.Name);
+                        post.AnonName = PostFormatter.GetFormattedAdminName(admin.Login, admin.NicknameColorCode) ;
+                    }
                     
                     DbAccess.AddThreadToBoard(_db, ref post);
 
@@ -202,7 +213,7 @@ namespace Menhera.Controllers
                     {
                         pageThreads.Add(allThreads[i]);
                     }
-                    catch (ArgumentOutOfRangeException e)
+                    catch (ArgumentOutOfRangeException)
                     {
                         break;
                     }
@@ -285,14 +296,14 @@ namespace Menhera.Controllers
                 ViewBag.Board = _collection.Boards.First(brd => brd.Prefix == prefix);
                 ViewBag.PostsFiles = postsFiles;
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
-                await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
-                    LoggingInformationKind.Error);
                 return NotFound();
             }
             catch (Exception e)
             {
+                await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
                 return StatusCode(500);
             }
 

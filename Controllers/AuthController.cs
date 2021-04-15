@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using Menhera.Authentification;
 using Menhera.Classes.Hash;
 using Menhera.Classes.Logging;
 using Menhera.Database;
-using Menhera.Extensions;
 using Menhera.Models.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -67,7 +64,7 @@ namespace Menhera.Controllers
                         {
                             await Authenticate(loginModel.Email);
                             await LogIntoFile(_logDirectory, string.Concat
-                                    ("New login from: ", admin.AdminIpHash, " ", admin.ToString()),
+                                    ("New login from: ", admin.ToString()),
                                 LoggingInformationKind.Info);
                             return RedirectToAction("Main", "MainPage");
                         }

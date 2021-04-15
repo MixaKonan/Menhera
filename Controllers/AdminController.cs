@@ -54,7 +54,7 @@ namespace Menhera.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAdminAsync(string email, string login, string passwordHash, string ipHash,
+        public async Task<IActionResult> AddAdminAsync(string email, string login, string passwordHash,
             bool canBanUsers, bool canCloseThreads, bool canDeletePosts, bool hasAccessToPanel)
         {
             try
@@ -64,7 +64,6 @@ namespace Menhera.Controllers
                     Email = email,
                     Login = login,
                     PasswordHash = passwordHash,
-                    AdminIpHash = ipHash,
                     CanBanUsers = canBanUsers,
                     CanCloseThreads = canCloseThreads,
                     CanDeletePosts = canDeletePosts,
@@ -211,20 +210,21 @@ namespace Menhera.Controllers
 
                 var posts = _db.Post.Include(p => p.File).Where(p => p.ThreadId == thread.ThreadId).ToList();
 
+                _db.Thread.Remove(thread);
+
+                
                 if (posts.Count > 0)
                 {
-                    _db.Thread.Remove(thread);
-                }
-
-                foreach (var post in posts)
-                {
-                    foreach (var file in post.File)
+                    foreach (var post in posts)
                     {
-                        System.IO.File.Delete(Path.Combine(_env.WebRootPath, "postImages", file.FileName));
-                        System.IO.File.Delete(Path.Combine(_env.WebRootPath, "thumbnails", file.ThumbnailName));
+                        foreach (var file in post.File)
+                        {
+                            System.IO.File.Delete(Path.Combine(_env.WebRootPath, "postImages", file.FileName));
+                            System.IO.File.Delete(Path.Combine(_env.WebRootPath, "thumbnails", file.ThumbnailName));
+                        }
                     }
                 }
-
+                
                 _db.SaveChanges();
 
                 await LogIntoFile(_logDirectory, string.Concat("Removed thread: ", threadId),
@@ -342,13 +342,9 @@ namespace Menhera.Controllers
 
                 var banEnd = ((DateTimeOffset) DateTime.Parse(banEndTime)).ToUnixTimeSeconds();
 
-                var adminIpHash = new MD5CryptoServiceProvider().ComputeHash
-                        (HttpContext.Connection.RemoteIpAddress.GetAddressBytes())
-                    .GetString();
-
                 using (_db)
                 {
-                    var adminId = _db.Admin.First(a => a.AdminIpHash == adminIpHash).AdminId;
+                    var adminId = _db.Admin.First(a => a.Email == User.Identity.Name).AdminId;
                     var banTime = DateTimeOffset.Now.ToUnixTimeSeconds();
                     var ban = new Ban
                     {

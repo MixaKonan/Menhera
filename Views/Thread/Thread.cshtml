@@ -1,5 +1,4 @@
-﻿@using Menhera.Classes.Anon
-@model Post
+﻿@model Post
 @inject Menhera.Intefaces.IBoardCollection BoardCollection
 @inject Menhera.Intefaces.IAdminCollection AdminCollection
 
@@ -130,27 +129,20 @@
                                     #OP
                                 </span>
                             }
-                            if (IpCheck.IpBelongsToAdmin(postFiles.Key.AnonIpHash, AdminCollection.Admins, out Admin admin))
+                            if (!string.IsNullOrEmpty(postFiles.Key.AnonName))
                             {
-                                <span style="color: blue">##@admin.Login</span>
-                            }
-                            else if (!string.IsNullOrEmpty(postFiles.Key.Email) && !string.IsNullOrEmpty(postFiles.Key.AnonName))
-                            {
-                                <span class="name">
-                                    <a href="mailto:@postFiles.Key.Email">
-                                        @postFiles.Key.AnonName
-                                    </a>
-                                </span>
-                            }
-                            else if (!string.IsNullOrEmpty(postFiles.Key.AnonName))
-                            {
-                                <span class="name">
-                                    @postFiles.Key.AnonName
-                                </span>
-                            }
-                            else if (!string.IsNullOrEmpty(ViewBag.Board.AnonName))
-                            {
-                                @ViewBag.Board.AnonName
+                                if (!string.IsNullOrEmpty(postFiles.Key.Email))
+                                {
+                                    <span class="name">
+                                        <a href="mailto:@postFiles.Key.Email">
+                                            @Html.Raw(postFiles.Key.AnonName)
+                                        </a>
+                                    </span>
+                                }
+                                else
+                                {
+                                    @Html.Raw(postFiles.Key.AnonName)
+                                }
                             }
                             <i></i>
                             @DateTimeOffset.FromUnixTimeSeconds(postFiles.Key.TimeInUnixSeconds).DateTime

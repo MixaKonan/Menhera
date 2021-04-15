@@ -126,9 +126,15 @@ namespace Menhera.Controllers
                     return RedirectToAction("YouAreBanned", "Ban");
                 }
 
-                post.Comment = PostFormatter.GetHtmlTrimmedComment(post);
+                post.Comment = PostFormatter.GetHtmlTrimmedString(post.Comment);
                 post.AnonIpHash = ipHash;
                 post.TimeInUnixSeconds = DateTimeOffset.Now.ToUnixTimeSeconds();
+                
+                if (User.Identity.IsAuthenticated)
+                {
+                    var admin = _db.Admin.First(a => a.Email == User.Identity.Name);
+                    post.AnonName = PostFormatter.GetFormattedAdminName(admin.Login, admin.NicknameColorCode) ;
+                }
 
                 if (ModelState.IsValid)
                 {

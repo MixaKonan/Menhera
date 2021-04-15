@@ -62,29 +62,26 @@
                                 @ViewBag.PostFiles.Key.Subject
                             </span>
                         }
-                        if (!string.IsNullOrEmpty(ViewBag.PostFiles.Key.Email) && !string.IsNullOrEmpty(ViewBag.PostFiles.Key.AnonName))
+                        if (!string.IsNullOrEmpty(ViewBag.PostFiles.Key.AnonName))
                         {
-                            <span class="name">
-                                <a href="mailto:@ViewBag.PostFiles.Key.Email">
-                                    @ViewBag.PostFiles.Key.AnonName
-                                </a>
-                            </span>
-                        }
-                        else if (!string.IsNullOrEmpty(ViewBag.PostFiles.Key.AnonName))
-                        {
-                            <span class="name">
-                                @ViewBag.PostFiles.Key.AnonName
-                            </span>
+                            if (!string.IsNullOrEmpty(ViewBag.PostFiles.Key.Email))
+                            {
+                                <span class="name">
+                                    <a href="mailto:@ViewBag.PostFiles.Key.Email">
+                                        @Html.Raw(ViewBag.PostFiles.Key.AnonName)
+                                    </a>
+                                </span>
+                            }
+                            else
+                            {
+                                @Html.Raw(ViewBag.PostFiles.Key.AnonName)
+                            }
                         }
                         if (ViewBag.PostFiles.Key.AnonIpHash == ViewBag.Thread.OpIpHash)
                         {
                             <span style="color: green; ">
                                 #OP
                             </span>
-                        }
-                        if (IpCheck.IpBelongsToAdmin(ViewBag.PostFiles.Key.AnonIpHash, AdminCollection.Admins, out Admin admin_))
-                        {
-                            @admin_.Login
                         }
                         <i></i>
                         @DateTimeOffset.FromUnixTimeSeconds(ViewBag.PostFiles.Key.TimeInUnixSeconds).DateTime
