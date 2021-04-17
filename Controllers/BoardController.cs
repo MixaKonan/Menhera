@@ -97,11 +97,27 @@ namespace Menhera.Controllers
                         {
                             if (file.Length > 0)
                             {
-                                using (var creator = new ImageThumbnailCreator(file, fileDirectory, thumbNailDirectory))
+                                switch (Path.GetExtension(file.FileName))
                                 {
-                                    await creator.CreateThumbnailAsync();
+                                    case ".jpeg":
+                                    case ".jpg":
+                                    case ".png":
+                                        var imageThumbnailCreator =
+                                            new ImageThumbnailCreator(file, fileDirectory, thumbNailDirectory);
+                                        imageThumbnailCreator.CreateThumbnail();
 
-                                    DbAccess.AddFilesToPost(_db, post, creator.ImgInfo);
+                                        DbAccess.AddFilesToPost(_db, post, imageThumbnailCreator.FileInfo);
+
+                                        break;
+
+                                    case ".gif":
+                                        var gifThumbnailCreator =
+                                            new GifThumbnailCreator(file, fileDirectory, thumbNailDirectory);
+                                        gifThumbnailCreator.CreateThumbnail();
+                                        
+                                        DbAccess.AddFilesToPost(_db, post, gifThumbnailCreator.FileInfo);
+                                        
+                                        break;
                                 }
                             }
                             else

@@ -8,14 +8,15 @@ namespace Menhera.Classes.Files
     {
         protected string FileName { get; }
         protected string ThumbnailName { get; }
-        protected string ImageInfo { get; set; }
+        
+        public FileInformation FileInfo { get; set; }
         protected IFormFile File { get; }
         protected string FileExtension { get; }
         protected string FileDirectory { get; }
         protected string FileFullPath { get; }
         protected string ThumbnailDirectory { get; }
         protected string ThumbnailFullPath { get; }
-        
+
         protected ThumbnailCreator(IFormFile file, string fileDirectory, string thumbNailDirectory)
         {
             File = file;
@@ -30,9 +31,15 @@ namespace Menhera.Classes.Files
 
             ThumbnailDirectory = thumbNailDirectory;
 
-            ThumbnailName = string.Concat("thmb-" ,FileName);
+            ThumbnailName = string.Concat("thmb-", FileName);
 
             ThumbnailFullPath = Path.Combine(ThumbnailDirectory, ThumbnailName);
+        }
+
+        public virtual void CreateThumbnail(double width = Constants.Constants.THUMBNAIL_WIDTH,
+            double height = Constants.Constants.THUMBNAIL_HEIGHT)
+        {
+
         }
     }
 }

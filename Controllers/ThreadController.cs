@@ -25,7 +25,7 @@ namespace Menhera.Controllers
     {
         private readonly MenherachanContext _db;
         private readonly IWebHostEnvironment _env;
-        
+
         private readonly string _logDirectory;
 
 
@@ -69,14 +69,11 @@ namespace Menhera.Controllers
                 {
                     try
                     {
-                        var thread = _db.Thread.Where(t => t.ThreadId == id).
-                            Include(t => t.Board).
-                            Include(t => t.Post)
+                        var thread = _db.Thread.Where(t => t.ThreadId == id).Include(t => t.Board).Include(t => t.Post)
                             .ToList()[0];
 
-                        var posts = _db.Post.Where(p => p.ThreadId == id).
-                            Include(p => p.File)
-                            .Include(p => p.Admin) 
+                        var posts = _db.Post.Where(p => p.ThreadId == id).Include(p => p.File)
+                            .Include(p => p.Admin)
                             .ToList();
 
                         var postsFiles = new Dictionary<Post, List<File>>();
@@ -87,7 +84,7 @@ namespace Menhera.Controllers
 
                             postsFiles.Add(post, post.File.ToList());
                         }
-                        
+
                         ViewBag.Board = thread.Board;
                         ViewBag.Thread = thread;
                         ViewBag.PostsFiles = postsFiles;
@@ -134,7 +131,7 @@ namespace Menhera.Controllers
                 post.Comment = PostFormatter.GetHtmlTrimmedString(post.Comment);
                 post.AnonIpHash = ipHash;
                 post.TimeInUnixSeconds = DateTimeOffset.Now.ToUnixTimeSeconds();
-                
+
                 if (User.Identity.IsAuthenticated)
                 {
                     var admin = _db.Admin.First(a => a.Email == User.Identity.Name);
@@ -156,11 +153,27 @@ namespace Menhera.Controllers
                         {
                             if (file.Length > 0)
                             {
-                                using (var creator = new ImageThumbnailCreator(file, fileDirectory, thumbNailDirectory))
+                                switch (Path.GetExtension(file.FileName))
                                 {
-                                    creator.CreateThumbnail();
+                                    case ".jpeg":
+                                    case ".jpg":
+                                    case ".png":
+                                        var imageThumbnailCreator =
+                                            new ImageThumbnailCreator(file, fileDirectory, thumbNailDirectory);
+                                        imageThumbnailCreator.CreateThumbnail();
 
-                                    DbAccess.AddFilesToPost(_db, post, creator.ImgInfo);
+                                        DbAccess.AddFilesToPost(_db, post, imageThumbnailCreator.FileInfo);
+
+                                        break;
+
+                                    case ".gif":
+                                        var gifThumbnailCreator =
+                                            new GifThumbnailCreator(file, fileDirectory, thumbNailDirectory);
+                                        gifThumbnailCreator.CreateThumbnail();
+                                        
+                                        DbAccess.AddFilesToPost(_db, post, gifThumbnailCreator.FileInfo);
+                                        
+                                        break;
                                 }
                             }
                             else
@@ -169,7 +182,9 @@ namespace Menhera.Controllers
                             }
                         }
                     }
-                    await LogIntoFile(_logDirectory, string.Concat("Added new post: ", post.PostId, "at thread: ", post.ThreadId),
+
+                    await LogIntoFile(_logDirectory,
+                        string.Concat("Added new post: ", post.PostId, "at thread: ", post.ThreadId),
                         LoggingInformationKind.Info);
                 }
                 else

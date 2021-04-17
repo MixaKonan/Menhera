@@ -49,7 +49,7 @@ namespace Menhera.Classes.Db
             db.SaveChanges();
         }
 
-        public static void AddFilesToPost(MenherachanContext db, Post post, ImageInformation info)
+        public static void AddFilesToPost(MenherachanContext db, Post post, FileInformation info)
         {
             db.File.Add(new File
             {

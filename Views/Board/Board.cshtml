@@ -76,9 +76,11 @@
     }
     <div class="functional-menu">
         <a asp-controller="MainPage" asp-action="Main">Главная</a>
+        <span> | </span>
         <a asp-controller="Board" asp-action="Search" asp-route-prefix="@ViewBag.Board.Prefix">Поиск</a>
         @if (User.Identity.IsAuthenticated)
         {
+            <span> | </span>
             <a asp-controller="Admin" asp-action="Panel">Управление</a>
         }
     </div>

@@ -2,76 +2,26 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
 namespace Menhera.Classes.Files
 {
-    public class ImageThumbnailCreator : ThumbnailCreator, IDisposable
+    public class ImageThumbnailCreator : ThumbnailCreator
     {
-        public ImageInformation ImgInfo { get; }
+        private string ImageInfo { get; set; }
         private Image Image { get; set; }
 
         public ImageThumbnailCreator(IFormFile file, string fileDirectory, string thumbNailDirectory) : base(file, fileDirectory, thumbNailDirectory)
         {
-            ImgInfo = new ImageInformation(FileName, ThumbnailName, ImageInfo);
         }
 
-        public async Task CreateThumbnailAsync(double width = Constants.Constants.THUMBNAIL_WIDTH, double height = Constants.Constants.THUMBNAIL_HEIGHT)
-        {
-            await using (Stream fileSaveStream = new FileStream(FileFullPath, FileMode.Create))
-            {
-                await File.CopyToAsync(fileSaveStream);
-            }
-
-            Image = Image.FromFile(FileFullPath);
-
-            ImageInfo = $"{Image.Width}x{Image.Height}";
-
-            if (Image.Width < width && Image.Height < height)
-            {
-                await using (Stream thumbnailSaveStream = new FileStream(ThumbnailFullPath, FileMode.Create))
-                {
-                    await File.CopyToAsync(thumbnailSaveStream);
-                }
-            }
-            else
-            {
-                double coefficient =
-                    Image.Width > Image.Height
-                    ? width / Image.Width
-                    : height / Image.Height;
-
-                int thumbnailW = (int) Math.Round(Image.Width * coefficient, MidpointRounding.ToEven);
-                int thumbnailH = (int) Math.Round(Image.Height * coefficient, MidpointRounding.ToEven);
-
-                Image thumbnail = Image.GetThumbnailImage(thumbnailW, thumbnailH,
-                    () => false,
-                    IntPtr.Zero);
-
-                await using (Stream thumbnailSaveStream = new FileStream(ThumbnailFullPath, FileMode.Create))
-                {
-                    switch (FileExtension)
-                    {
-                        case ".jpeg":
-                        case ".jpg":
-                            thumbnail.Save(thumbnailSaveStream, ImageFormat.Jpeg);
-                            break;
-                        case ".png":
-                            thumbnail.Save(thumbnailSaveStream, ImageFormat.Png);
-                            break;
-                    }
-                }
-            }
-        }
-        
-        public void CreateThumbnail(double width = Constants.Constants.THUMBNAIL_WIDTH, double height = Constants.Constants.THUMBNAIL_HEIGHT)
+        public override void CreateThumbnail(double width = Constants.Constants.THUMBNAIL_WIDTH, double height = Constants.Constants.THUMBNAIL_HEIGHT)
         {
             using (Stream fileSaveStream = new FileStream(FileFullPath, FileMode.Create))
             {
                 File.CopyTo(fileSaveStream);
             }
-
+            
             Image = Image.FromFile(FileFullPath);
 
             ImageInfo = $"{Image.Width}x{Image.Height}";
@@ -110,21 +60,9 @@ namespace Menhera.Classes.Files
                             break;
                     }
                 }
+                
+                FileInfo = new ImageInformation(FileName, ThumbnailName, ImageInfo);
             }
-        }
-
-        public void Dispose()
-        {
-            Image?.Dispose();
-            
-            GC.Collect();
-        }
-
-        ~ImageThumbnailCreator()
-        {
-            Image?.Dispose();
-            
-            GC.Collect();
         }
     }
 }

@@ -54,7 +54,7 @@ input[type="search"] {
     box-sizing: border-box;
     border: none;
     padding: 4px 0 0 2px;
-    font-family: 'Ubuntu', sans-serif;
+    font-family: Raleway, sans-serif;
 }
 
 textarea {
@@ -89,7 +89,7 @@ hr {
 
 button {
     cursor: pointer;
-    font-family: 'Ubuntu', sans-serif;
+    font-family: Raleway, sans-serif;
 }
 
 header,
@@ -174,7 +174,7 @@ aside a {
 .functional-menu,
 .threads {
     margin: 0 226px 0 10%;
-    font-family: 'Ubuntu', sans-serif;
+    font-family: Raleway, sans-serif;
 }
 
 .functional-menu {
