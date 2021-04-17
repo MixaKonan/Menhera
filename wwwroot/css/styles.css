@@ -48,3 +48,22 @@ thead{
     color: gray !important;
     font-size: 18px !important;
 }
+
+.color-picker{
+    display: flex;
+    align-items: center;
+}
+
+.color-picker input[type="color"]{
+    padding: 3px;
+    height:34px;
+    width: 34px;
+    margin-right: 5px;
+}
+
+.color-picker input[type="text"]{
+    padding: 4px;
+    font-size: 20px;
+    outline: none;
+    font-weight: bold;
+}

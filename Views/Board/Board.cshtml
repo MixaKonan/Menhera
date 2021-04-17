@@ -106,7 +106,7 @@
                                         #OP
                                     </span>
                                 }
-                                if (!(string.IsNullOrEmpty(ViewBag.Post.Email) && string.IsNullOrEmpty(ViewBag.Post.AnonName)))
+                                if (!string.IsNullOrEmpty(ViewBag.Post.Email) && !string.IsNullOrEmpty(ViewBag.Post.AnonName))
                                 {
                                     <span class="name">
                                         <a href="mailto:@ViewBag.Post.Email">

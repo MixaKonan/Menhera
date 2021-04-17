@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Menhera.Authentication;
 using Menhera.Classes.Logging;
 using Menhera.Database;
-using Menhera.Extensions;
 using Menhera.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -371,6 +370,50 @@ namespace Menhera.Controllers
             }
 
             return StatusCode(200);
+        }
+
+        [HttpGet]
+        public IActionResult Account()
+        {
+            var admin = _db.Admin.First(a => a.Email == User.Identity.Name);
+            
+            return View(admin);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Account(string email, string login, string password, string color)
+        {
+            try
+            {
+                var admin = _db.Admin.First(a => a.Email == User.Identity.Name);
+
+                admin.Email = email;
+                admin.Login = login;
+                admin.NicknameColorCode = color;
+
+                if (!string.IsNullOrEmpty(password))
+                {
+                    admin.PasswordHash = await Authenticator.GetHashStringAsync(password);
+                    _db.Admin.Update(admin);
+                    _db.SaveChanges();
+                    return RedirectToAction("Logout", "Auth");
+                }
+                
+                _db.Admin.Update(admin);
+                _db.SaveChanges();
+
+                await LogIntoFile(_logDirectory, string.Concat("Admin: ", admin.Login, " updated his data."),
+                    LoggingInformationKind.Info);
+                
+                return StatusCode(200);
+            }
+            catch (Exception e)
+            {
+                await LogIntoFile(_logDirectory, string.Concat(e.Message, "\n", e.StackTrace),
+                    LoggingInformationKind.Error);
+                Console.WriteLine(e);
+                return StatusCode(500);
+            }
         }
     }
 }

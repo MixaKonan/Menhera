@@ -130,7 +130,7 @@
                                     #OP
                                 </span>
                             }
-                            if (!(string.IsNullOrEmpty(postFiles.Key.Email) && string.IsNullOrEmpty(postFiles.Key.AnonName)))
+                            if (!string.IsNullOrEmpty(postFiles.Key.Email) && !string.IsNullOrEmpty(postFiles.Key.AnonName))
                             {
                                 <span class="name">
                                     <a href="mailto:@postFiles.Key.Email">

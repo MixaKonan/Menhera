@@ -89,7 +89,7 @@ namespace Menhera.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login");
+            return Json(new { redirectToUrl = Url.Action("Login", "Auth") });
         }
 
         private async Task Authenticate(string userName)
