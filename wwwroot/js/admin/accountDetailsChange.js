@@ -13,7 +13,12 @@ function submitChanges() {
         data: data,
         method: 'post',
         success: (result) => {
+            if(result.redirectToUrl != null) {
                 window.location.href = result.redirectToUrl;
+            }
+            else {
+                window.location.reload();
+            }
         },
         error: () => {
             alert("Произошла ошибка.")

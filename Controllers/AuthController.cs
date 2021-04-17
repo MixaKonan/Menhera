@@ -39,6 +39,11 @@ namespace Menhera.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Panel", "Admin");
+            }
+            
             return View();
         }
 

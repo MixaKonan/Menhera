@@ -27,52 +27,36 @@
 </header>
 @{
     @Html.ValidationSummary(true)
-    if (User.Identity.IsAuthenticated)
-    {
-        <div class="signed">
-            <div class="signed-screen" style="text-align: center; margin-top: 300px;">
-                <div class="signed-title">
-                    <h1>Вы уже вошли</h1>
+    <div class="anime">
+        <div class="login">
+            <div class="login-screen">
+                <div class="login-title">
+                    <h1>Вход</h1>
                 </div>
-                <div class="signed-form">
-                    <a asp-controller="MainPage" asp-action="Main" class="back-link">Вернуться на главную</a>
-                </div>
-            </div>
-        </div>
-    }
-    else
-    {
-        <div class="anime">
-            <div class="login">
-                <div class="login-screen">
-                    <div class="login-title">
-                        <h1>Вход</h1>
-                    </div>
-                    <div class="login-form">
-                        @using (Html.BeginForm("Login", "Auth", FormMethod.Post))
-                        {
-                            <div class="control-group">
-                                <input asp-for="Email" type="email" class="login-field" placeholder="Email" id="login-email">
-                                <input asp-for="Password" type="password" class="login-field" placeholder="Password" id="login-pass">
-                            </div>
-                            <input type="submit" class="btn-login" value="Войти"/>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div style="text-align: center">
-            @{
-                foreach (var errors in ViewData.ModelState.Where(n => n.Value.Errors.Count > 0).ToList())
-                {
-                    foreach (var err in errors.Value.Errors)
+                <div class="login-form">
+                    @using (Html.BeginForm("Login", "Auth", FormMethod.Post))
                     {
-                        <p>@err.ErrorMessage</p>
+                        <div class="control-group">
+                            <input asp-for="Email" type="email" class="login-field" placeholder="Email" id="login-email">
+                            <input asp-for="Password" type="password" class="login-field" placeholder="Password" id="login-pass">
+                        </div>
+                        <input type="submit" class="btn-login" value="Войти"/>
                     }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="text-align: center">
+        @{
+            foreach (var errors in ViewData.ModelState.Where(n => n.Value.Errors.Count > 0).ToList())
+            {
+                foreach (var err in errors.Value.Errors)
+                {
+                    <p>@err.ErrorMessage</p>
                 }
             }
-        </div>
-    }
+        }
+    </div>
 }
 </body>
 </html>
