@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Menhera.Authentification;
+using Menhera.Authentication;
 using Menhera.Classes.Hash;
 using Menhera.Classes.Logging;
 using Menhera.Database;
@@ -48,7 +48,7 @@ namespace Menhera.Controllers
         {
             if (ModelState.IsValid)
             {
-                var loginPassHash = await new Authenticator().GetHashStringAsync(loginModel.Password);
+                var loginPassHash = await Authenticator.GetHashStringAsync(loginModel.Password);
 
                 try
                 {

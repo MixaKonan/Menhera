@@ -3,17 +3,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Menhera.Extensions;
 
-namespace Menhera.Authentification
+namespace Menhera.Authentication
 {
-    public class Authenticator
+    public static class Authenticator
     {
-        
-        public string GetHashString(string password)
-        {
-            return new SHA256Managed().ComputeHash(Encoding.UTF8.GetBytes(password)).GetString();
-        }
-        
-        public async Task<string> GetHashStringAsync(string password)
+        public static async Task<string> GetHashStringAsync(string password)
         {
             var hashString = string.Empty;
             
