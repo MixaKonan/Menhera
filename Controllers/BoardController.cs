@@ -29,7 +29,7 @@ namespace Menhera.Controllers
         private readonly MenherachanContext _db;
         private readonly IBoardCollection _collection;
         private readonly IWebHostEnvironment _env;
-        
+
         private readonly string _logDirectory;
 
         private readonly MD5CryptoServiceProvider _md5;
@@ -41,7 +41,7 @@ namespace Menhera.Controllers
             _collection = collection;
 
             _logDirectory = Path.Combine(_env.WebRootPath, "logs", "board_logs.log");
-            
+
             _md5 = new MD5CryptoServiceProvider();
         }
 
@@ -63,26 +63,28 @@ namespace Menhera.Controllers
                 if (ModelState.IsValid)
                 {
                     var board = _db.Board.First(b => b.BoardId == post.BoardId);
-                
+
                     if (_db.Thread.Count(t => t.BoardId == post.BoardId) >= 20)
                     {
                         return RedirectToAction("Board", new {prefix = board.Prefix});
                     }
 
-                    
+
                     post.AnonIpHash = ipHash;
-                    if (!string.IsNullOrEmpty(post.AnonName)) ;
+                    if (!string.IsNullOrEmpty(post.AnonName))
                     {
                         post.AnonName = PostFormatter.GetHtmlTrimmedString(post.AnonName);
                     }
+
                     post.Comment = PostFormatter.GetHtmlTrimmedString(post.Comment);
-                    
+
                     if (User.Identity.IsAuthenticated)
                     {
                         var admin = _db.Admin.First(a => a.Email == User.Identity.Name);
-                        post.AnonName = PostFormatter.GetFormattedAdminName(admin.Login, admin.NicknameColorCode) ;
+                        post.AnonName = admin.Login;
+                        post.Admin = admin;
                     }
-                    
+
                     DbAccess.AddThreadToBoard(_db, ref post);
 
                     if (files.Count > 0)
@@ -108,6 +110,7 @@ namespace Menhera.Controllers
                             }
                         }
                     }
+
                     await LogIntoFile(_logDirectory, string.Concat("Added new thread: ", post.ThreadId),
                         LoggingInformationKind.Info);
                     return RedirectToAction("Thread", "Thread", new {id = post.ThreadId});
@@ -120,6 +123,7 @@ namespace Menhera.Controllers
                 Console.WriteLine(e);
                 return StatusCode(500);
             }
+
             return RedirectToAction("Board");
         }
 
@@ -172,7 +176,6 @@ namespace Menhera.Controllers
                 {
                     var thread = _db.Thread.Include(t => t.Post).First(t => t.ThreadId == thrd.ThreadId);
 
-
                     if (thread != null)
                     {
                         var postFiles = new List<KeyValuePair<Post, List<File>>>();
@@ -185,7 +188,11 @@ namespace Menhera.Controllers
 
                             foreach (var post in posts)
                             {
-                                var p = _db.Post.Include(pp => pp.File).First(pp => pp.PostId == post.PostId);
+                                var p = _db.Post
+                                    .Include(pp => pp.File)
+                                    .Include(pp => pp.Admin)
+                                    .First(pp => pp.PostId == post.PostId);
+
                                 postFiles.Add(new KeyValuePair<Post, List<File>>(p, p.File.ToList()));
                             }
 
@@ -194,7 +201,10 @@ namespace Menhera.Controllers
                         }
                         else if (thread.Post.Count > 0 && thread.Post.Count <= 3)
                         {
-                            var p = _db.Post.Include(pp => pp.File).First(pp => pp.ThreadId == thread.ThreadId);
+                            var p = _db.Post
+                                .Include(pp => pp.File)
+                                .Include(pp => pp.Admin)
+                                .First(pp => pp.ThreadId == thread.ThreadId);
                             postFiles.Add(new KeyValuePair<Post, List<File>>(p, p.File.ToList()));
 
                             allThreads.Add(

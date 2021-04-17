@@ -1,5 +1,4 @@
-﻿@using Menhera.Classes.Anon
-@model Post
+﻿@model Post
 @inject Menhera.Intefaces.IBoardCollection BoardCollection
 @inject Menhera.Intefaces.IAdminCollection AdminCollection
 
@@ -43,12 +42,12 @@
             {
                 if (ViewBag.Board.AnonHasNoName)
                 {
-                    <input asp-for="Email" type="text" name="email" placeholder="Email" autocomplete="off" class="field full-email">
+                    <input asp-for="Email" type="text" name="email" placeholder="Email" autocomplete="off" class="field full-email" maxlength="50">
                 }
                 else
                 {
-                    <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field email">
-                    <input asp-for="AnonName" type="text" name="name" placeholder="Имя" autocomplete="off" class="field email">
+                    <input asp-for="Email" type="email" name="email" placeholder="Email" autocomplete="off" class="field email" maxlength="50">
+                    <input asp-for="AnonName" type="text" name="name" placeholder="Имя" autocomplete="off" class="field email" maxlength="30">
                 }
 
                 <input type="submit" value="Пост" class="field submit" id="submit">
@@ -57,7 +56,7 @@
 
                 if (ViewBag.Board.HasSubject)
                 {
-                    <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field">
+                    <input asp-for="Subject" type="text" name="subject" placeholder="Тема" autocomplete="off" class="field" maxlength="50">
                 }
                 <textarea asp-for="Comment" class="field comment" id="comment" placeholder="( . .)φ__"></textarea>
                 <div class="formating-btn">
@@ -96,32 +95,40 @@
                     <article>
                         <div class="thread-header">
                             @{
-                                if (!string.IsNullOrEmpty(ViewBag.Post.Subject))
-                                {
-                                    <span class="subject">
-                                        @ViewBag.Post.Subject
-                                    </span>
-                                }
+                                <span class="subject">
+                                    @ViewBag.Post.Subject
+                                </span>
                                 if (ViewBag.Post.AnonIpHash == ViewBag.Thread.OpIpHash)
                                 {
                                     <span style="color: green; ">
                                         #OP
                                     </span>
                                 }
-                                if (!string.IsNullOrEmpty(ViewBag.Post.AnonName))
+                                if (!(string.IsNullOrEmpty(ViewBag.Post.Email) && string.IsNullOrEmpty(ViewBag.Post.AnonName)))
                                 {
-                                    if (!string.IsNullOrEmpty(ViewBag.Post.Email))
+                                    <span class="name">
+                                        <a href="mailto:@ViewBag.Post.Email">
+                                            @if (!(ViewBag.Post.Admin is null))
+                                            {
+                                                @Html.Raw($"<span style=\"color: {ViewBag.Post.Admin.NicknameColorCode};\">{ViewBag.Post.Admin.Login}</span>")
+                                            }
+                                            else
+                                            {
+                                                @ViewBag.Post.AnonName
+                                            }
+                                        </a>
+                                    </span>
+                                }
+                                else
+                                {
+                                    if (!(ViewBag.Post.Admin is null))
                                     {
-                                        <span class="name">
-                                            <a href="mailto:@ViewBag.Post.Email">
-                                                @Html.Raw(ViewBag.Post.AnonName)
-                                            </a>
-                                        </span>
+                                        @Html.Raw($"<span style=\"color: {ViewBag.Post.Admin.NicknameColorCode};\">{ViewBag.Post.Admin.Login}</span>")
                                     }
                                     else
                                     {
-                                        @Html.Raw(ViewBag.Post.AnonName)
-                                    }
+                                        @ViewBag.Post.AnonName
+                                    }    
                                 }
                                 <i></i>
                                 <span class="post-time">@ViewBag.Post.TimeInUnixSeconds</span>

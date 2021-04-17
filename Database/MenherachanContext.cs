@@ -26,8 +26,7 @@ namespace Menhera.Database
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql("",
-                    x => x.ServerVersion("10.3.27-mariadb"));
+                optionsBuilder.UseMySql();
             }
         }
 
@@ -40,13 +39,6 @@ namespace Menhera.Database
                 entity.Property(e => e.AdminId)
                     .HasColumnName("admin_id")
                     .HasColumnType("int(11)");
-
-                entity.Property(e => e.AdminIpHash)
-                    .IsRequired()
-                    .HasColumnName("admin_ip_hash")
-                    .HasColumnType("varchar(100)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
 
                 entity.Property(e => e.CanBanUsers)
                     .IsRequired()
@@ -88,6 +80,13 @@ namespace Menhera.Database
                     .HasColumnType("varchar(100)")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.NicknameColorCode)
+                    .HasColumnName("nickname_color_code")
+                    .HasColumnType("varchar(15)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci")
+                    .HasDefaultValueSql("'#FFFFFF'");
             });
 
             modelBuilder.Entity<Ban>(entity =>
@@ -283,6 +282,9 @@ namespace Menhera.Database
                 entity.HasIndex(e => e.ThreadId)
                     .HasName("fkThreadId_Post");
 
+                entity.HasIndex(e => e.AdminId)
+                    .HasName("fkAdminId_Post");
+
                 entity.Property(e => e.PostId)
                     .HasColumnName("post_id")
                     .HasColumnType("int(11)");
@@ -296,7 +298,7 @@ namespace Menhera.Database
 
                 entity.Property(e => e.AnonName)
                     .HasColumnName("anon_name")
-                    .HasColumnType("varchar(45)")
+                    .HasColumnType("varchar(100)")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_general_ci");
 
@@ -336,6 +338,17 @@ namespace Menhera.Database
                     .HasColumnName("time_in_unix_seconds")
                     .HasColumnType("bigint(20)")
                     .HasDefaultValueSql("'unix_timestamp(current_timestamp())'");
+
+                entity.Property(e => e.AdminId)
+                    .HasColumnName("admin_id")
+                    .HasColumnType("int(11)")
+                    .IsRequired(false);
+
+                entity.HasOne(p => p.Admin)
+                    .WithMany(p => p.Post)
+                    .HasForeignKey(p => p.AdminId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("FK_AdminPost");
 
                 entity.HasOne(d => d.Board)
                     .WithMany(p => p.Post)
@@ -411,7 +424,7 @@ namespace Menhera.Database
 
                 entity.Property(e => e.AnonName)
                     .HasColumnName("anon_name")
-                    .HasColumnType("varchar(45)")
+                    .HasColumnType("varchar(100)")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_general_ci");
 

@@ -69,10 +69,15 @@ namespace Menhera.Controllers
                 {
                     try
                     {
-                        var thread = _db.Thread.Where(t => t.ThreadId == id).Include(t => t.Board).Include(t => t.Post)
+                        var thread = _db.Thread.Where(t => t.ThreadId == id).
+                            Include(t => t.Board).
+                            Include(t => t.Post)
                             .ToList()[0];
 
-                        var posts = _db.Post.Where(p => p.ThreadId == id).Include(p => p.File).ToList();
+                        var posts = _db.Post.Where(p => p.ThreadId == id).
+                            Include(p => p.File)
+                            .Include(p => p.Admin) 
+                            .ToList();
 
                         var postsFiles = new Dictionary<Post, List<File>>();
 
@@ -82,7 +87,7 @@ namespace Menhera.Controllers
 
                             postsFiles.Add(post, post.File.ToList());
                         }
-
+                        
                         ViewBag.Board = thread.Board;
                         ViewBag.Thread = thread;
                         ViewBag.PostsFiles = postsFiles;
@@ -133,7 +138,8 @@ namespace Menhera.Controllers
                 if (User.Identity.IsAuthenticated)
                 {
                     var admin = _db.Admin.First(a => a.Email == User.Identity.Name);
-                    post.AnonName = PostFormatter.GetFormattedAdminName(admin.Login, admin.NicknameColorCode) ;
+                    post.AnonName = admin.Login;
+                    post.Admin = admin;
                 }
 
                 if (ModelState.IsValid)

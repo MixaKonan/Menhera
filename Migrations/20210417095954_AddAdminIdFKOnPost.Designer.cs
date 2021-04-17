@@ -3,14 +3,16 @@ using System;
 using Menhera.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Menhera.Migrations
 {
     [DbContext(typeof(MenherachanContext))]
-    partial class MenherachanContextModelSnapshot : ModelSnapshot
+    [Migration("20210417095954_AddAdminIdFKOnPost")]
+    partial class AddAdminIdFKOnPost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

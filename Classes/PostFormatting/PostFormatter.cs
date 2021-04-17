@@ -48,11 +48,6 @@ namespace Menhera.Classes.PostFormatting
             return quoteAdded;
         }
 
-        public static string GetFormattedAdminName(string name, string colorCode)
-        {
-            return $"<span style=\"color: {colorCode}\">##{name}</span>";
-        }
-        
         public static string GetHtmlTrimmedString(string str)
         {
             _postHtmlTagsRegex = new Regex(Constants.Constants.HTML_TAGS_TEXT_PATTERN, RegexOptions.Compiled);

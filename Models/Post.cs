@@ -18,6 +18,7 @@ namespace Menhera.Models
         public int PostId { get; set; }
         public int BoardId { get; set; }
         public int ThreadId { get; set; }
+        public int? AdminId { get; set; }
         public string Email { get; set; }
         public string Subject { get; set; }
         public string Comment { get; set; }
@@ -28,6 +29,8 @@ namespace Menhera.Models
 
         public virtual Board Board { get; set; }
         public virtual Thread Thread { get; set; }
+        
+        public virtual Admin Admin { get; set; }
         public virtual ICollection<File> File { get; set; }
     }
 }

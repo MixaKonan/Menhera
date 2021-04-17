@@ -30,5 +30,6 @@ namespace Menhera.Models
         public string NicknameColorCode { get; set; }
 
         public virtual ICollection<Ban> Ban { get; set; }
+        public virtual ICollection<Post> Post { get; set; }
     }
 }

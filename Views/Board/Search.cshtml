@@ -1,5 +1,4 @@
-﻿@using Menhera.Classes.Anon
-@inject Menhera.Intefaces.IBoardCollection BoardCollection
+﻿@inject Menhera.Intefaces.IBoardCollection BoardCollection
 @inject Menhera.Intefaces.IAdminCollection AdminCollection
 
 @{
@@ -40,9 +39,6 @@
             ← К доске
         </a>
         <a asp-controller="MainPage" asp-action="Main">Главная</a>
-        @{
-            //if(user.HasAccess) { <a href="/controls">Управление</a> }
-        }
         <hr>
     </div>
 </section>
@@ -60,32 +56,40 @@
             <article class="@className" id="post-@postFiles.Key.PostId">
                 <div class="thread-header">
                     @{
-                        if (!string.IsNullOrEmpty(postFiles.Key.Subject))
-                        {
-                            <span class="subject">
-                                @postFiles.Key.Subject
-                            </span>
-                        }
+                        <span class="subject">
+                            @postFiles.Key.Subject
+                        </span>
                         if (postFiles.Key.AnonIpHash == ViewBag.Thread.OpIpHash)
                         {
                             <span style="color: green; ">
                                 #OP
                             </span>
                         }
-                        if (!string.IsNullOrEmpty(postFiles.Key.AnonName))
+                        if (!(string.IsNullOrEmpty(postFiles.Key.Email) && string.IsNullOrEmpty(postFiles.Key.AnonName)))
                         {
-                            if (!string.IsNullOrEmpty(postFiles.Key.Email))
+                            <span class="name">
+                                <a href="mailto:@postFiles.Key.Email">
+                                    @if (!(postFiles.Key.Admin is null))
+                                    {
+                                        @Html.Raw($"<span style=\"color: {postFiles.Key.Admin.NicknameColorCode};\">{postFiles.Key.Admin.Login}</span>")
+                                    }
+                                    else
+                                    {
+                                        @postFiles.Key.AnonName
+                                    }
+                                </a>
+                            </span>
+                        }
+                        else
+                        {
+                            if (!(postFiles.Key.Admin is null))
                             {
-                                <span class="name">
-                                    <a href="mailto:@postFiles.Key.Email">
-                                        @Html.Raw(postFiles.Key.AnonName)
-                                    </a>
-                                </span>
+                                @Html.Raw($"<span style=\"color: {postFiles.Key.Admin.NicknameColorCode};\">{postFiles.Key.Admin.Login}</span>")
                             }
                             else
                             {
-                                @Html.Raw(postFiles.Key.AnonName)
-                            }
+                                @postFiles.Key.AnonName
+                            }  
                         }
                         <i></i>
                         @DateTimeOffset.FromUnixTimeSeconds(postFiles.Key.TimeInUnixSeconds).DateTime
