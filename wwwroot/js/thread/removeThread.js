@@ -22,6 +22,7 @@ function removeThread(buttonId) {
             method: 'post',
             success: () => {
                 alert("Тред удалён.");
+                location.reload();
             },
             error: () => {
                 alert("Произошла ошибка.")

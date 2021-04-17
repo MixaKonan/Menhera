@@ -22,6 +22,7 @@ function closeThread(buttonId) {
             method: 'post',
             success: () => {
                 alert("Тред закрыт.");
+                location.reload();
             },
             error: () => {
                 alert("Произошла ошибка.")

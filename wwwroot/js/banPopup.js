@@ -36,6 +36,7 @@ function banAnon(stringId) {
             method: 'post',
             success: () => {
                 alert("Анон забанен");
+                location.reload();
             },
             error: () => {
                 alert("Произошла ошибка")

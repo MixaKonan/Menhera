@@ -28,6 +28,7 @@ function addAdmin() {
         method: 'post',
         success: () => {
             alert("Админ добавлен.");
+            location.reload();
         },
         error: () => {
             alert("Произошла ошибка.")

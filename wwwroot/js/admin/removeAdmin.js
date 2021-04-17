@@ -17,6 +17,7 @@ function removeAdmin(adminId) {
             method: 'post',
             success: () => {
                 alert("Админ удалён.");
+                location.reload();
             },
             error: () => {
                 alert("Произошла ошибка.")

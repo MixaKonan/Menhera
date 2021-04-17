@@ -18,8 +18,13 @@ function deletePost(stringId) {
                 contentType: 'application/x-www-form-urlencoded',
                 data: deletionData,
                 method: 'post',
-                success: () => alert("Пост удалён"),
-                error: () => alert("Произошла ошибка")
-            })
+                success: () => {
+                    alert("Пост удалён");
+                    location.reload();
+                },
+                error: () => {
+                    alert("Произошла ошибка")
+                }
+        })
     }
 }

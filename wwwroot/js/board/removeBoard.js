@@ -23,6 +23,7 @@ function removeBoard(buttonId) {
             method: 'post',
             success: () => {
                 alert("Доска удалена.");
+                location.reload();
             },
             error: () => {
                 alert("Произошла ошибка.")
