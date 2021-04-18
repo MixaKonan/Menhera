@@ -15,7 +15,7 @@ body {
 
 a {
     display: inline-block;
-    color: #9c68ab;
+    color: #843f94;
     text-decoration: none;
 }
 
@@ -174,7 +174,7 @@ aside a {
 .functional-menu,
 .threads {
     margin: 0 226px 0 10%;
-    font-family: Raleway, sans-serif;
+    font-size: 115%;    
 }
 
 .functional-menu {

@@ -73,7 +73,10 @@
         </div>
     </div>
 </div>
-<script src="/js/thread/removeThread.js"></script>
-<script src="/js/thread/closeThread.js"></script>
+@if (ViewBag.CurrentAdmin.HasAccessToPanel)
+{
+    <script src="/js/thread/removeThread.js"></script>
+    <script src="/js/thread/closeThread.js"></script>
+}
 </body>
 </html>

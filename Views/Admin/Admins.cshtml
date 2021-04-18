@@ -110,6 +110,9 @@
         </div>
     </div>
 </div>
-<script src="/js/admin/removeAdmin.js"></script>
+@if (ViewBag.CurrentAdmin.HasAccessToPanel)
+{
+    <script src="/js/admin/removeAdmin.js"></script>
+}
 </body>
 </html>

@@ -20,9 +20,13 @@ function removeThread(buttonId) {
             contentType: 'application/x-www-form-urlencoded',
             data: data,
             method: 'post',
-            success: () => {
-                alert("Тред удалён.");
-                location.reload();
+            success: (result) => {
+                if(result.redirectToUrl != null) {
+                    window.location.href = result.redirectToUrl;
+                }
+                else {
+                    window.location.reload();
+                }
             },
             error: () => {
                 alert("Произошла ошибка.")

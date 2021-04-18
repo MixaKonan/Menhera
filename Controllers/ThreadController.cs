@@ -63,16 +63,23 @@ namespace Menhera.Controllers
                 ViewBag.BanEnd = DateTimeOffset.FromUnixTimeSeconds(ban.Term).ToLocalTime();
             }
 
+            if (User.Identity.IsAuthenticated)
+            {
+                ViewBag.CurrentAdmin = _db.Admin.First(a => a.Email == User.Identity.Name);
+            }
+
             try
             {
                 using (_db)
                 {
                     try
                     {
-                        var thread = _db.Thread.Where(t => t.ThreadId == id).Include(t => t.Board).Include(t => t.Post)
+                        var thread = _db.Thread.Where(t => t.ThreadId == id)
+                            .Include(t => t.Board)
                             .ToList()[0];
 
-                        var posts = _db.Post.Where(p => p.ThreadId == id).Include(p => p.File)
+                        var posts = _db.Post.Where(p => p.ThreadId == id)
+                            .Include(p => p.File)
                             .Include(p => p.Admin)
                             .ToList();
 

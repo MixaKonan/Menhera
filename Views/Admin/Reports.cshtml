@@ -63,6 +63,9 @@
         </div>
     </div>
 </div>
-<script src="/js/report/removeReport.js"></script>
+@if (ViewBag.CurrentAdmin.HasAccessToPanel)
+{
+    <script src="/js/report/removeReport.js"></script>
+}
 </body>
 </html>

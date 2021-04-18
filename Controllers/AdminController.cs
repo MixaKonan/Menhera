@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Menhera.Attributes;
 using Menhera.Authentication;
 using Menhera.Classes.Logging;
 using Menhera.Database;
@@ -15,6 +16,7 @@ using static Menhera.Classes.Logging.Logger;
 namespace Menhera.Controllers
 {
     [Authorize]
+    //TODO: Add authorization attribute that checks whether admin has access to panel
     public class AdminController : Controller
     {
         private readonly MenherachanContext _db;
@@ -41,6 +43,8 @@ namespace Menhera.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.CurrentAdmin = _db.Admin.First(a => a.Email == User.Identity.Name);
+            
             return View();
         }
 
@@ -210,8 +214,8 @@ namespace Menhera.Controllers
                 var posts = _db.Post.Include(p => p.File).Where(p => p.ThreadId == thread.ThreadId).ToList();
 
                 _db.Thread.Remove(thread);
+                _db.SaveChanges();
 
-                
                 if (posts.Count > 0)
                 {
                     foreach (var post in posts)
@@ -224,7 +228,6 @@ namespace Menhera.Controllers
                     }
                 }
                 
-                _db.SaveChanges();
 
                 await LogIntoFile(_logDirectory, string.Concat("Removed thread: ", threadId),
                     LoggingInformationKind.Info);
@@ -237,11 +240,11 @@ namespace Menhera.Controllers
                 return StatusCode(500);
             }
 
-            return StatusCode(200);
+            return Json(new { redirectToUrl = Url.Action("Main", "MainPage") });
         }
 
         [HttpPost]
-        public async Task<IActionResult> CloseThreadAsyncAsync(int threadId)
+        public async Task<IActionResult> CloseThreadAsync(int threadId)
         {
             try
             {
@@ -294,6 +297,27 @@ namespace Menhera.Controllers
             }
         }
 
+        [HttpPost]
+        public void PinPost(int postId)
+        {
+            var post = _db.Post.First(p => p.PostId == postId);
+            post.IsPinned = true;
+
+            try
+            {
+                var pinnedPost = _db.Post.First(p => p.IsPinned);
+                pinnedPost.IsPinned = false;
+                
+                _db.Post.Update(pinnedPost);
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            
+            _db.Post.Update(post);
+            _db.SaveChanges();
+        }
+        
         [HttpPost]
         public async void DeletePostAsync(int postId)
         {
