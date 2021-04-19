@@ -376,11 +376,11 @@ article .comment {
     background: #fff url("../images/underline.png") no-repeat;
 }
 
-.sage{
+.form-check{
     position: relative;
 
 }
-.sage label{
+.form-check label{
     background-color: #fff;
     border: 2px solid #a670ba;
     border-radius: 50%;
@@ -396,9 +396,9 @@ article .comment {
     display: flex;
 }
 
-/*.form-check input[type="checkbox"]{*/
-/*    visibility: hidden;*/
-/*}*/
+.form-check input[type="checkbox"]{
+    visibility: hidden;
+}
 
 .form-check input[type="checkbox"]:checked + label{
     background-color: #a670ba;
