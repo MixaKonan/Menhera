@@ -56,32 +56,40 @@
             <article class="@className">
                 <div class="thread-header">
                     @{
-                        if (!string.IsNullOrEmpty(ViewBag.PostFiles.Key.Subject))
-                        {
-                            <span class="subject">
-                                @ViewBag.PostFiles.Key.Subject
-                            </span>
-                        }
-                        if (!string.IsNullOrEmpty(ViewBag.PostFiles.Key.AnonName))
-                        {
-                            if (!string.IsNullOrEmpty(ViewBag.PostFiles.Key.Email))
-                            {
-                                <span class="name">
-                                    <a href="mailto:@ViewBag.PostFiles.Key.Email">
-                                        @Html.Raw(ViewBag.PostFiles.Key.AnonName)
-                                    </a>
-                                </span>
-                            }
-                            else
-                            {
-                                @Html.Raw(ViewBag.PostFiles.Key.AnonName)
-                            }
-                        }
-                        if (ViewBag.PostFiles.Key.AnonIpHash == ViewBag.Thread.OpIpHash)
+                        <span class="subject">
+                            @ViewBag.PostFiles.Key.Subject
+                        </span>
+                        if (ViewBag.PostFiles.Key.IsWrittenByOp)
                         {
                             <span style="color: green; ">
                                 #OP
                             </span>
+                        }
+                        if (!string.IsNullOrEmpty(ViewBag.PostFiles.Key.Email) && !string.IsNullOrEmpty(ViewBag.PostFiles.Key.AnonName))
+                        {
+                            <span class="name">
+                                <a href="mailto:@ViewBag.PostFiles.Key.Email">
+                                    @if (!(ViewBag.PostFiles.Key.Admin is null))
+                                    {
+                                        @Html.Raw($"<span style=\"color: {ViewBag.PostFiles.Key.Admin.NicknameColorCode};\">{ViewBag.PostFiles.Key.Admin.Login}</span>")
+                                    }
+                                    else
+                                    {
+                                        @ViewBag.PostFiles.Key.AnonName
+                                    }
+                                </a>
+                            </span>
+                        }
+                        else
+                        {
+                            if (!(ViewBag.PostFiles.Key.Admin is null))
+                            {
+                                @Html.Raw($"<span style=\"color: {ViewBag.PostFiles.Key.Admin.NicknameColorCode};\">{ViewBag.PostFiles.Key.Admin.Login}</span>")
+                            }
+                            else
+                            {
+                                @ViewBag.PostFiles.Key.AnonName
+                            }    
                         }
                         <i></i>
                         @DateTimeOffset.FromUnixTimeSeconds(ViewBag.PostFiles.Key.TimeInUnixSeconds).DateTime

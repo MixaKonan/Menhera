@@ -24,6 +24,7 @@ namespace Menhera.Models
         public string Comment { get; set; }
         public string AnonName { get; set; }
         public bool IsPinned { get; set; }
+        public bool IsWrittenByOp { get; set; }
         public long TimeInUnixSeconds { get; set; }
         public string AnonIpHash { get; set; }
 

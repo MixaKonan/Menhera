@@ -8,7 +8,7 @@ function submitChanges() {
     let data = {email: email.value, login: login.value, password: password.value, color: color.value};
 
     $.ajax({
-        url: "/Admin/Account",
+        url: "/Admin/ChangeAccountDetails",
         contentType: 'application/x-www-form-urlencoded',
         data: data,
         method: 'post',

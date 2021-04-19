@@ -184,7 +184,7 @@ aside a {
 .form {
     max-width: 450px;
     margin: 10px auto;
-    box-shadow: 0px 0px 10px 1px #e1bfe2;
+    box-shadow: 0 0 10px 1px #e1bfe2;
     background: #dcd2df;
     padding: 2px;
 }
@@ -200,7 +200,7 @@ aside a {
 
 .form .email {
     float: left;
-    width: calc(40% - 2px);
+    width: calc(40% - 6px);
     margin-right: 2px;
 }
 
@@ -208,6 +208,15 @@ aside a {
     float: left;
     width: calc(80% - 2px);
     margin-right: 2px;
+}
+
+.search-field {
+    width: calc(100% - 8px);
+    margin-right: 2px;
+}
+
+.search-submit {
+    width: 100%;
 }
 
 .form .submit {
@@ -261,7 +270,7 @@ aside a {
 .optionsButton {
     border: none;
     background: rgb(220, 210, 223);
-    padding: 0px 2px 1px 4px;
+    padding: 0 2px 1px 4px;
     color: rgb(156, 104, 171);
 }
 
@@ -383,15 +392,20 @@ article .comment {
     width: 12px;
 }
 
-.sage input[type="checkbox"]{
-    visibility: hidden;
+.form-checks {
+    display: flex;
 }
 
-.sage input[type="checkbox"]:checked + label{
+/*.form-check input[type="checkbox"]{*/
+/*    visibility: hidden;*/
+/*}*/
+
+.form-check input[type="checkbox"]:checked + label{
     background-color: #a670ba;
     border-color: #a670ba;
 }
-.sage input[type="checkbox"]:checked + label:after {
+
+.form-check input[type="checkbox"]:checked + label:after {
     opacity: 1;
 }
 

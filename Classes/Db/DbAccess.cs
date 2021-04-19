@@ -32,7 +32,7 @@ namespace Menhera.Classes.Db
             db.SaveChanges();
         }
 
-        public static void AddPostToThread(MenherachanContext db, Post post, bool sage)
+        public static void AddPostToThread(MenherachanContext db, Post post, bool sage, bool isWrittenByOp = false)
         {
             var thread = db.Thread.First(t => t.ThreadId == post.ThreadId);
 
@@ -45,6 +45,9 @@ namespace Menhera.Classes.Db
             {
                 thread.BumpInUnixTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             }
+
+            post.IsWrittenByOp = isWrittenByOp;
+            
             db.Post.Add(post);
             db.SaveChanges();
         }

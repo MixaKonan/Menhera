@@ -62,7 +62,9 @@ namespace Menhera.Controllers
 
             try
             {
-                var post = _db.Post.Include(p => p.File).First(p => p.PostId == postId) ?? throw new Exception();
+                var post = _db.Post.Include(p => p.File)
+                    .Include(p => p.Admin)
+                    .First(p => p.PostId == postId) ?? throw new Exception();
 
                 ViewBag.Board = _collection.Boards.First(brd => brd.BoardId == post.BoardId);
 

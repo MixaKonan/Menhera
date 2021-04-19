@@ -19,7 +19,7 @@ function sendReport() {
         method: 'post',
         success: () => {
             window.alert("Репорт отправлен.");
-            history.back();
+            window.history.go(-1);
         },
         error: () => {
             window.alert("Произошла ошибка.");

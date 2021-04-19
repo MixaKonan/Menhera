@@ -77,6 +77,7 @@ namespace Menhera.Controllers
                     }
 
                     post.Comment = PostFormatter.GetHtmlTrimmedString(post.Comment);
+                    post.IsWrittenByOp = true;
 
                     if (User.Identity.IsAuthenticated)
                     {
@@ -285,6 +286,11 @@ namespace Menhera.Controllers
             try
             {
                 var postsFiles = new Dictionary<Post, List<File>>();
+                
+                if (User.Identity.IsAuthenticated)
+                {
+                    ViewBag.CurrentAdmin = _db.Admin.First(a => a.Email == User.Identity.Name);
+                }
 
                 if (!string.IsNullOrWhiteSpace(query) || !string.IsNullOrEmpty(query))
                 {

@@ -26,5 +26,10 @@ namespace Menhera.Classes.Anon
                 return false;
             }
         }
+
+        public static bool UserIsOp(Thread thread, string ipHash)
+        {
+            return thread.OpIpHash == ipHash;
+        }
     }
 }

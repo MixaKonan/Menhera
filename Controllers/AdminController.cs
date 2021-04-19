@@ -37,6 +37,8 @@ namespace Menhera.Controllers
         [HttpGet]
         public IActionResult Panel()
         {
+            ViewBag.CurrentAdmin = _db.Admin.First(a => a.Email == User.Identity.Name);
+
             return View();
         }
 
@@ -51,6 +53,8 @@ namespace Menhera.Controllers
         [HttpGet]
         public IActionResult Admins()
         {
+            ViewBag.CurrentAdmin = _db.Admin.First(a => a.Email == User.Identity.Name);
+
             ViewBag.Id = 1;
 
             return View();
@@ -121,6 +125,8 @@ namespace Menhera.Controllers
         [HttpGet]
         public IActionResult Boards()
         {
+            ViewBag.CurrentAdmin = _db.Admin.First(a => a.Email == User.Identity.Name);
+
             ViewBag.Id = 1;
 
             return View();
@@ -199,6 +205,8 @@ namespace Menhera.Controllers
         [HttpGet]
         public IActionResult Threads()
         {
+            ViewBag.CurrentAdmin = _db.Admin.First(a => a.Email == User.Identity.Name);
+
             ViewBag.Threads = _db.Thread.Include(t => t.Board).Include(t => t.Post).ToList();
 
             return View();
@@ -271,6 +279,8 @@ namespace Menhera.Controllers
         [HttpGet]
         public IActionResult Reports()
         {
+            ViewBag.CurrentAdmin = _db.Admin.First(a => a.Email == User.Identity.Name);
+
             ViewBag.Reports = _db.Report.Include(r => r.Board).ToList();
 
             return View();
@@ -405,7 +415,7 @@ namespace Menhera.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Account(string email, string login, string password, string color)
+        public async Task<IActionResult> ChangeAccountDetails(string email, string login, string password, string color)
         {
             try
             {

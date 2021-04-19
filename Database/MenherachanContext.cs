@@ -26,7 +26,7 @@ namespace Menhera.Database
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql();
+                optionsBuilder.UseMySql("");
             }
         }
 
@@ -322,6 +322,11 @@ namespace Menhera.Database
                 entity.Property(e => e.IsPinned)
                     .IsRequired()
                     .HasColumnName("is_pinned")
+                    .HasDefaultValueSql("b'0'");
+                
+                entity.Property(e => e.IsWrittenByOp)
+                    .IsRequired()
+                    .HasColumnName("is_written_by_op")
                     .HasDefaultValueSql("b'0'");
 
                 entity.Property(e => e.Subject)

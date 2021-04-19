@@ -28,7 +28,6 @@ namespace Menhera.Controllers
 
         private readonly string _logDirectory;
 
-
         private readonly MD5CryptoServiceProvider _md5;
 
         public ThreadController(MenherachanContext db, IWebHostEnvironment env)
@@ -67,7 +66,7 @@ namespace Menhera.Controllers
             {
                 ViewBag.CurrentAdmin = _db.Admin.First(a => a.Email == User.Identity.Name);
             }
-
+            
             try
             {
                 using (_db)
@@ -84,16 +83,24 @@ namespace Menhera.Controllers
                             .ToList();
 
                         var postsFiles = new Dictionary<Post, List<File>>();
-
+                        
+                        ViewBag.PinnedPost = new KeyValuePair<Post, List<File>>(null, null);
+                        
                         foreach (var post in posts)
                         {
                             post.Comment = PostFormatter.GetFormattedPostText(post);
-
+                            if (post.IsPinned)
+                            {
+                                ViewBag.PinnedPost = new KeyValuePair<Post, List<File>>(post, post.File.ToList());
+                                continue;
+                            }
+                            
                             postsFiles.Add(post, post.File.ToList());
                         }
 
                         ViewBag.Board = thread.Board;
                         ViewBag.Thread = thread;
+                        ViewBag.UserIsOp = IpCheck.UserIsOp(thread, anon.IpHash);
                         ViewBag.PostsFiles = postsFiles;
                     }
                     catch (ArgumentOutOfRangeException)
@@ -121,7 +128,7 @@ namespace Menhera.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddPost(Post post, List<IFormFile> files, bool sage)
+        public async Task<IActionResult> AddPost(Post post, List<IFormFile> files, bool sage, bool isWrittenByOp = false)
         {
             try
             {
@@ -148,7 +155,7 @@ namespace Menhera.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    DbAccess.AddPostToThread(_db, post, sage);
+                    DbAccess.AddPostToThread(_db, post, sage, isWrittenByOp);
 
                     if (files.Count > 0)
                     {
@@ -216,6 +223,11 @@ namespace Menhera.Controllers
         {
             try
             {
+                if (User.Identity.IsAuthenticated)
+                {
+                    ViewBag.CurrentAdmin = _db.Admin.First(a => a.Email == User.Identity.Name);
+                }
+                
                 var postsFiles = new Dictionary<Post, List<File>>();
 
                 if (!string.IsNullOrWhiteSpace(query) || !string.IsNullOrEmpty(query))
@@ -257,6 +269,10 @@ namespace Menhera.Controllers
             }
 
             return View();
+        }
+        private Post GetPinnedPost(IEnumerable<Post> posts)
+        {
+            return posts.First(p => p.IsPinned);
         }
     }
 }

@@ -100,7 +100,7 @@
                                 <span class="subject">
                                     @ViewBag.Post.Subject
                                 </span>
-                                if (ViewBag.Post.AnonIpHash == ViewBag.Thread.OpIpHash)
+                                if (ViewBag.Post.IsWrittenByOp)
                                 {
                                     <span style="color: green; ">
                                         #OP

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 
 namespace Menhera.Classes.Files
 {
     public abstract class ThumbnailCreator
     {
+        private static Random random = new Random();
         protected string FileName { get; }
         protected string ThumbnailName { get; }
         
@@ -25,13 +27,13 @@ namespace Menhera.Classes.Files
 
             FileDirectory = fileDirectory;
 
-            FileName = string.Concat(Guid.NewGuid().ToString(), FileExtension);
+            FileName = string.Concat(GetRandomString(8), FileExtension);
 
             FileFullPath = Path.Combine(FileDirectory, FileName ?? throw new InvalidOperationException());
 
             ThumbnailDirectory = thumbNailDirectory;
 
-            ThumbnailName = string.Concat("thmb-", FileName);
+            ThumbnailName = string.Concat("th-", FileName);
 
             ThumbnailFullPath = Path.Combine(ThumbnailDirectory, ThumbnailName);
         }
@@ -40,6 +42,13 @@ namespace Menhera.Classes.Files
             double height = Constants.Constants.THUMBNAIL_HEIGHT)
         {
 
+        }
+        
+        private static string GetRandomString(int length)
+        {
+            const string chars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVNM0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
         }
     }
 }
