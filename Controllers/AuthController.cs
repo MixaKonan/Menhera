@@ -26,14 +26,12 @@ namespace Menhera.Controllers
 
         private readonly string _logDirectory;
 
-
         public AuthController(MenherachanContext db, IWebHostEnvironment env)
         {
             _db = db;
             _env = env;
             
             _logDirectory = Path.Combine(_env.WebRootPath, "logs", "auth_logs.log");
-
         }
 
         [HttpGet]
@@ -90,11 +88,10 @@ namespace Menhera.Controllers
             return View(loginModel);
         }
 
-        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return Json(new { redirectToUrl = Url.Action("Login", "Auth") });
+            return RedirectToAction("Login");
         }
 
         private async Task Authenticate(string userName)
