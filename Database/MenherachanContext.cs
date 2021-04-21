@@ -86,7 +86,7 @@ namespace Menhera.Database
                     .HasColumnType("varchar(15)")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_general_ci")
-                    .HasDefaultValueSql("'#FFFFFF'");
+                    .HasDefaultValueSql("'#000000'");
             });
 
             modelBuilder.Entity<Ban>(entity =>
