@@ -1,36 +1,48 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Microsoft.AspNetCore.Http;
 using ImageMagick;
+using Menhera.Intefaces;
 
 namespace Menhera.Classes.Files
 {
-    public class GifThumbnailCreator : ThumbnailCreator
+    public class GifThumbnailCreator : ThumbnailCreator, IThumbnailCreator
     {
         private string GifInfo { get; set; }
+        private MagickImage Gif { get; }
         
         public GifThumbnailCreator(IFormFile file, string fileDirectory, string thumbNailDirectory) : base(file, fileDirectory, thumbNailDirectory)
         {
+            Gif = new MagickImage(this.FileFullPath);
         }
-        
-        public override void CreateThumbnail(double width = Constants.Constants.THUMBNAIL_WIDTH, double height = Constants.Constants.THUMBNAIL_HEIGHT)
+
+        public void CreateThumbnail(int width = Constants.Constants.THUMBNAIL_WIDTH,
+            int height = Constants.Constants.THUMBNAIL_HEIGHT)
         {
-            using (Stream stream = new FileStream(this.FileFullPath, FileMode.Create))
+            using (Gif)
             {
-                File.CopyTo(stream);
-            }
+                using (Stream stream = new FileStream(this.FileFullPath, FileMode.Create))
+                {
+                    File.CopyTo(stream);
+                }
 
-            using (var image = new MagickImage(this.FileFullPath))
-            {
-                var size = new MagickGeometry((int)width, (int)height);
-                
-                image.Resize(size);
-                
-                image.Write(this.ThumbnailFullPath);
+                if (Gif.Width < width && Gif.Height < height)
+                {
+                    using (Stream thumbnailSaveStream = new FileStream(ThumbnailFullPath, FileMode.Create))
+                    {
+                        File.CopyToAsync(thumbnailSaveStream);
+                    }
+                }
+                else
+                {
+                    var size = new MagickGeometry(width, height);
 
-                this.GifInfo = $"{image.BaseWidth}x{image.BaseHeight}";
-                
-                this.FileInfo = new GifInformation(this.FileName, this.ThumbnailName, GifInfo);
+                    Gif.Resize(size);
+                    Gif.Write(this.ThumbnailFullPath);
+
+                    this.GifInfo = $"{Gif.BaseWidth}x{Gif.BaseHeight}";
+
+                    this.FileInfo = new GifInformation(this.FileName, this.ThumbnailName, GifInfo);
+                }
             }
         }
     }

@@ -174,6 +174,7 @@ namespace Menhera.Controllers
                                     case ".png":
                                         var imageThumbnailCreator =
                                             new ImageThumbnailCreator(file, fileDirectory, thumbNailDirectory);
+                                        
                                         imageThumbnailCreator.CreateThumbnail();
 
                                         DbAccess.AddFilesToPost(_db, post, imageThumbnailCreator.FileInfo);
@@ -183,6 +184,7 @@ namespace Menhera.Controllers
                                     case ".gif":
                                         var gifThumbnailCreator =
                                             new GifThumbnailCreator(file, fileDirectory, thumbNailDirectory);
+                                        
                                         gifThumbnailCreator.CreateThumbnail();
                                         
                                         DbAccess.AddFilesToPost(_db, post, gifThumbnailCreator.FileInfo);

@@ -2,9 +2,9 @@
 {
     public static class Constants
     {
-        public const double THUMBNAIL_WIDTH = 200;
+        public const int THUMBNAIL_WIDTH = 200;
 
-        public const double THUMBNAIL_HEIGHT = 200;
+        public const int THUMBNAIL_HEIGHT = 200;
 
         public const string HTML_POST_REFERENCE_PATTERN = @"([>]{2})(\d+)";
 

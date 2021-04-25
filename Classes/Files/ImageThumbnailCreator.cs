@@ -3,65 +3,49 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using ImageMagick;
+using Menhera.Intefaces;
 
 namespace Menhera.Classes.Files
 {
-    public class ImageThumbnailCreator : ThumbnailCreator
+    public class ImageThumbnailCreator : ThumbnailCreator, IThumbnailCreator
     {
         private string ImageInfo { get; set; }
-        private Image Image { get; set; }
+        private MagickImage Image { get; }
 
         public ImageThumbnailCreator(IFormFile file, string fileDirectory, string thumbNailDirectory) : base(file, fileDirectory, thumbNailDirectory)
         {
+            Image = new MagickImage(this.FileFullPath);
         }
 
-        public override void CreateThumbnail(double width = Constants.Constants.THUMBNAIL_WIDTH, double height = Constants.Constants.THUMBNAIL_HEIGHT)
+        public void CreateThumbnail(int width = Constants.Constants.THUMBNAIL_WIDTH, int height = Constants.Constants.THUMBNAIL_HEIGHT)
         {
             using (Stream fileSaveStream = new FileStream(FileFullPath, FileMode.Create))
             {
                 File.CopyTo(fileSaveStream);
             }
-            
-            Image = Image.FromFile(FileFullPath);
 
-            ImageInfo = $"{Image.Width}x{Image.Height}";
-
-            if (Image.Width < width && Image.Height < height)
+            using (Image)
             {
-                using (Stream thumbnailSaveStream = new FileStream(ThumbnailFullPath, FileMode.Create))
+                ImageInfo = $"{Image.Width}x{Image.Height}";
+
+                if (Image.Width < width && Image.Height < height)
                 {
-                    File.CopyToAsync(thumbnailSaveStream);
-                }
-            }
-            else
-            {
-                double coefficient =
-                    Image.Width > Image.Height
-                        ? width / Image.Width
-                        : height / Image.Height;
-
-                int thumbnailW = (int) Math.Round(Image.Width * coefficient, MidpointRounding.ToEven);
-                int thumbnailH = (int) Math.Round(Image.Height * coefficient, MidpointRounding.ToEven);
-
-                Image thumbnail = Image.GetThumbnailImage(thumbnailW, thumbnailH,
-                    () => false,
-                    IntPtr.Zero);
-
-                using (Stream thumbnailSaveStream = new FileStream(ThumbnailFullPath, FileMode.Create))
-                {
-                    switch (FileExtension)
+                    using (Stream thumbnailSaveStream = new FileStream(ThumbnailFullPath, FileMode.Create))
                     {
-                        case ".jpeg":
-                        case ".jpg":
-                            thumbnail.Save(thumbnailSaveStream, ImageFormat.Jpeg);
-                            break;
-                        case ".png":
-                            thumbnail.Save(thumbnailSaveStream, ImageFormat.Png);
-                            break;
+                        File.CopyToAsync(thumbnailSaveStream);
                     }
                 }
-                
-                FileInfo = new ImageInformation(FileName, ThumbnailName, ImageInfo);
+                else
+                {
+                    var size = new MagickGeometry(width, height);
+
+                    Image.Resize(size);
+                    Image.Write(this.ThumbnailFullPath);
+
+
+                    FileInfo = new ImageInformation(FileName, ThumbnailName, ImageInfo);
+                }
             }
         }
     }

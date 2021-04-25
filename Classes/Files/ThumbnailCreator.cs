@@ -10,7 +10,6 @@ namespace Menhera.Classes.Files
         private static Random random = new Random();
         protected string FileName { get; }
         protected string ThumbnailName { get; }
-        
         public FileInformation FileInfo { get; set; }
         protected IFormFile File { get; }
         protected string FileExtension { get; }
@@ -36,12 +35,6 @@ namespace Menhera.Classes.Files
             ThumbnailName = string.Concat("th-", FileName);
 
             ThumbnailFullPath = Path.Combine(ThumbnailDirectory, ThumbnailName);
-        }
-
-        public virtual void CreateThumbnail(double width = Constants.Constants.THUMBNAIL_WIDTH,
-            double height = Constants.Constants.THUMBNAIL_HEIGHT)
-        {
-
         }
         
         private static string GetRandomString(int length)

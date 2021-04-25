@@ -23,6 +23,8 @@
 
     <ItemGroup>
       <Folder Include="Database" />
+      <Folder Include="wwwroot\postImages" />
+      <Folder Include="wwwroot\thumbnails" />
     </ItemGroup>
 
     <ItemGroup>
