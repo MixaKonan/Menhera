@@ -36,6 +36,8 @@ namespace Menhera.Classes.Files
 
             ThumbnailFullPath = Path.Combine(ThumbnailDirectory, ThumbnailName);
         }
+
+        public abstract void CreateThumbnail(int width = Constants.Constants.THUMBNAIL_WIDTH, int height = Constants.Constants.THUMBNAIL_HEIGHT);
         
         private static string GetRandomString(int length)
         {

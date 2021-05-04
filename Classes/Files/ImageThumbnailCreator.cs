@@ -1,31 +1,27 @@
-﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
+﻿using System.IO;
 using Microsoft.AspNetCore.Http;
 using ImageMagick;
-using Menhera.Intefaces;
 
 namespace Menhera.Classes.Files
 {
-    public class ImageThumbnailCreator : ThumbnailCreator, IThumbnailCreator
+    public class ImageThumbnailCreator : ThumbnailCreator
     {
         private string ImageInfo { get; set; }
-        private MagickImage Image { get; }
+        private MagickImage Image { get; set; }
 
         public ImageThumbnailCreator(IFormFile file, string fileDirectory, string thumbNailDirectory) : base(file, fileDirectory, thumbNailDirectory)
         {
-            Image = new MagickImage(this.FileFullPath);
+            
         }
 
-        public void CreateThumbnail(int width = Constants.Constants.THUMBNAIL_WIDTH, int height = Constants.Constants.THUMBNAIL_HEIGHT)
+        public override void  CreateThumbnail(int width = Constants.Constants.THUMBNAIL_WIDTH, int height = Constants.Constants.THUMBNAIL_HEIGHT)
         {
             using (Stream fileSaveStream = new FileStream(FileFullPath, FileMode.Create))
             {
                 File.CopyTo(fileSaveStream);
             }
 
-            using (Image)
+            using (Image = new MagickImage(this.FileFullPath))
             {
                 ImageInfo = $"{Image.Width}x{Image.Height}";
 

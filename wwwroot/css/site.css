@@ -409,30 +409,23 @@ article .comment {
     opacity: 1;
 }
 
-.bottom-btn {
-    background-color: #9c68ab;
-    color: #d68eea;
-    font-size: 28px;
-    border: none;
-    outline: none;
+.bottom-btn{
+    background: transparent;
     position: fixed;
+    height: 100px;
+    width: 100px;
+    border: none;
     cursor: pointer;
-    bottom: 12px;
-    left: 15px;
-    height: 50px;
-    width: 50px;
-    border-radius: 30px;
-    box-shadow: 0 0 10px 1px #e1bfe2;
 }
-.bottom-btn:hover {
-    transition: 0.2s ease;
-    background-color: #d68eea;
-    color: #9c68ab;
-    box-shadow: 0 0 10px 6px #e1bfe2;
+
+.login_{
+    bottom: 5px;
+    background: url("../images/admin_access.png") no-repeat;
 }
 
 .refresh{
-    bottom: 74px;
+    bottom: 115px;
+    background: url("../images/reload.png") no-repeat;
 }
 
 @keyframes highlight {

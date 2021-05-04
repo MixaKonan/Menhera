@@ -172,6 +172,7 @@ namespace Menhera.Controllers
                                     case ".jpeg":
                                     case ".jpg":
                                     case ".png":
+                                    {
                                         var imageThumbnailCreator =
                                             new ImageThumbnailCreator(file, fileDirectory, thumbNailDirectory);
                                         
@@ -180,8 +181,9 @@ namespace Menhera.Controllers
                                         DbAccess.AddFilesToPost(_db, post, imageThumbnailCreator.FileInfo);
 
                                         break;
-
+                                    }
                                     case ".gif":
+                                    {
                                         var gifThumbnailCreator =
                                             new GifThumbnailCreator(file, fileDirectory, thumbNailDirectory);
                                         
@@ -190,6 +192,7 @@ namespace Menhera.Controllers
                                         DbAccess.AddFilesToPost(_db, post, gifThumbnailCreator.FileInfo);
                                         
                                         break;
+                                    }
                                 }
                             }
                             else

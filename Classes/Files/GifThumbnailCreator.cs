@@ -1,30 +1,29 @@
 ﻿using System.IO;
 using Microsoft.AspNetCore.Http;
 using ImageMagick;
-using Menhera.Intefaces;
 
 namespace Menhera.Classes.Files
 {
-    public class GifThumbnailCreator : ThumbnailCreator, IThumbnailCreator
+    public class GifThumbnailCreator : ThumbnailCreator
     {
         private string GifInfo { get; set; }
-        private MagickImage Gif { get; }
+        private MagickImage Gif { get; set; }
         
         public GifThumbnailCreator(IFormFile file, string fileDirectory, string thumbNailDirectory) : base(file, fileDirectory, thumbNailDirectory)
         {
-            Gif = new MagickImage(this.FileFullPath);
+            
         }
 
-        public void CreateThumbnail(int width = Constants.Constants.THUMBNAIL_WIDTH,
+        public override void CreateThumbnail(int width = Constants.Constants.THUMBNAIL_WIDTH,
             int height = Constants.Constants.THUMBNAIL_HEIGHT)
         {
-            using (Gif)
+            using (Stream stream = new FileStream(this.FileFullPath, FileMode.Create))
             {
-                using (Stream stream = new FileStream(this.FileFullPath, FileMode.Create))
-                {
-                    File.CopyTo(stream);
-                }
+                File.CopyTo(stream);
+            }
 
+            using (Gif = new MagickImage(this.FileFullPath))
+            {
                 if (Gif.Width < width && Gif.Height < height)
                 {
                     using (Stream thumbnailSaveStream = new FileStream(ThumbnailFullPath, FileMode.Create))

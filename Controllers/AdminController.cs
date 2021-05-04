@@ -213,7 +213,7 @@ namespace Menhera.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveThreadAsync(int threadId)
+        public async Task<IActionResult> RemoveThreadAsync(int threadId, string action)
         {
             try
             {
@@ -248,7 +248,9 @@ namespace Menhera.Controllers
                 return StatusCode(500);
             }
 
-            return Json(new { redirectToUrl = Url.Action("Main", "MainPage") });
+            return Json(action == "/Admin/Threads"
+                ? new { redirectToUrl = Url.Action("Threads", "Admin") }
+                : new { redirectToUrl = Url.Action("Main", "MainPage") });
         }
 
         [HttpPost]

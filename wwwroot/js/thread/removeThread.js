@@ -10,7 +10,7 @@ function removeThread(buttonId) {
         id += buttonId[i];
     }
 
-    let data = {threadId: id};
+    let data = {threadId: id, action: window.location.pathname};
 
     let confirmed = window.confirm("Удалить тред?");
 
