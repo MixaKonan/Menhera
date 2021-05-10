@@ -421,11 +421,13 @@ article .comment {
 .login_{
     bottom: 5px;
     background: url("../images/admin_access.png") no-repeat;
+    background-size: 80%;
 }
 
 .refresh{
-    bottom: 115px;
+    bottom: 5px;
     background: url("../images/reload.png") no-repeat;
+    background-size: 80%;
 }
 
 @keyframes highlight {

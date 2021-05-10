@@ -18,7 +18,7 @@
         <a asp-action="Main" asp-controller="MainPage">
             На сосач!
         </a>
-        </div>
+    </div>
     <div class="board">
         /bash/<span class="postfix">org</span>
     </div>
@@ -35,14 +35,16 @@
         <br>
         2.Запрещены любые публикации нарушающие законодательство и способные привести к блокировке ресурса — все остальное разрешено, за исключением вайпа.
         <br>
-        3.Придерживайтесь тематики борды и ее правил, если они указаны.
+        3.Запрещены треды, посвящённые нанесению морального вреда каким-либо людям.
         <br>
-        4.Трипкоды и аватарки разрешены только в
+        4.Придерживайтесь тематики борды и ее правил, если они указаны.
+        <br>
+        5.Трипкоды и аватарки разрешены только в
         <a asp-controller="Board" asp-action="Board" asp-route-prefix="rf">
             /rf/
         </a>.
         <br>
-        5.Обсуждение работы модерации сайта запрещено на всех досках, кроме
+        6.Обсуждение работы модерации сайта запрещено на всех досках, кроме
         <a asp-controller="Board" asp-action="Board" asp-route-prefix="s">
             /s/
         </a>.
@@ -57,13 +59,14 @@
             {
                 if (!board.IsHidden)
                 {
-                    <p>Раздел
+                    <p>
+                        Раздел
                         <a asp-controller="Board" asp-action="Board" asp-route-prefix="@board.Prefix">
                             /@board.Prefix/
                         </a>;
-                        тредов @boardInfo.ThreadCount ;
-                        постов @boardInfo.PostCount ;
-                        файлов @boardInfo.FileCount ;
+                        тредов @boardInfo.ThreadCount;
+                        постов @boardInfo.PostCount;
+                        файлов @boardInfo.FileCount;
                     </p>
                     <hr>
                 }
@@ -71,5 +74,9 @@
         }
     </div>
 </div>
+<form asp-controller="Auth" asp-action="Login" method="get">
+    <button class="bottom-btn login_"></button>
+</form>
+
 </body>
 </html>
